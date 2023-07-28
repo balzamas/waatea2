@@ -18,6 +18,7 @@ class TeamSerializer(serializers.ModelSerializer):
         'name',
         ]
 class GameSerializer(serializers.ModelSerializer):
+    dayofyear = serializers.SerializerMethodField()
     home = TeamSerializer()
     away = TeamSerializer()
     class Meta:
@@ -27,7 +28,10 @@ class GameSerializer(serializers.ModelSerializer):
         'home',
         'away',
         'date',
+            'dayofyear'
         ]
+    def get_dayofyear(self, obj):
+        return obj.date.timetuple().tm_yday
 
 class UserSerializer(serializers.ModelSerializer):
     club = ClubSerializer()
@@ -48,8 +52,7 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         fields = [
         'pk',
         'player',
-        'game',
-        'date',
         'state',
-        'club'
+        'club',
+        'dayofyear'
         ]

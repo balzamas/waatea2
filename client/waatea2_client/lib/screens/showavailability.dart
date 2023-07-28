@@ -58,7 +58,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     for (var i = 0; i < games.length; i++) {
       final responseAvail = await http.get(
           Uri.parse(
-              "${globals.URL_PREFIX}/api/availabilities/filter?game=${games[i].pk}"),
+              "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}"),
           headers: {'Authorization': 'Token ${widget.token}'});
 
       if (responseAvail.statusCode == 200) {
@@ -123,6 +123,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
                   date: data.date,
                   token: widget.token,
                   clubId: widget.clubid,
+                  dayofyear: data.dayofyear,
                   isAvailable: data.isAvailable,
                   isNotAvailable: data.isNotAvailable,
                   isMaybe: data.isMaybe,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:waatea2_client/models/game_model.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -40,7 +41,7 @@ class SetAvailabilityState extends State<SetAvailability> {
     for (var i = 0; i < games.length; i++) {
       final responseAvail = await http.get(
           Uri.parse(
-              "${globals.URL_PREFIX}/api/availabilities/filter?game=${games[i].pk}&player=${widget.userid}"),
+              "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&player=${widget.userid}"),
           headers: {'Authorization': 'Token ${widget.token}'});
 
       if (responseAvail.statusCode == 200) {
@@ -88,6 +89,7 @@ class SetAvailabilityState extends State<SetAvailability> {
                   token: widget.token,
                   initialAvailabilityId: data.avail_id,
                   clubId: widget.clubid,
+                  dayofyear: data.dayofyear,
                 );
               },
             );

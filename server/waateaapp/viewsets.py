@@ -56,15 +56,13 @@ class AvailiabilityFilterAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        game = self.request.query_params.get('game')
         player = self.request.query_params.get('player')
+        dayofyear = self.request.query_params.get('dayofyear')
 
-        if game and player:
-            queryset = queryset.filter(game=game, player=player)
-        elif game:
-            queryset = queryset.filter(game=game)
-
-
+        if dayofyear and player:
+            queryset = queryset.filter(dayofyear=dayofyear, player=player)
+        elif dayofyear:
+            queryset = queryset.filter(dayofyear=dayofyear)
 
         return queryset
 

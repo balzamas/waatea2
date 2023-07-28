@@ -46,19 +46,24 @@ class Game(models.Model):
     updated = models.DateTimeField(auto_now=True)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
     date = models.DateTimeField()
+    dayofyear = models.IntegerField(default=-1)
 
     def __str__(self):
         return self.home.name + " - " + self.away.name
 
+    def save(self, *args, **kwargs):
+        self.dayofyear = self.date.timetuple().tm_yday
+        super(Game, self).save(*args, **kwargs)
+
 class Availability(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField()
     state = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    dayofyear = models.IntegerField(default=-1)
 
     def __str__(self):
-        return self.game.__str__() + " " + self.game.date.strftime("%m/%d/%Y")
+        return self.dayofyear.__str__() + " " + self.player.name
+

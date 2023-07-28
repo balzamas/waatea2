@@ -17,9 +17,10 @@ class ShowAvailabilityDetail extends StatefulWidget {
   late final String gameid;
   late final String game;
   late final String gameDate;
+  late final int dayofyear;
 
-  ShowAvailabilityDetail(
-      this.token, this.clubid, this.gameid, this.game, this.gameDate);
+  ShowAvailabilityDetail(this.token, this.clubid, this.gameid, this.game,
+      this.gameDate, this.dayofyear);
   @override
   ShowAvailabilityDetailState createState() => ShowAvailabilityDetailState();
 }
@@ -50,7 +51,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
     final responseAvail = await http.get(
         Uri.parse(
-            "${globals.URL_PREFIX}/api/availabilities/filter?game=${widget.gameid}"),
+            "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${widget.dayofyear}"),
         headers: {'Authorization': 'Token ${widget.token}'});
 
     if (responseAvail.statusCode == 200) {

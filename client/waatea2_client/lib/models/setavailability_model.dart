@@ -5,6 +5,7 @@ class SetAvailabilityModel {
   final String date;
   int state;
   String avail_id;
+  final int dayofyear;
 
   SetAvailabilityModel(
       {required this.pk,
@@ -12,7 +13,8 @@ class SetAvailabilityModel {
       required this.away,
       required this.date,
       required this.state,
-      required this.avail_id});
+      required this.avail_id,
+      required this.dayofyear});
 
   factory SetAvailabilityModel.fromJson(Map<String, dynamic> json) {
     return SetAvailabilityModel(
@@ -21,7 +23,8 @@ class SetAvailabilityModel {
         away: json['away']['name'],
         date: json['date'],
         state: 0,
-        avail_id: "");
+        avail_id: "",
+        dayofyear: json['dayofyear']);
   }
 
   Map<String, dynamic> toJson() =>

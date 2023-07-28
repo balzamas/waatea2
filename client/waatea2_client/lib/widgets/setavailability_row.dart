@@ -13,6 +13,7 @@ class SetAvailabilityRow extends StatefulWidget {
   final String token;
   final String initialAvailabilityId;
   final String clubId;
+  final int dayofyear;
 
   const SetAvailabilityRow(
       {Key? key,
@@ -23,7 +24,8 @@ class SetAvailabilityRow extends StatefulWidget {
       required this.playerId,
       required this.token,
       required this.initialAvailabilityId,
-      required this.clubId})
+      required this.clubId,
+      required this.dayofyear})
       : super(key: key);
 
   @override
@@ -62,18 +64,11 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
         body: json.encode(body),
       );
     } else {
-      DateTime selectedDateTime = DateTime.now();
-
-      // Format the DateTime value in ISO 8601 format
-      String formattedDateTime =
-          DateFormat("yyyy-MM-ddTHH:mm:ss.ssssssZ").format(selectedDateTime);
-
-      final Map<String, String> body = {
+      final Map<String, dynamic> body = {
         'state': state.toString(),
-        'game': widget.gameId,
         'player': widget.playerId.toString(),
         'club': widget.clubId,
-        'date': widget.date
+        'dayofyear': widget.dayofyear
       };
 
       final http.Response response = await http.post(
