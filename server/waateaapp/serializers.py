@@ -49,6 +49,7 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         'pk',
         'player',
         'game',
+        'date',
         'state',
         'club'
         ]

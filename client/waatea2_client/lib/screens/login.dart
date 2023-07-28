@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:waatea2_client/screens/signup.dart';
 import 'home.dart';
 import '../globals.dart' as globals;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,6 +14,20 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCredentials(); // Load saved email and password
+  }
+
+  Future<void> _loadCredentials() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      _usernameController.text = sharedPreferences.getString('email') ?? '';
+      _passwordController.text = sharedPreferences.getString('password') ?? '';
+    });
+  }
 
   Future<void> _login() async {
     String username = _usernameController.text.trim();
@@ -35,6 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
           headers: headers, body: json.encode(body));
 
       if (response.statusCode == 200) {
+        // User successfully logged in, save login credentials
+        final sharedPreferences = await SharedPreferences.getInstance();
+        sharedPreferences.setString('email', _usernameController.text);
+        sharedPreferences.setString('password', _passwordController.text);
+
         // Login successful, extract the token from the response
         String token = json.decode(response.body)['token'];
 

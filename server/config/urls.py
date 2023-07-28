@@ -24,10 +24,10 @@ def flutter_redirect(request, resource):
     return serve(request, resource, FLUTTER_WEB_APP)
 
 urlpatterns = [
-                  path('api/register/', register_user, name='register'),
-                  path('client/', lambda r: flutter_redirect(r, 'index.html')),
-                  path('client/<path:resource>', flutter_redirect),
-    #path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+      path('api/register/', register_user, name='register'),
+      path('client/', lambda r: flutter_redirect(r, 'index.html')),
+      path('client/<path:resource>', flutter_redirect),
+    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
 
     # Django Admin, use {% url 'admin:index' %}

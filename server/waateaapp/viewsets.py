@@ -30,7 +30,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 class UserFilterAPIView(generics.ListAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('name')
     serializer_class = UserSerializer
 
     def get_queryset(self):
