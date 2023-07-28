@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'availability.dart';
+import 'userprofile.dart';
+
+class MyHomePage extends StatefulWidget {
+  final String token;
+  final String user;
+  final int userid;
+  final String clubid;
+
+  MyHomePage(this.token, this.user, this.clubid, this.userid);
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          SafeArea(
+            child: NavigationRail(
+              extended: false,
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.sports_rugby_outlined),
+                  label: Text('Games'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.settings),
+                  label: Text('User Profile'),
+                ),
+              ],
+              selectedIndex: _currentIndex,
+              onDestinationSelected: (value) {
+                setState(() {
+                  _currentIndex = value;
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: _getScreenForIndex(_currentIndex),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getScreenForIndex(int index) {
+    switch (index) {
+      case 0:
+        return Availability(widget.token, widget.clubid, widget.userid);
+      case 1:
+        return UserProfile(widget.token, widget.user);
+      default:
+        return Container();
+    }
+  }
+}
