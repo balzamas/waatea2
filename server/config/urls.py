@@ -9,16 +9,27 @@ from waateaapp import views
 from rest_framework import routers
 from rest_framework.authtoken import views as restviews
 from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, AvailabilityUpdateAPIView, AvailabilityCreateAPIView
+from django.views.static import serve
+import os
+from waatea_2.users.views import register_user
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('gamedetails', views.Game)
 router.register('userdetails', views.User)
 router.register('availabilitydetails', views.Availability)
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FLUTTER_WEB_APP = os.path.join(BASE_DIR, 'client')
 
+def flutter_redirect(request, resource):
+    return serve(request, resource, FLUTTER_WEB_APP)
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+                  path('api/register/', register_user, name='register'),
+                  path('client/', lambda r: flutter_redirect(r, 'index.html')),
+                  path('client/<path:resource>', flutter_redirect),
+    #path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
+
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management

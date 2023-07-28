@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:waatea2_client/screens/signup.dart';
 import 'home.dart';
 import '../globals.dart' as globals;
 
@@ -94,6 +95,19 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               onPressed: _login,
               child: const Text('Login'),
+            ),
+            SizedBox(height: 55),
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to the login screen
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignUpScreen(),
+                  ),
+                );
+              },
+              child: const Text('Register'),
             ),
           ],
         ),

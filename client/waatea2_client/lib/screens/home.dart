@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'availability.dart';
+import 'setavailability.dart';
+import 'showavailability.dart';
 import 'userprofile.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -29,7 +30,11 @@ class _MyHomePageState extends State<MyHomePage> {
               destinations: [
                 NavigationRailDestination(
                   icon: Icon(Icons.sports_rugby_outlined),
-                  label: Text('Games'),
+                  label: Text('Set Availabilities'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.list_alt_outlined),
+                  label: Text('Show Availabilities'),
                 ),
                 NavigationRailDestination(
                   icon: Icon(Icons.settings),
@@ -58,8 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getScreenForIndex(int index) {
     switch (index) {
       case 0:
-        return Availability(widget.token, widget.clubid, widget.userid);
+        return SetAvailability(widget.token, widget.clubid, widget.userid);
       case 1:
+        return ShowAvailability(widget.token, widget.clubid);
+      case 2:
         return UserProfile(widget.token, widget.user);
       default:
         return Container();

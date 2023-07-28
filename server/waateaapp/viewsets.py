@@ -36,9 +36,12 @@ class UserFilterAPIView(generics.ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         email = self.request.query_params.get('email')
+        club = self.request.query_params.get('club')
 
-        if id:
+        if email:
             queryset = queryset.filter(email=email)
+        elif club:
+            queryset = queryset.filter(club=club)
 
         return queryset
 
@@ -58,6 +61,10 @@ class AvailiabilityFilterAPIView(generics.ListAPIView):
 
         if game and player:
             queryset = queryset.filter(game=game, player=player)
+        elif game:
+            queryset = queryset.filter(game=game)
+
+
 
         return queryset
 
