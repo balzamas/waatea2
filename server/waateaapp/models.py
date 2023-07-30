@@ -59,6 +59,7 @@ class Availability(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
     state = models.IntegerField()
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
@@ -67,3 +68,11 @@ class Availability(models.Model):
     def __str__(self):
         return self.dayofyear.__str__() + " " + self.player.name
 
+class CurrentSeason(models.Model):
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.club.name

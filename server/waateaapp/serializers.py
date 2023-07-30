@@ -28,7 +28,8 @@ class GameSerializer(serializers.ModelSerializer):
         'home',
         'away',
         'date',
-            'dayofyear'
+            'dayofyear',
+            'season'
         ]
     def get_dayofyear(self, obj):
         return obj.date.timetuple().tm_yday
@@ -54,5 +55,6 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         'player',
         'state',
         'club',
-        'dayofyear'
+        'dayofyear',
+            'season'
         ]
