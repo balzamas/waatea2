@@ -58,7 +58,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     for (var i = 0; i < games.length; i++) {
       final responseAvail = await http.get(
           Uri.parse(
-              "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}"),
+              "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&season=${games[i].season}"),
           headers: {'Authorization': 'Token ${widget.token}'});
 
       if (responseAvail.statusCode == 200) {
@@ -118,17 +118,17 @@ class ShowAvailabilityState extends State<ShowAvailability> {
                 var data = snapshot.data[index];
 
                 return ShowAvailabilityRow(
-                  gameId: data.pk,
-                  game: data.home + " - " + data.away,
-                  date: data.date,
-                  token: widget.token,
-                  clubId: widget.clubid,
-                  dayofyear: data.dayofyear,
-                  isAvailable: data.isAvailable,
-                  isNotAvailable: data.isNotAvailable,
-                  isMaybe: data.isMaybe,
-                  isNotSet: data.isNotSet,
-                );
+                    gameId: data.pk,
+                    game: data.home + " - " + data.away,
+                    date: data.date,
+                    token: widget.token,
+                    clubId: widget.clubid,
+                    dayofyear: data.dayofyear,
+                    isAvailable: data.isAvailable,
+                    isNotAvailable: data.isNotAvailable,
+                    isMaybe: data.isMaybe,
+                    isNotSet: data.isNotSet,
+                    season: data.season);
               },
             );
           },

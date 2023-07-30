@@ -14,6 +14,7 @@ class SetAvailabilityRow extends StatefulWidget {
   final String initialAvailabilityId;
   final String clubId;
   final int dayofyear;
+  final String season;
 
   const SetAvailabilityRow(
       {Key? key,
@@ -25,7 +26,8 @@ class SetAvailabilityRow extends StatefulWidget {
       required this.token,
       required this.initialAvailabilityId,
       required this.clubId,
-      required this.dayofyear})
+      required this.dayofyear,
+      required this.season})
       : super(key: key);
 
   @override
@@ -68,7 +70,8 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
         'state': state.toString(),
         'player': widget.playerId.toString(),
         'club': widget.clubId,
-        'dayofyear': widget.dayofyear
+        'dayofyear': widget.dayofyear,
+        'season': widget.season
       };
 
       final http.Response response = await http.post(

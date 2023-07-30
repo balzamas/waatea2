@@ -11,6 +11,7 @@ class ShowAvailabilityRow extends StatefulWidget {
   final String token;
   final String clubId;
   final int dayofyear;
+  final String season;
   final int isAvailable;
   final int isNotAvailable;
   final int isMaybe;
@@ -24,6 +25,7 @@ class ShowAvailabilityRow extends StatefulWidget {
     required this.token,
     required this.clubId,
     required this.dayofyear,
+    required this.season,
     required this.isAvailable,
     required this.isNotAvailable,
     required this.isMaybe,
@@ -89,7 +91,8 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                     widget.gameId,
                     widget.game,
                     widget.date,
-                    widget.dayofyear),
+                    widget.dayofyear,
+                    widget.season),
                 // Pass any other necessary parameters to ShowAvailabilityDetail constructor
               ),
             );

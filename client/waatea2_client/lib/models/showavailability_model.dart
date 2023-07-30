@@ -4,6 +4,7 @@ class ShowAvailabilityModel {
   final String away;
   final String date;
   final int dayofyear;
+  final String season;
   int isAvailable;
   int isNotAvailable;
   int isMaybe;
@@ -15,6 +16,7 @@ class ShowAvailabilityModel {
     required this.away,
     required this.date,
     required this.dayofyear,
+    required this.season,
     required this.isAvailable,
     required this.isNotAvailable,
     required this.isMaybe,
@@ -28,6 +30,7 @@ class ShowAvailabilityModel {
       away: json['away']['name'],
       date: json['date'],
       dayofyear: json['dayofyear'],
+      season: json['season'],
       isAvailable: 0,
       isNotAvailable: 0,
       isMaybe: 0,
@@ -36,5 +39,5 @@ class ShowAvailabilityModel {
   }
 
   Map<String, dynamic> toJson() =>
-      {'pk': pk, 'home': home, 'away': away, 'date': date};
+      {'pk': pk, 'home': home, 'away': away, 'date': date, 'season': season};
 }
