@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
@@ -35,10 +35,26 @@ class TrainingFilterAPIView(generics.ListAPIView):
         club = self.request.query_params.get('club')
         season = self.request.query_params.get('season')
 
-        if club:
+        if club and season:
             queryset = queryset.filter(club=club, season=season)
 
         return queryset
+
+class TrainingCurrentFilterAPIView(generics.ListAPIView):
+    queryset = Training.objects.filter(date__gte=(datetime.today()-timedelta(hours=23))).filter(date__lte=(datetime.today()+timedelta(hours=23))).order_by('date')
+    serializer_class = TrainingSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+        season = self.request.query_params.get('season')
+
+        if club and season:
+            queryset = queryset.filter(club=club, season=season)
+
+        return queryset
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

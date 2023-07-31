@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'setattendance.dart';
 import 'setavailability.dart';
 import 'showavailability.dart';
 import 'userprofile.dart';
@@ -9,8 +10,9 @@ class MyHomePage extends StatefulWidget {
   final String user;
   final int userid;
   final String clubid;
+  final String season;
 
-  MyHomePage(this.token, this.user, this.clubid, this.userid);
+  MyHomePage(this.token, this.user, this.clubid, this.userid, this.season);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -69,7 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return SetAvailability(widget.token, widget.clubid, widget.userid);
       case 1:
-        return SetAvailability(widget.token, widget.clubid, widget.userid);
+        return SetAttendance(
+            widget.token, widget.clubid, widget.userid, widget.season);
       case 2:
         return ShowAvailability(widget.token, widget.clubid);
       case 3:
