@@ -7,7 +7,7 @@ import '../screens/showavailabilitydetail.dart';
 class ShowAvailabilityRow extends StatefulWidget {
   final String gameId;
   final String game;
-  final String date;
+  final String gameDate;
   final String token;
   final String clubId;
   final int dayofyear;
@@ -21,7 +21,7 @@ class ShowAvailabilityRow extends StatefulWidget {
     Key? key,
     required this.gameId,
     required this.game,
-    required this.date,
+    required this.gameDate,
     required this.token,
     required this.clubId,
     required this.dayofyear,
@@ -90,9 +90,13 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                     widget.clubId,
                     widget.gameId,
                     widget.game,
-                    widget.date,
+                    widget.gameDate,
                     widget.dayofyear,
-                    widget.season),
+                    widget.season,
+                    widget.isAvailable,
+                    widget.isNotAvailable,
+                    widget.isMaybe,
+                    widget.isNotSet),
                 // Pass any other necessary parameters to ShowAvailabilityDetail constructor
               ),
             );
@@ -116,7 +120,7 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                         height: 10,
                       ),
                       Text(
-                        widget.date,
+                        widget.gameDate,
                         style: Theme.of(context).textTheme.bodyText2?.copyWith(
                               color: Colors.black54,
                               fontSize: 12,

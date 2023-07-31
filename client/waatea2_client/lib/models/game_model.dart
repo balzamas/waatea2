@@ -4,13 +4,15 @@ class GameModel {
   final String away;
   final String date;
   final int dayofyear;
+  final String season;
 
   GameModel(
       {required this.pk,
       required this.home,
       required this.away,
       required this.date,
-      required this.dayofyear});
+      required this.dayofyear,
+      required this.season});
 
   factory GameModel.fromJson(Map<String, dynamic> json) {
     return GameModel(
@@ -18,6 +20,7 @@ class GameModel {
         home: json['home']['name'],
         away: json['away']['name'],
         date: json['date'],
+        season: json['season'],
         dayofyear: json['dayofyear']);
   }
 
@@ -26,6 +29,7 @@ class GameModel {
         'home': home,
         'away': away,
         'date': date,
+        'season': season,
         'dayofyear': dayofyear
       };
 }

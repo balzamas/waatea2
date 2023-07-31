@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Game, User, Club, Team, Availability
+from .models import Game, User, Club, Team, Availability, Attendance, Training
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,7 +18,6 @@ class TeamSerializer(serializers.ModelSerializer):
         'name',
         ]
 class GameSerializer(serializers.ModelSerializer):
-    dayofyear = serializers.SerializerMethodField()
     home = TeamSerializer()
     away = TeamSerializer()
     class Meta:
@@ -27,12 +26,12 @@ class GameSerializer(serializers.ModelSerializer):
         'pk',
         'home',
         'away',
+        'club',
         'date',
-            'dayofyear',
-            'season'
+        'dayofyear',
+        'season'
         ]
-    def get_dayofyear(self, obj):
-        return obj.date.timetuple().tm_yday
+
 
 class UserSerializer(serializers.ModelSerializer):
     club = ClubSerializer()
@@ -56,5 +55,27 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         'state',
         'club',
         'dayofyear',
+            'season',
+            'updated'
+        ]
+
+class TrainingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Training
+        fields = [
+        'pk',
+        'club',
+        'date',
+            'dayofyear',
             'season'
+        ]
+class AttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = [
+        'pk',
+        'player',
+        'attended',
+        'dayofyear',
+            'season',
         ]

@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 from waateaapp import views
 from rest_framework import routers
 from rest_framework.authtoken import views as restviews
-from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, AvailabilityUpdateAPIView, AvailabilityCreateAPIView
+from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, AttendanceUpdateAPIView, TrainingFilterAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -41,9 +41,13 @@ urlpatterns = [
     path('api/games_current/filter/', GameCurrentFilterAPIView.as_view(), name='game-filter'),
     path('api/users/filter/', UserFilterAPIView.as_view(), name='user-filter'),
     path('api/availabilities/filter/', AvailiabilityFilterAPIView.as_view(), name='availability-filter'),
-
     path('api/availability/<uuid:pk>/', AvailabilityUpdateAPIView.as_view(), name='availability-update'),
     path('api/availability/', AvailabilityCreateAPIView.as_view(), name='availability-create'),
+
+    path('api/trainings/filter/', TrainingFilterAPIView.as_view(), name='training-filter'),
+    path('api/attendances/filter/', AttendanceFilterAPIView.as_view(), name='attendance-filter'),
+    path('api/attendance/<uuid:pk>/', AttendanceUpdateAPIView.as_view(), name='attendance-update'),
+    path('api/attendance/', AttendanceCreateAPIView.as_view(), name='attendance-create'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

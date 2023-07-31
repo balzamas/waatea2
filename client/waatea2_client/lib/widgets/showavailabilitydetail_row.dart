@@ -8,13 +8,15 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
   final String name;
   final int level;
   final int state;
+  final String updated;
 
-  const ShowAvailabilityDetailRow({
-    Key? key,
-    required this.name,
-    required this.level,
-    required this.state,
-  }) : super(key: key);
+  const ShowAvailabilityDetailRow(
+      {Key? key,
+      required this.name,
+      required this.level,
+      required this.state,
+      required this.updated})
+      : super(key: key);
 
   @override
   _ShowAvailabilityDetailRowState createState() =>
@@ -115,6 +117,20 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                 children: [
                   Text(
                     widget.name,
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .apply(fontSizeFactor: 1.5),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.updated,
                     style: DefaultTextStyle.of(context)
                         .style
                         .apply(fontSizeFactor: 1.5),

@@ -19,9 +19,23 @@ class ShowAvailabilityDetail extends StatefulWidget {
   late final String gameDate;
   late final int dayofyear;
   late final String season;
+  late final isAvailable;
+  late final int isNotAvailable;
+  late final int isMaybe;
+  late final int isNotSet;
 
-  ShowAvailabilityDetail(this.token, this.clubid, this.gameid, this.game,
-      this.gameDate, this.dayofyear, this.season);
+  ShowAvailabilityDetail(
+      this.token,
+      this.clubid,
+      this.gameid,
+      this.game,
+      this.gameDate,
+      this.dayofyear,
+      this.season,
+      this.isAvailable,
+      this.isNotAvailable,
+      this.isMaybe,
+      this.isNotSet);
   @override
   ShowAvailabilityDetailState createState() => ShowAvailabilityDetailState();
 }
@@ -69,6 +83,11 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
             availabilities.where((e) => e.player == players[i].pk);
         if (myListFiltered.length == 1) {
           players[i].state = myListFiltered.first.state;
+          if (myListFiltered.first.updated != "") {
+            DateTime updated = DateTime.parse(myListFiltered.first.updated);
+            players[i].updated =
+                '${updated.day}.${updated.month}.${updated.year} ${updated.hour}:${updated.minute}';
+          }
         } else if (myListFiltered.length > 1) {
           print("Error! Too many availabilities");
         }
@@ -85,27 +104,40 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
       appBar: AppBar(
         title: Text(widget.game + " // " + widget.gameDate),
       ),
-      body: Center(
-        child: FutureBuilder<List<ShowAvailabilityDetailModel>>(
-          future: games,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            // By default, show a loading spinner.
-            if (!snapshot.hasData) return CircularProgressIndicator();
-            // Render employee lists
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                var data = snapshot.data[index];
+      body: Column(
+        // Wrap the body with a Column
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Add your static information here
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "${widget.isAvailable}, ${widget.isNotAvailable}, ${widget.isMaybe}, ${widget.isNotSet}",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<ShowAvailabilityDetailModel>>(
+              future: games,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                // By default, show a loading spinner.
+                if (!snapshot.hasData) return CircularProgressIndicator();
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var data = snapshot.data[index];
 
-                return ShowAvailabilityDetailRow(
-                  name: data.name,
-                  state: data.state,
-                  level: data.level,
+                    return ShowAvailabilityDetailRow(
+                        name: data.name,
+                        state: data.state,
+                        level: data.level,
+                        updated: data.updated);
+                  },
                 );
               },
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

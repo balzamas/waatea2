@@ -33,6 +33,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Set Availabilities'),
                 ),
                 NavigationRailDestination(
+                  icon: Icon(Icons.fitness_center),
+                  label: Text('Set Training Attendance'),
+                ),
+                NavigationRailDestination(
                   icon: Icon(Icons.list_alt_outlined),
                   label: Text('Show Availabilities'),
                 ),
@@ -65,8 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return SetAvailability(widget.token, widget.clubid, widget.userid);
       case 1:
-        return ShowAvailability(widget.token, widget.clubid);
+        return SetAvailability(widget.token, widget.clubid, widget.userid);
       case 2:
+        return ShowAvailability(widget.token, widget.clubid);
+      case 3:
         return UserProfile(widget.token, widget.user);
       default:
         return Container();

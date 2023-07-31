@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:waatea2_client/models/game_model.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
@@ -28,37 +29,63 @@ class SetAvailabilityState extends State<SetAvailability> {
   }
 
   Future<List<SetAvailabilityModel>> getGameList() async {
+    final formatter_date = DateFormat('dd.MM.yyyy EEEE');
+    final formatter_time = DateFormat('HH:mm');
+
     final response = await http.get(
         Uri.parse("${globals.URL_PREFIX}/api/games_current/filter?club=" +
             widget.clubid),
         headers: {'Authorization': 'Token ${widget.token}'});
 
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
-    List<SetAvailabilityModel> games = items.map<SetAvailabilityModel>((json) {
-      return SetAvailabilityModel.fromJson(json);
+    List<GameModel> games = items.map<GameModel>((json) {
+      return GameModel.fromJson(json);
     }).toList();
 
-    for (var i = 0; i < games.length; i++) {
-      final responseAvail = await http.get(
-          Uri.parse(
-              "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&player=${widget.userid}&season=${games[i].season}"),
-          headers: {'Authorization': 'Token ${widget.token}'});
+    List<SetAvailabilityModel> setAvailabilities = [];
 
-      if (responseAvail.statusCode == 200) {
-        final items =
-            json.decode(responseAvail.body).cast<Map<String, dynamic>>();
-        List<AvailabilityModel> availabilities =
-            items.map<AvailabilityModel>((json) {
-          return AvailabilityModel.fromJson(json);
-        }).toList();
-        if (availabilities.isNotEmpty) {
-          games[i].state = availabilities[0].state;
-          games[i].avail_id = availabilities[0].pk;
+    for (var i = 0; i < games.length; i++) {
+      if (i > 0 && games[i].dayofyear == games[i - 1].dayofyear) {
+        DateTime gameDate = DateTime.parse(games[i].date);
+
+        setAvailabilities[setAvailabilities.length - 1]
+            .games = setAvailabilities[setAvailabilities.length - 1]
+                .games +
+            "\n${formatter_time.format(gameDate)} - ${games[i].home} - ${games[i].away}";
+      } else {
+        DateTime gameDate = DateTime.parse(games[i].date);
+        SetAvailabilityModel record = SetAvailabilityModel(
+            avail_id: "",
+            games:
+                "${formatter_time.format(gameDate)} - ${games[i].home} - ${games[i].away}",
+            dayofyear: games[i].dayofyear,
+            date: formatter_date.format(gameDate),
+            state: 0,
+            season: games[i].season);
+        final responseAvail = await http.get(
+            Uri.parse(
+                "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&player=${widget.userid}&season=${games[i].season}"),
+            headers: {'Authorization': 'Token ${widget.token}'});
+
+        if (responseAvail.statusCode == 200) {
+          final items =
+              json.decode(responseAvail.body).cast<Map<String, dynamic>>();
+          List<AvailabilityModel> availabilities =
+              items.map<AvailabilityModel>((json) {
+            return AvailabilityModel.fromJson(json);
+          }).toList();
+
+          if (availabilities.isNotEmpty) {
+            record.state = availabilities[0].state;
+            record.avail_id = availabilities[0].pk;
+          }
+
+          setAvailabilities.add(record);
         }
       }
     }
 
-    return games;
+    return setAvailabilities;
   }
 
   @override
@@ -81,8 +108,7 @@ class SetAvailabilityState extends State<SetAvailability> {
                 var data = snapshot.data[index];
 
                 return SetAvailabilityRow(
-                    gameId: data.pk,
-                    game: data.home + " - " + data.away,
+                    game: data.games,
                     date: data.date,
                     initialState: data.state,
                     playerId: widget.userid,

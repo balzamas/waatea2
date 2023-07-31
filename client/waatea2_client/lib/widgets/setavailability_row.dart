@@ -5,7 +5,6 @@ import '../globals.dart' as globals;
 import 'package:intl/intl.dart';
 
 class SetAvailabilityRow extends StatefulWidget {
-  final String gameId;
   final String game;
   final String date;
   final int initialState;
@@ -18,7 +17,6 @@ class SetAvailabilityRow extends StatefulWidget {
 
   const SetAvailabilityRow(
       {Key? key,
-      required this.gameId,
       required this.game,
       required this.date,
       required this.initialState,
@@ -47,7 +45,6 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
 
   Future<void> _submitMutation(
     BuildContext context,
-    String gameId,
     int playerId,
     int state,
     String token,
@@ -132,7 +129,6 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
           }
           _submitMutation(
             context,
-            widget.gameId,
             widget.playerId,
             newState,
             widget.token,
@@ -146,7 +142,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.game,
+                    "${widget.date}",
                     style: Theme.of(context).textTheme.headline6?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
@@ -156,7 +152,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
                     height: 10,
                   ),
                   Text(
-                    widget.date,
+                    widget.game,
                     style: Theme.of(context).textTheme.bodyText2?.copyWith(
                           color: Colors.black54,
                           fontSize: 12,

@@ -16,12 +16,3 @@ class User(viewsets.ModelViewSet):
 class Availability(viewsets.ModelViewSet):
     queryset = Availability.objects.all()
     serializer_class = AvailabilitySerializer
-
-
-
-def get_games_by_club(club_id):
-    return Game.objects.get(club=club_id)
-
-
-def get_availability_by_game_and_player(game_id, player_id):
-    return Availability.objects.get(game=game_id, player=player_id)

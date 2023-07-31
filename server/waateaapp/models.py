@@ -30,13 +30,23 @@ class Training(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date = models.DateTimeField()
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
+    dayofyear = models.IntegerField(default=-1)
 
+    def __str__(self):
+        return self.date.__str__()
+    def save(self, *args, **kwargs):
+        self.dayofyear = self.date.timetuple().tm_yday
+        super(Training, self).save(*args, **kwargs)
 class Attendance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
-    state = models.BooleanField()
-    training = models.ForeignKey(Training, on_delete=models.CASCADE)
+    attended = models.BooleanField()
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
+    dayofyear = models.IntegerField(default=-1)
 
+    def __str__(self):
+        return self.dayofyear.__str__() + " " + self.player.name + " " + str(self.attended)
 class Game(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     home = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games')

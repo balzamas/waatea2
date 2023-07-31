@@ -120,7 +120,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
                 return ShowAvailabilityRow(
                     gameId: data.pk,
                     game: data.home + " - " + data.away,
-                    date: data.date,
+                    gameDate: data.date,
                     token: widget.token,
                     clubId: widget.clubid,
                     dayofyear: data.dayofyear,

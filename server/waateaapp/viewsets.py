@@ -2,8 +2,8 @@ from datetime import datetime
 
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
-from .models import Game, User, Availability
-from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer
+from .models import Game, User, Availability, Attendance, Training
+from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, TrainingSerializer
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
@@ -22,6 +22,21 @@ class GameCurrentFilterAPIView(generics.ListAPIView):
 
         if club:
             queryset = queryset.filter(club=club)
+
+        return queryset
+
+class TrainingFilterAPIView(generics.ListAPIView):
+    queryset = Training.objects.order_by('date')
+    serializer_class = TrainingSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+        season = self.request.query_params.get('season')
+
+        if club:
+            queryset = queryset.filter(club=club, season=season)
 
         return queryset
 
@@ -76,3 +91,29 @@ class AvailabilityUpdateAPIView(UpdateAPIView):
 class AvailabilityCreateAPIView(CreateAPIView):
     queryset = Availability.objects.all()
     serializer_class = AvailabilitySerializer
+
+class AttendanceFilterAPIView(generics.ListAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        player = self.request.query_params.get('player')
+        dayofyear = self.request.query_params.get('dayofyear')
+        season = self.request.query_params.get('season')
+
+        if dayofyear and player and season:
+            queryset = queryset.filter(dayofyear=dayofyear, player=player, season=season)
+        elif player and season:
+            queryset = queryset.filter(player=player, season=season)
+        elif dayofyear and season:
+            queryset = queryset.filter(dayofyear=dayofyear, season=season)
+
+        return queryset
+class AttendanceUpdateAPIView(UpdateAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+
+class AttendanceCreateAPIView(CreateAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
