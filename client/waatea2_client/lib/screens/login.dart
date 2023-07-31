@@ -76,7 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MyHomePage(token, username, clubid, userid),
+              builder: (context) =>
+                  MyHomePage(token, username, clubid, userid, globals.Season),
             ),
           );
         }
