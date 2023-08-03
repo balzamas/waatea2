@@ -28,7 +28,7 @@ certificatesResolvers:
 http:
   routers:
     web-secure-router:
-      rule: 'Host(Host(`waatea2.waatea.vip`)'
+      rule: 'Host(Host(`waatea2.waatea.vip`))'
       entryPoints:
         - web-secure
       middlewares:
