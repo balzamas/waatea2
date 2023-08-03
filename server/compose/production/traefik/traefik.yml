@@ -28,7 +28,7 @@ certificatesResolvers:
 http:
   routers:
     web-secure-router:
-      rule: 'Host(`megasrv.de`) || Host(`v2202307129169234772.megasrv.de`)'
+      rule: 'Host(Host(`waatea2.waatea.vip`)'
       entryPoints:
         - web-secure
       middlewares:
@@ -39,7 +39,7 @@ http:
         certResolver: letsencrypt
 
     web-media-router:
-      rule: '(Host(`megasrv.de`) || Host(`v2202307129169234772.megasrv.de`)) && PathPrefix(`/media/`)'
+      rule: '(Host(`waatea2.waatea.vip`)) && PathPrefix(`/media/`)'
       entryPoints:
         - web-secure
       middlewares:

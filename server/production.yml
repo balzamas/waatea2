@@ -23,7 +23,7 @@ services:
       - ./.envs/.production/.postgres
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.django.rule=Host(`megasrv.de`)"
+      - "traefik.http.routers.django.rule=Host(`waatea2.waatea.vip`)"
       - "traefik.http.routers.django.entrypoints=web"
       - "traefik.http.services.django.loadbalancer.server.port=8000"
     command: /start
