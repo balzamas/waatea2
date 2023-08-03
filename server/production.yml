@@ -21,6 +21,11 @@ services:
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.django.rule=Host(`megasrv.de`)"
+      - "traefik.http.routers.django.entrypoints=web"
+      - "traefik.http.services.django.loadbalancer.server.port=8000"
     command: /start
 
   postgres:
@@ -42,13 +47,28 @@ services:
     depends_on:
       - django
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - production_traefik:/etc/traefik/acme
     ports:
       - '0.0.0.0:80:80'
       - '0.0.0.0:443:443'
+    environment:
+      - "TRAEFIK_PROVIDERS_DOCKER=true"
+      - "TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT=false"
+      - "TRAEFIK_ENTRYPOINTS_WEB_ADDRESS=:80"
+      - "TRAEFIK_ENTRYPOINTS_WEB_HTTPSADDRESS=:443"
+      - "TRAEFIK_LOG_LEVEL=INFO"
+      - "TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_EMAIL=d.berger@dontsniff.co.uk"
+      - "TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_STORAGE=/etc/traefik/acme/acme.json"
+      - "TRAEFIK_API_INSECURE=true"
 
   redis:
     image: redis:6
+
+networks:
+  traefik-public:
+    external: true
+
 
 #  nginx:
 #    build:
@@ -59,3 +79,4 @@ services:
 #      - django
 #    volumes:
 #      - production_django_media:/usr/share/nginx/media:ro
+
