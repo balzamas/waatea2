@@ -76829,7 +76829,7 @@ s.e.scs(0,r)},
 $S:0}
 A.adt.prototype={
 $1(a){var s=this
-return new A.o0(s.a,s.b,s.d,s.c,"fe9f0c5e-b19f-4d6d-afd9-2238d67a36cb",null)},
+return new A.o0(s.a,s.b,s.d,s.c,"2885b70f-fb01-4fd2-8d8e-27d8eb2f202e",null)},
 $S:448}
 A.adv.prototype={
 $0(){A.akK(this.a,A.Ig(new A.adu(),null,t.z))},
@@ -77205,7 +77205,7 @@ while(true)switch(s){case 0:o=q.e
 n=q.f
 m=t.N
 l=t.z
-k=A.a9(["name",B.c.iJ(q.d.a.a),"email",B.c.iJ(o.a.a),"password",n.a.a,"mobile_phone",B.c.iJ(q.w.a.a),"club","998c01d7-e2ea-40fe-a4cb-93420f9dd583"],m,l)
+k=A.a9(["name",B.c.iJ(q.d.a.a),"email",B.c.iJ(o.a.a),"password",n.a.a,"mobile_phone",B.c.iJ(q.w.a.a),"club","2a506873-e57b-4ffb-99a1-7575b1f04aec"],m,l)
 j=A.da("https://new.waatea.vip/api/register/")
 m=A.a9(["Content-Type","application/json"],m,m)
 s=5

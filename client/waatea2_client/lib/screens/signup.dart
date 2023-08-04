@@ -28,7 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "password": _passwordController.text,
       "mobile_phone": _mobilephoneController.text.trim(),
       //ToDo remove hardcoded club
-      "club": '998c01d7-e2ea-40fe-a4cb-93420f9dd583'
+      "club": '2a506873-e57b-4ffb-99a1-7575b1f04aec'
     };
 
     final http.Response response = await http.post(

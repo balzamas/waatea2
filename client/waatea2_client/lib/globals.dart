@@ -2,4 +2,4 @@
 const String URL_PREFIX = "https://new.waatea.vip";
 
 const String Season =
-    'fe9f0c5e-b19f-4d6d-afd9-2238d67a36cb'; //ToDo: Load corrent season
+    '2885b70f-fb01-4fd2-8d8e-27d8eb2f202e'; //ToDo: Load corrent season
