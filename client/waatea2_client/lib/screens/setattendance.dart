@@ -103,17 +103,14 @@ class SetAttendanceState extends State<SetAttendance> {
           future: setAttendanceContent,
           builder: (BuildContext context,
               AsyncSnapshot<SetAttendanceModel> snapshot) {
-            // By default, show a loading spinner.
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              // Access the data from the future and show the text and state.
               final setAttendance = snapshot.data;
 
               if (setAttendance == null) {
-                // No data available yet or some other issue.
                 return Text('Loading...');
               }
 
@@ -133,17 +130,41 @@ class SetAttendanceState extends State<SetAttendance> {
                     color: Colors.black, size: 150);
               }
 
-              // You can display the text and state however you want.
-              // Here, we're using a Column widget to show the text and state under each other.
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(setAttendance.text,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    setAttendance.text,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 10),
                   icon,
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          // Handle the "Yes" button tap
+                          // You can call a function here to set the attendance to "Yes"
+                          // For example:
+                          // setAttendanceToYes();
+                        },
+                        child: Text("Yes"),
+                      ),
+                      SizedBox(width: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Handle the "No" button tap
+                          // You can call a function here to set the attendance to "No"
+                          // For example:
+                          // setAttendanceToNo();
+                        },
+                        child: Text("No"),
+                      ),
+                    ],
+                  ),
                 ],
               );
             }
