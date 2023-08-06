@@ -41,6 +41,7 @@ class Training(models.Model):
 class Attendance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
+    training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name='attendances')
     attended = models.BooleanField()
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     dayofyear = models.IntegerField(default=-1)

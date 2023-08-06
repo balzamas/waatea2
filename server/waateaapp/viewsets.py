@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason
-from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, TrainingSerializer, CurrentSeasonSerializer
+from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
@@ -144,5 +144,18 @@ class CurrentSeasonFilterAPIView(generics.ListAPIView):
 
         if club:
             queryset = queryset.filter(club=club)
+
+        return queryset
+
+class TrainingAttendanceCountAPIView(generics.ListAPIView):
+    queryset = Training.objects.filter(date__lte=(datetime.today()+timedelta(hours=44))).order_by('-date')
+    serializer_class = TrainingAttendanceCountSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        season = self.request.query_params.get('season')
+
+        if season:
+            queryset = queryset.filter(season=season)
 
         return queryset

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waatea2_client/screens/showattendance.dart';
 import 'setattendance.dart';
 import 'setavailability.dart';
 import 'showavailability.dart';
@@ -42,6 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Show Availabilities'),
                 ),
                 NavigationRailDestination(
+                  icon: Icon(Icons.playlist_add_check),
+                  label: Text('Show Training Attendance'),
+                ),
+                NavigationRailDestination(
                   icon: Icon(Icons.settings),
                   label: Text('User Profile'),
                 ),
@@ -75,6 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         return ShowAvailability(widget.token, widget.clubid);
       case 3:
+        return ShowAttendance(widget.token, widget.season);
+      case 4:
         return UserProfile(widget.token, widget.user);
       default:
         return Container();

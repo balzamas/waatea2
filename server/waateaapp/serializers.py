@@ -59,16 +59,6 @@ class AvailabilitySerializer(serializers.ModelSerializer):
             'updated'
         ]
 
-class TrainingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Training
-        fields = [
-        'pk',
-        'club',
-        'date',
-            'dayofyear',
-            'season'
-        ]
 class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
@@ -78,7 +68,29 @@ class AttendanceSerializer(serializers.ModelSerializer):
         'attended',
         'dayofyear',
             'season',
+            'training'
         ]
+
+class TrainingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Training
+        fields = [
+        'pk',
+        'club',
+        'date',
+            'dayofyear',
+            'season',
+        ]
+
+class TrainingAttendanceCountSerializer(serializers.ModelSerializer):
+    attendance_count = serializers.SerializerMethodField()
+
+    def get_attendance_count(self, obj):
+        return obj.attendances.filter(attended=True).count()
+
+    class Meta:
+        model = Training
+        fields = '__all__'
 
 class CurrentSeasonSerializer(serializers.ModelSerializer):
     class Meta:

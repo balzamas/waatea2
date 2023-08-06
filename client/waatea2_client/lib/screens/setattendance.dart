@@ -62,7 +62,8 @@ class SetAttendanceState extends State<SetAttendance> {
         'club': widget.clubId,
         'dayofyear': this.dayofhteyear,
         'season': widget.season,
-        'player': widget.userId
+        'player': widget.userId,
+        'training': this.trainingId
       };
 
       final http.Response response = await http.post(
