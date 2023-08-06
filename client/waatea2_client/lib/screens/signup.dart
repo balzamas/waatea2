@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../globals.dart' as globals;
+import '../models/club.dart';
 import 'login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +20,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final TextEditingController _mobilephoneController = TextEditingController();
 
+  List<ClubModel> _clubs = [];
+  ClubModel? _selectedClub;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchClubs().then((_) {
+      // Set the default selected club when clubs are available
+      if (_clubs.isNotEmpty) {
+        setState(() {
+          _selectedClub = _clubs.first;
+        });
+      }
+    });
+  }
+
+  Future<void> _fetchClubs() async {
+    final String apiUrl = "${globals.URL_PREFIX}/api/clubs/allclubs";
+    final http.Response response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> clubData = jsonDecode(response.body);
+      setState(() {
+        _clubs = clubData.map((data) => ClubModel.fromJson(data)).toList();
+      });
+    } else {
+      // Handle error if clubs fetching fails
+      print('Failed to fetch clubs.');
+    }
+  }
+
   Future<void> _registerUser() async {
     final String apiUrl = "${globals.URL_PREFIX}/api/register/";
 
@@ -27,8 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "email": _emailController.text.trim(),
       "password": _passwordController.text,
       "mobile_phone": _mobilephoneController.text.trim(),
-      //ToDo remove hardcoded club
-      "club": '2a506873-e57b-4ffb-99a1-7575b1f04aec'
+      "club": _selectedClub!.pk
     };
 
     final http.Response response = await http.post(
@@ -107,6 +138,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
             TextField(
               controller: _emailController,
               decoration: InputDecoration(labelText: "Email"),
+            ),
+            DropdownButtonFormField<ClubModel>(
+              value: _selectedClub,
+              onChanged: (ClubModel? newValue) {
+                setState(() {
+                  _selectedClub = newValue;
+                });
+              },
+              items: _clubs.map((club) {
+                return DropdownMenuItem<ClubModel>(
+                  value: club,
+                  child: Text(club.name),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: "Club",
+                border: OutlineInputBorder(),
+              ),
             ),
             SizedBox(height: 16),
             TextField(

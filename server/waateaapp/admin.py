@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Club, Game, Team, Season, Availability, Training, Attendance
+from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason
 
 admin.site.register(Club)
 admin.site.register(Game)
@@ -8,3 +8,4 @@ admin.site.register(Season)
 admin.site.register(Availability)
 admin.site.register(Training)
 admin.site.register(Attendance)
+admin.site.register(CurrentSeason)

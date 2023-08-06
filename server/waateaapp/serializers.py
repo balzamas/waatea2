@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Game, User, Club, Team, Availability, Attendance, Training
+from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,4 +78,13 @@ class AttendanceSerializer(serializers.ModelSerializer):
         'attended',
         'dayofyear',
             'season',
+        ]
+
+class CurrentSeasonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CurrentSeason
+        fields = [
+        'pk',
+        'club',
+        'season',
         ]

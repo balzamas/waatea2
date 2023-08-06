@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/screens/signup.dart';
+import '../models/currentseason_model.dart';
 import 'home.dart';
 import '../globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -72,12 +73,27 @@ class _LoginScreenState extends State<LoginScreen> {
           String clubid = json.decode(response2.body)[0]['club']['pk'];
           int userid = json.decode(response2.body)[0]['pk'];
 
+          final response_currentseason = await http.get(
+              Uri.parse("${globals.URL_PREFIX}/api/currentseason/filter?club=" +
+                  clubid),
+              headers: {'Authorization': 'Token $token'});
+
+          final items_currentseason = json
+              .decode(response_currentseason.body)
+              .cast<Map<String, dynamic>>();
+          List<CurrentSeasonModel> currentseason =
+              items_currentseason.map<CurrentSeasonModel>((json) {
+            return CurrentSeasonModel.fromJson(json);
+          }).toList();
+
+          String season = currentseason[0].season;
+
           // Navigate to the next screen (you can go to the home screen here)
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  MyHomePage(token, username, clubid, userid, globals.Season),
+                  MyHomePage(token, username, clubid, userid, season),
             ),
           );
         }
