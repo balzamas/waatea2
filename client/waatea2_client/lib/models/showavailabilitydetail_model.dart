@@ -21,7 +21,7 @@ class ShowAvailabilityDetailModel {
         pk: json['pk'],
         name: json['name'],
         email: json['email'],
-        level: json['level'],
+        level: json['profile']['level'],
         mobilephone: json['mobile_phone'],
         state: 0,
         updated: "");

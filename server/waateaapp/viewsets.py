@@ -76,6 +76,9 @@ class UserFilterAPIView(generics.ListAPIView):
 
         return queryset
 
+class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 class AvailabilityViewSet(viewsets.ModelViewSet):
     queryset = Availability.objects.all()
@@ -148,7 +151,7 @@ class CurrentSeasonFilterAPIView(generics.ListAPIView):
         return queryset
 
 class TrainingAttendanceCountAPIView(generics.ListAPIView):
-    queryset = Training.objects.filter(date__lte=(datetime.today()+timedelta(hours=44))).order_by('-date')
+    queryset = Training.objects.filter(date__lte=(datetime.today()+timedelta(hours=24))).order_by('-date')
     serializer_class = TrainingAttendanceCountSerializer
 
     def get_queryset(self):

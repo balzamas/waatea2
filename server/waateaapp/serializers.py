@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason
-
+from waatea_2.users.models import UserProfile
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
@@ -32,9 +32,14 @@ class GameSerializer(serializers.ModelSerializer):
         'season'
         ]
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ('level',)
 
 class UserSerializer(serializers.ModelSerializer):
     club = ClubSerializer()
+    profile = UserProfileSerializer(source='userprofile')
     class Meta:
         model = User
         fields = [
@@ -43,7 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
         'email',
         'club',
         'mobile_phone',
-        'level'
+        'profile'
         ]
 
 class AvailabilitySerializer(serializers.ModelSerializer):
@@ -100,3 +105,6 @@ class CurrentSeasonSerializer(serializers.ModelSerializer):
         'club',
         'season',
         ]
+
+
+

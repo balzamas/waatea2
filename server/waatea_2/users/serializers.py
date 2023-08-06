@@ -13,8 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
             name=validated_data['name'],
             email=validated_data['email'],
             mobile_phone=validated_data['mobile_phone'],
-            club=validated_data['club'],
-            level = 5
+            club=validated_data['club']
         )
         user.set_password(validated_data['password'])
         user.save()

@@ -25,7 +25,6 @@ class UserAdmin(auth_admin.UserAdmin):
                     "groups",
                     "user_permissions",
                     "mobile_phone",
-                    "level",
                     "club"
                 ),
             },
