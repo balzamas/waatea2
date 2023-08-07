@@ -11,6 +11,8 @@ import '../models/user_model.dart';
 import '../widgets/showavailability_row.dart';
 import '../widgets/showavailabilitydetail_row.dart';
 
+enum SortOption { state, level, updated, name }
+
 class ShowAvailabilityDetail extends StatefulWidget {
   late final String token;
   late final String clubid;
@@ -43,6 +45,9 @@ class ShowAvailabilityDetail extends StatefulWidget {
 class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
   late Future<List<ShowAvailabilityDetailModel>> games;
   final availabilityListKey = GlobalKey<ShowAvailabilityDetailState>();
+  SortOption currentSortOption = SortOption.name;
+  bool showOnlyAvailableMaybe = false;
+  bool sortByNameAscending = true;
 
   @override
   void initState() {
@@ -97,41 +102,167 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     return players;
   }
 
+  void onSortOptionChanged(SortOption option) {
+    setState(() {
+      currentSortOption = option;
+    });
+  }
+
+  void onNameSortChanged() {
+    setState(() {
+      sortByNameAscending = !sortByNameAscending;
+    });
+  }
+
+  void onFilterChanged(bool newValue) {
+    setState(() {
+      showOnlyAvailableMaybe = newValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: availabilityListKey,
       appBar: AppBar(
-        title: Text(widget.game + " // " + widget.gameDate),
+        title: Text(
+            "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}"),
+        actions: [
+          PopupMenuButton<SortOption>(
+            onSelected: onSortOptionChanged,
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                value: SortOption.state,
+                child: Text('Sort by State'),
+              ),
+              PopupMenuItem(
+                value: SortOption.level,
+                child: Text('Sort by Level'),
+              ),
+              PopupMenuItem(
+                value: SortOption.updated,
+                child: Text('Sort by Updated'),
+              ),
+            ],
+          ),
+          IconButton(
+            icon: Icon(showOnlyAvailableMaybe
+                ? Icons.check_box
+                : Icons.check_box_outline_blank),
+            onPressed: () {
+              onFilterChanged(!showOnlyAvailableMaybe);
+            },
+          ),
+        ],
       ),
       body: Column(
-        // Wrap the body with a Column
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Add your static information here
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "${widget.isAvailable}, ${widget.isNotAvailable}, ${widget.isMaybe}, ${widget.isNotSet}",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    radius: 25.0,
+                    child: CircleAvatar(
+                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      foregroundColor: Colors.green,
+                      radius: 20.0,
+                      child: Text(widget.isAvailable.toString(),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  CircleAvatar(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    radius: 25.0,
+                    child: CircleAvatar(
+                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      foregroundColor: Colors.orange,
+                      radius: 20.0,
+                      child: Text(widget.isMaybe.toString(),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  CircleAvatar(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    radius: 25.0,
+                    child: CircleAvatar(
+                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      foregroundColor: Colors.red,
+                      radius: 20.0,
+                      child: Text(widget.isNotAvailable.toString(),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    foregroundColor: Colors.white,
+                    radius: 25.0,
+                    child: CircleAvatar(
+                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      foregroundColor: Colors.grey,
+                      radius: 20.0,
+                      child: Text(widget.isNotSet.toString(),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              )),
           Expanded(
             child: FutureBuilder<List<ShowAvailabilityDetailModel>>(
               future: games,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                // By default, show a loading spinner.
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<ShowAvailabilityDetailModel>> snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
+
+                // Apply filtering
+                var filteredPlayers = snapshot.data!.where((player) {
+                  if (showOnlyAvailableMaybe) {
+                    return player.state == 2 || player.state == 3;
+                  }
+                  return true;
+                }).toList();
+
+                // Apply sorting
+                filteredPlayers.sort((a, b) {
+                  switch (currentSortOption) {
+                    case SortOption.state:
+                      return b.state.compareTo(a.state);
+                    case SortOption.level:
+                      return a.level.compareTo(b.level);
+                    case SortOption.updated:
+                      return b.updated.compareTo(a.updated);
+                    case SortOption.name: // Added name sorting
+                      return sortByNameAscending
+                          ? a.name.compareTo(b.name)
+                          : b.name.compareTo(a.name);
+                  }
+                });
+
                 return ListView.builder(
-                  itemCount: snapshot.data.length,
+                  itemCount: filteredPlayers.length,
                   itemBuilder: (BuildContext context, int index) {
-                    var data = snapshot.data[index];
+                    var data = filteredPlayers[index];
 
                     return ShowAvailabilityDetailRow(
-                        name: data.name,
-                        state: data.state,
-                        level: data.level,
-                        updated: data.updated);
+                      name: data.name,
+                      state: data.state,
+                      level: data.level,
+                      updated: data.updated,
+                    );
                   },
                 );
               },

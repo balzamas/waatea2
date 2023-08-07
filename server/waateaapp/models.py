@@ -69,7 +69,7 @@ class Game(models.Model):
 class Availability(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
-    state = models.IntegerField()
+    state = models.IntegerField() #1 = Not available 2= Maybe 3=Available
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

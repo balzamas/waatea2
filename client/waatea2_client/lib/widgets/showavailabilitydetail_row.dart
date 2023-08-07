@@ -34,70 +34,61 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
   @override
   Widget build(BuildContext context) {
     Icon stateIcon;
-
-    if (widget.state == 1) {
-      stateIcon = const Icon(
+    if (widget.state == 3) {
+      stateIcon = Icon(
         Icons.thumb_up_alt_outlined,
         color: Colors.green,
       );
-    } else if (widget.state == 2) {
-      stateIcon = const Icon(
+    } else if (widget.state == 1) {
+      stateIcon = Icon(
         Icons.thumb_down_alt_outlined,
         color: Colors.red,
       );
-    } else if (widget.state == 3) {
-      stateIcon = const Icon(
-        Icons.question_mark,
+    } else if (widget.state == 2) {
+      stateIcon = Icon(
+        Icons.help_outline,
         color: Colors.orange,
       );
     } else {
-      stateIcon = const Icon(
+      stateIcon = Icon(
         Icons.warning_amber_rounded,
         color: Colors.red,
       );
     }
 
     Icon levelIcon;
-
-    // (0, 'High performance, performance motivation'),
-    // (1, 'Basic performance, performance motivation'),
-    // (2, 'High performance, time deficit'),
-    // (3, 'High performance, social motivation'),
-    // (4, 'Basic performance, social motivation'),
-    // (5, 'Newcomer'),
-
     if (widget.level == 0) {
-      levelIcon = const Icon(
+      levelIcon = Icon(
         Icons.star,
         color: Colors.black,
       );
     } else if (widget.level == 1) {
-      levelIcon = const Icon(
+      levelIcon = Icon(
         Icons.star_border,
         color: Colors.black,
       );
     } else if (widget.level == 2) {
-      levelIcon = const Icon(
+      levelIcon = Icon(
         Icons.lock_clock,
         color: Colors.black,
       );
     } else if (widget.level == 3) {
-      levelIcon = const Icon(
+      levelIcon = Icon(
         Icons.local_bar,
         color: Colors.black,
       );
     } else if (widget.level == 4) {
-      levelIcon = const Icon(
+      levelIcon = Icon(
         Icons.liquor,
         color: Colors.black,
       );
     } else if (widget.level == 5) {
-      levelIcon = const Icon(
+      levelIcon = Icon(
         Icons.pets,
         color: Colors.black,
       );
     } else {
-      levelIcon = const Icon(
+      levelIcon = Icon(
         Icons.warning_amber_rounded,
         color: Colors.red,
       );
@@ -108,43 +99,46 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {},
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.name,
-                    style: DefaultTextStyle.of(context)
-                        .style
-                        .apply(fontSizeFactor: 1.5),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.updated,
-                    style: DefaultTextStyle.of(context)
-                        .style
-                        .apply(fontSizeFactor: 1.5),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
+        child: Container(
+          color: Color.fromARGB(255, 238, 236, 236),
+          child: Row(
+            children: [
+              Expanded(
                 flex: 2,
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [levelIcon])),
-            stateIcon,
-          ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.name,
+                      style: DefaultTextStyle.of(context)
+                          .style
+                          .apply(fontSizeFactor: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                  flex: 1,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [levelIcon])),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Last update:\n" + widget.updated,
+                      style: DefaultTextStyle.of(context)
+                          .style
+                          .apply(fontSizeFactor: 0.8),
+                    ),
+                  ],
+                ),
+              ),
+              stateIcon,
+            ],
+          ),
         ),
       ),
     );

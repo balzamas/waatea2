@@ -90,11 +90,15 @@ class SetAvailabilityState extends State<SetAvailability> {
 
   @override
   Widget build(BuildContext context) {
+    final isTopLevelScreen = ModalRoute.of(context)?.canPop ?? false;
+
     return Scaffold(
       key: availabilityListKey,
-      appBar: AppBar(
-        title: const Text('Set your availability'),
-      ),
+      appBar: isTopLevelScreen
+          ? null
+          : AppBar(
+              title: Text('Set availability'),
+            ),
       body: Center(
         child: FutureBuilder<List<SetAvailabilityModel>>(
           future: games,
