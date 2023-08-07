@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import './screens/login.dart';
-import './screens/signup.dart';
 
 void main() => runApp(App());
 
@@ -10,6 +9,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Waatea 2',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(color: Colors.black), color: Colors.black),
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),

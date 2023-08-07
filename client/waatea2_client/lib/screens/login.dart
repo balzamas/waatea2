@@ -74,8 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
           int userid = json.decode(response2.body)[0]['pk'];
 
           final response_currentseason = await http.get(
-              Uri.parse("${globals.URL_PREFIX}/api/currentseason/filter?club=" +
-                  clubid),
+              Uri.parse(
+                  "${globals.URL_PREFIX}/api/currentseason/filter?club=$clubid"),
               headers: {'Authorization': 'Token $token'});
 
           final items_currentseason = json
@@ -89,11 +89,14 @@ class _LoginScreenState extends State<LoginScreen> {
           String season = currentseason[0].season;
 
           // Navigate to the next screen (you can go to the home screen here)
+          globals.playerId = userid;
+          globals.clubId = clubid;
+          globals.seasonID = season;
+          globals.token = token;
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  MyHomePage(token, username, clubid, userid, season),
+              builder: (context) => MyHomePage(username),
             ),
           );
         }

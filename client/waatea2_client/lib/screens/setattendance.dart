@@ -200,6 +200,8 @@ class SetAttendanceState extends State<SetAttendance> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black),
                           onPressed: () {
                             setAttendance.state = 1;
                             state = 1;
@@ -214,6 +216,8 @@ class SetAttendanceState extends State<SetAttendance> {
                         ),
                         SizedBox(width: 20),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black),
                           onPressed: () {
                             setAttendance.state = 2;
                             state = 2;
