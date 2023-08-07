@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason
-from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer
+from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
@@ -19,9 +20,13 @@ class GameCurrentFilterAPIView(generics.ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         club = self.request.query_params.get('club')
+        season = self.request.query_params.get('season')
 
         if club:
             queryset = queryset.filter(club=club)
+        if club and season:
+            queryset = queryset.filter(club=club, season=season)
+
 
         return queryset
 
@@ -164,3 +169,29 @@ class TrainingAttendanceCountAPIView(generics.ListAPIView):
             queryset = queryset.filter(season=season)
 
         return queryset
+
+class TrainingAttendanceViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TrainingAttendanceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.request.query_params.get('user_id')
+        season_id = self.request.query_params.get('season')
+        club_id = self.request.query_params.get('club')
+        last_n = int(self.request.query_params.get('last_n', 0))  # Number of last trainings
+
+        queryset = Training.objects.filter(
+            club_id=club_id,
+            season_id=season_id,
+            date__lte=datetime.now(),  # Only past trainings
+        ).distinct()
+
+        if last_n > 0:
+            queryset = queryset.order_by('-date')[:last_n]
+
+        return queryset
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['user_id'] = self.request.query_params.get('user_id')
+        return context

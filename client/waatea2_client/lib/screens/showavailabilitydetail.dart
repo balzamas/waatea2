@@ -3,19 +3,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../globals.dart' as globals;
 
-import '../models/showavailability_model.dart';
 import '../models/availability_model.dart';
 import '../models/showavailabilitydetail_model.dart';
-import '../models/user_model.dart';
 
-import '../widgets/showavailability_row.dart';
 import '../widgets/showavailabilitydetail_row.dart';
 
 enum SortOption { state, level, updated, name }
 
 class ShowAvailabilityDetail extends StatefulWidget {
-  late final String token;
-  late final String clubid;
   late final String gameid;
   late final String game;
   late final String gameDate;
@@ -27,8 +22,6 @@ class ShowAvailabilityDetail extends StatefulWidget {
   late final int isNotSet;
 
   ShowAvailabilityDetail(
-      this.token,
-      this.clubid,
       this.gameid,
       this.game,
       this.gameDate,
@@ -59,8 +52,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     //Get players
     final response_player = await http.get(
         Uri.parse(
-            "${globals.URL_PREFIX}/api/users/filter?club=" + widget.clubid),
-        headers: {'Authorization': 'Token ${widget.token}'});
+            "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}"),
+        headers: {'Authorization': 'Token ${globals.token}'});
 
     final items_players =
         json.decode(response_player.body).cast<Map<String, dynamic>>();
@@ -72,7 +65,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     final responseAvail = await http.get(
         Uri.parse(
             "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${widget.dayofyear}&season=${widget.season}"),
-        headers: {'Authorization': 'Token ${widget.token}'});
+        headers: {'Authorization': 'Token ${globals.token}'});
 
     if (responseAvail.statusCode == 200) {
       final items_availability =

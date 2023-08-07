@@ -1,17 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:waatea2_client/helper.dart';
 import '../globals.dart' as globals;
-import 'package:intl/intl.dart';
 
 class SetAvailabilityRow extends StatefulWidget {
   final String game;
   final String date;
   final int initialState;
   final int playerId;
-  final String token;
   final String initialAvailabilityId;
-  final String clubId;
   final int dayofyear;
   final String season;
 
@@ -21,9 +19,7 @@ class SetAvailabilityRow extends StatefulWidget {
       required this.date,
       required this.initialState,
       required this.playerId,
-      required this.token,
       required this.initialAvailabilityId,
-      required this.clubId,
       required this.dayofyear,
       required this.season})
       : super(key: key);
@@ -47,7 +43,6 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
     BuildContext context,
     int playerId,
     int state,
-    String token,
   ) async {
     if (availabilityId != "") {
       final Map<String, int> body = {
@@ -57,7 +52,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
       final http.Response response = await http.patch(
         Uri.parse('${globals.URL_PREFIX}/api/availability/$availabilityId/'),
         headers: {
-          'Authorization': 'Token $token',
+          'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: json.encode(body),
@@ -66,7 +61,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
       final Map<String, dynamic> body = {
         'state': state.toString(),
         'player': widget.playerId.toString(),
-        'club': widget.clubId,
+        'club': globals.clubId,
         'dayofyear': widget.dayofyear,
         'season': widget.season
       };
@@ -74,7 +69,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
       final http.Response response = await http.post(
         Uri.parse('${globals.URL_PREFIX}/api/availability/'),
         headers: {
-          'Authorization': 'Token $token',
+          'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: json.encode(body),
@@ -95,27 +90,8 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
   Widget build(BuildContext context) {
     Icon icon;
 
-    if (state == 3) {
-      icon = const Icon(
-        Icons.thumb_up_alt_outlined,
-        color: Colors.green,
-      );
-    } else if (state == 1) {
-      icon = const Icon(
-        Icons.thumb_down_alt_outlined,
-        color: Colors.red,
-      );
-    } else if (state == 2) {
-      icon = const Icon(
-        Icons.question_mark,
-        color: Colors.orange,
-      );
-    } else {
-      icon = const Icon(
-        Icons.warning_amber_rounded,
-        color: Colors.red,
-      );
-    }
+    icon = returnStateIcon(state);
+
     return Padding(
       padding: const EdgeInsets.all(7.0),
       child: GestureDetector(
@@ -131,7 +107,6 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
             context,
             widget.playerId,
             newState,
-            widget.token,
           );
         },
         child: Row(
@@ -142,7 +117,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${widget.date}",
+                    widget.date,
                     style: Theme.of(context).textTheme.headline6?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,

@@ -5,15 +5,12 @@ import 'setattendance.dart';
 import 'setavailability.dart';
 import 'showavailability.dart';
 import 'userprofile.dart';
+import '../globals.dart' as globals;
 
 class MyHomePage extends StatefulWidget {
-  final String token;
   final String user;
-  final int userid;
-  final String clubid;
-  final String season;
 
-  MyHomePage(this.token, this.user, this.clubid, this.userid, this.season);
+  MyHomePage(this.user);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -78,18 +75,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getScreenForIndex(int index) {
     switch (index) {
       case 0:
-        return SetAvailability(widget.token, widget.clubid, widget.userid);
+        return SetAvailability(globals.playerId);
       case 1:
-        return SetAttendance(
-            widget.token, widget.clubid, widget.userid, widget.season);
+        return SetAttendance(globals.playerId);
       case 2:
-        return ShowAvailability(widget.token, widget.clubid);
+        return ShowAvailability();
       case 3:
-        return ShowAttendance(widget.token, widget.season);
+        return ShowAttendance();
       case 4:
-        return ShowPlayers(widget.token, widget.clubid);
+        return ShowPlayers();
       case 5:
-        return UserProfile(widget.token, widget.user);
+        return UserProfile(globals.token, widget.user);
       default:
         return Container();
     }

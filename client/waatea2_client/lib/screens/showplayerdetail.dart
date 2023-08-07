@@ -7,14 +7,10 @@ import 'package:waatea2_client/widgets/showplayerattendance.dart';
 
 class ShowPlayerDetail extends StatelessWidget {
   final UserModel user;
-  late final String token;
-  late final String clubid;
-  late final String season;
-  ShowPlayerDetail(
-      {required this.user,
-      required this.token,
-      required this.clubid,
-      required this.season});
+
+  ShowPlayerDetail({
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +75,12 @@ class ShowPlayerDetail extends StatelessWidget {
           children: [
             levelIcon,
             SizedBox(height: 16),
-            Text('${user.name}'),
+            Text(user.name),
             SizedBox(height: 16),
             Text('Email: ${user.email}'),
             SizedBox(height: 16),
             Text('Level:'),
-            Text('$LevelText'),
+            Text(LevelText),
             SizedBox(height: 16),
             Text('Mobile Phone: ${user.mobilePhone}'),
             SizedBox(height: 22),
@@ -96,8 +92,9 @@ class ShowPlayerDetail extends StatelessWidget {
             SizedBox(height: 10),
             Container(
               width: 500, // Replace with your desired width
-              height: 20, // Replace with your desired height
-              child: ShowPlayerAttendance(token, season, clubid, user.pk),
+              height: 30, // Replace with your desired height
+              child:
+                  ShowPlayerAttendance(user.pk, 10, MainAxisAlignment.center),
             ),
             SizedBox(height: 22),
             Text('Availability',
@@ -108,7 +105,7 @@ class ShowPlayerDetail extends StatelessWidget {
             Container(
               width: 500, // Replace with your desired width
               height: 300, // Replace with your desired height
-              child: SetAvailability(token, clubid, user.pk),
+              child: SetAvailability(user.pk),
             ),
           ],
         ),

@@ -97,6 +97,22 @@ class TrainingAttendanceCountSerializer(serializers.ModelSerializer):
         model = Training
         fields = '__all__'
 
+class TrainingAttendanceSerializer(serializers.ModelSerializer):
+    attended = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Training
+        fields = ['date', 'attended']
+
+    def get_attended(self, obj):
+        user_id = self.context.get('user_id')
+        print("-------")
+        print(self.context)
+        print(user_id)
+        if user_id is not None:
+            return obj.attendances.filter(player_id=user_id, attended=True).exists()
+        return False
+
 class CurrentSeasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = CurrentSeason

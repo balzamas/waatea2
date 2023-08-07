@@ -10,10 +10,8 @@ import '../models/availability_model.dart';
 import '../widgets/setavailability_row.dart';
 
 class SetAvailability extends StatefulWidget {
-  late final String token;
-  late final String clubid;
-  late final int userid;
-  SetAvailability(this.token, this.clubid, this.userid);
+  late final int playerId;
+  SetAvailability(this.playerId);
   @override
   SetAvailabilityState createState() => SetAvailabilityState();
 }
@@ -33,9 +31,9 @@ class SetAvailabilityState extends State<SetAvailability> {
     final formatter_time = DateFormat('HH:mm');
 
     final response = await http.get(
-        Uri.parse("${globals.URL_PREFIX}/api/games_current/filter?club=" +
-            widget.clubid),
-        headers: {'Authorization': 'Token ${widget.token}'});
+        Uri.parse(
+            "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}"),
+        headers: {'Authorization': 'Token ${globals.token}'});
 
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
     List<GameModel> games = items.map<GameModel>((json) {
@@ -46,14 +44,12 @@ class SetAvailabilityState extends State<SetAvailability> {
 
     for (var i = 0; i < games.length; i++) {
       if (i > 0 && games[i].dayofyear == games[i - 1].dayofyear) {
-        DateTime gameDate = DateTime.parse(games[i].date).toLocal();
+        DateTime gameDate = DateTime.parse(games[i].date);
 
-        setAvailabilities[setAvailabilities.length - 1]
-            .games = setAvailabilities[setAvailabilities.length - 1]
-                .games +
-            "\n${formatter_time.format(gameDate)} - ${games[i].home} - ${games[i].away}";
+        setAvailabilities[setAvailabilities.length - 1].games =
+            "${setAvailabilities[setAvailabilities.length - 1].games}\n${formatter_time.format(gameDate)} - ${games[i].home} - ${games[i].away}";
       } else {
-        DateTime gameDate = DateTime.parse(games[i].date).toLocal();
+        DateTime gameDate = DateTime.parse(games[i].date);
         SetAvailabilityModel record = SetAvailabilityModel(
             avail_id: "",
             games:
@@ -64,8 +60,8 @@ class SetAvailabilityState extends State<SetAvailability> {
             season: games[i].season);
         final responseAvail = await http.get(
             Uri.parse(
-                "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&player=${widget.userid}&season=${games[i].season}"),
-            headers: {'Authorization': 'Token ${widget.token}'});
+                "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&player=${widget.playerId}&season=${games[i].season}"),
+            headers: {'Authorization': 'Token ${globals.token}'});
 
         if (responseAvail.statusCode == 200) {
           final items =
@@ -115,10 +111,8 @@ class SetAvailabilityState extends State<SetAvailability> {
                     game: data.games,
                     date: data.date,
                     initialState: data.state,
-                    playerId: widget.userid,
-                    token: widget.token,
+                    playerId: widget.playerId,
                     initialAvailabilityId: data.avail_id,
-                    clubId: widget.clubid,
                     dayofyear: data.dayofyear,
                     season: data.season);
               },

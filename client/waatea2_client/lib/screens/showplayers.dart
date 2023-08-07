@@ -9,12 +9,7 @@ import 'dart:convert';
 import '../globals.dart' as globals;
 
 class ShowPlayers extends StatefulWidget {
-  late final String token;
-  late final String clubId;
-  late final int userid;
-  late final String season;
-
-  ShowPlayers(this.token, this.clubId, this.season);
+  ShowPlayers();
 
   @override
   _ShowPlayersState createState() => _ShowPlayersState();
@@ -32,9 +27,9 @@ class _ShowPlayersState extends State<ShowPlayers> {
   Future<void> fetchUsers() async {
     final response = await http.get(
         Uri.parse(
-            '${globals.URL_PREFIX}/api/users/filter?club=${widget.clubId}'),
+            '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}'),
         headers: {
-          'Authorization': 'Token ${widget.token}',
+          'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json; charset=UTF-8',
         });
     if (response.statusCode == 200) {
@@ -55,33 +50,79 @@ class _ShowPlayersState extends State<ShowPlayers> {
         itemCount: users.length,
         itemBuilder: (context, index) {
           final user = users[index];
+          String LevelText = "";
+          Icon levelIcon = const Icon(
+            Icons.warning_amber_rounded,
+            color: Colors.red,
+          );
+
+          switch (user.profile.level) {
+            case 0:
+              LevelText = "High performance, performance motivation";
+              levelIcon = const Icon(
+                Icons.star,
+                color: Colors.black,
+              );
+              break;
+            case 1:
+              LevelText = "Basic performance, performance motivation";
+              levelIcon = const Icon(
+                Icons.star_border,
+                color: Colors.black,
+              );
+              break;
+            case 2:
+              LevelText = "High performance, time deficit";
+              levelIcon = const Icon(
+                Icons.lock_clock,
+                color: Colors.black,
+              );
+              break;
+            case 3:
+              LevelText = "High performance, social motivation";
+              levelIcon = const Icon(
+                Icons.local_bar,
+                color: Colors.black,
+              );
+              break;
+            case 4:
+              LevelText = "Basic performance, social motivation";
+              levelIcon = const Icon(
+                Icons.liquor,
+                color: Colors.black,
+              );
+              break;
+            case 5:
+              LevelText = "Newcomer";
+              levelIcon = const Icon(
+                Icons.pets,
+                color: Colors.black,
+              );
+              break;
+          }
           return ListTile(
-            title: Text(user.name),
+            title: Text(
+              user.name,
+              style:
+                  DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(user.email),
                 Container(
                     width: 500, // Replace with your desired width
-                    height: 20, // Replace with your desired height
+                    height: 40, // Replace with your desired height
                     child: ShowPlayerAttendance(
-                      widget.token,
-                      widget.season,
-                      widget.clubId,
-                      user.pk,
-                    ))
+                        user.pk, 6, MainAxisAlignment.start))
               ],
             ),
-            trailing: Icon(Icons.person), // Add the icon here
+            trailing: levelIcon, // Add the icon here
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => ShowPlayerDetail(
                     user: user,
-                    clubid: widget.clubId,
-                    token: widget.token,
-                    season: widget.season,
                   ),
                 ),
               );

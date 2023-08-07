@@ -10,9 +10,7 @@ import '../models/user_model.dart';
 import '../widgets/showavailability_row.dart';
 
 class ShowAvailability extends StatefulWidget {
-  late final String token;
-  late final String clubid;
-  ShowAvailability(this.token, this.clubid);
+  ShowAvailability();
   @override
   ShowAvailabilityState createState() => ShowAvailabilityState();
 }
@@ -31,8 +29,8 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     //Get number of players
     final response_user = await http.get(
         Uri.parse(
-            "${globals.URL_PREFIX}/api/users/filter?club=" + widget.clubid),
-        headers: {'Authorization': 'Token ${widget.token}'});
+            "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}"),
+        headers: {'Authorization': 'Token ${globals.token}'});
 
     final items_user =
         json.decode(response_user.body).cast<Map<String, dynamic>>();
@@ -44,9 +42,9 @@ class ShowAvailabilityState extends State<ShowAvailability> {
 
     //Get games
     final response = await http.get(
-        Uri.parse("${globals.URL_PREFIX}/api/games_current/filter?club=" +
-            widget.clubid),
-        headers: {'Authorization': 'Token ${widget.token}'});
+        Uri.parse(
+            "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}"),
+        headers: {'Authorization': 'Token ${globals.token}'});
 
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
     List<ShowAvailabilityModel> games =
@@ -59,7 +57,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
       final responseAvail = await http.get(
           Uri.parse(
               "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&season=${games[i].season}"),
-          headers: {'Authorization': 'Token ${widget.token}'});
+          headers: {'Authorization': 'Token ${globals.token}'});
 
       if (responseAvail.statusCode == 200) {
         final items =
@@ -121,8 +119,6 @@ class ShowAvailabilityState extends State<ShowAvailability> {
                     gameId: data.pk,
                     game: data.home + " - " + data.away,
                     gameDate: data.date,
-                    token: widget.token,
-                    clubId: widget.clubid,
                     dayofyear: data.dayofyear,
                     isAvailable: data.isAvailable,
                     isNotAvailable: data.isNotAvailable,

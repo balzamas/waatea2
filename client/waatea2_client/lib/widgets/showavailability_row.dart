@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../globals.dart' as globals;
 import '../screens/showavailabilitydetail.dart';
 
@@ -8,8 +6,6 @@ class ShowAvailabilityRow extends StatefulWidget {
   final String gameId;
   final String game;
   final String gameDate;
-  final String token;
-  final String clubId;
   final int dayofyear;
   final String season;
   final int isAvailable;
@@ -22,8 +18,6 @@ class ShowAvailabilityRow extends StatefulWidget {
     required this.gameId,
     required this.game,
     required this.gameDate,
-    required this.token,
-    required this.clubId,
     required this.dayofyear,
     required this.season,
     required this.isAvailable,
@@ -56,32 +50,6 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
 
   @override
   Widget build(BuildContext context) {
-    Icon iconAvailable = const Icon(
-      Icons.thumb_up_alt_outlined,
-      color: Colors.green,
-    );
-
-    Icon iconNotAvailable = const Icon(
-      Icons.thumb_down_alt_outlined,
-      color: Colors.red,
-    );
-
-    Icon iconMaybe = const Icon(
-      Icons.question_mark,
-      color: Colors.orange,
-    );
-
-    Icon iconNotSet = const Icon(
-      Icons.warning_amber_rounded,
-      color: Colors.red,
-    );
-
-    // Calculate total availability
-    int totalAvailability = widget.isAvailable +
-        widget.isNotAvailable +
-        widget.isMaybe +
-        widget.isNotSet;
-
     return Padding(
       padding: const EdgeInsets.all(18.0),
       child: GestureDetector(
@@ -92,8 +60,6 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
             context,
             MaterialPageRoute(
               builder: (context) => ShowAvailabilityDetail(
-                widget.token,
-                widget.clubId,
                 widget.gameId,
                 widget.game,
                 widget.gameDate,

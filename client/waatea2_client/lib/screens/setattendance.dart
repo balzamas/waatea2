@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:waatea2_client/models/game_model.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
 import '../models/attendance.dart';
 import '../models/setattendance.dart';
-import '../models/setavailability_model.dart';
-import '../models/availability_model.dart';
 import '../models/training_model.dart';
-import '../widgets/setavailability_row.dart';
 
 //Todo: programmiert mit Kindergeschrei im Hintergrund, total mess, aufräumen
 
 class SetAttendance extends StatefulWidget {
-  late final String token;
-  late final String clubId;
   late final int userId;
-  late final String season;
-  SetAttendance(this.token, this.clubId, this.userId, this.season);
+  SetAttendance(this.userId);
   @override
   SetAttendanceState createState() => SetAttendanceState();
 }
@@ -51,7 +44,7 @@ class SetAttendanceState extends State<SetAttendance> {
       final http.Response response = await http.patch(
         Uri.parse('${globals.URL_PREFIX}/api/attendance/$attendanceId/'),
         headers: {
-          'Authorization': 'Token ${widget.token}',
+          'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: json.encode(body),
@@ -59,17 +52,15 @@ class SetAttendanceState extends State<SetAttendance> {
     } else {
       final Map<String, dynamic> body = {
         'attended': boolState,
-        'club': widget.clubId,
-        'dayofyear': this.dayofhteyear,
-        'season': widget.season,
+        'dayofyear': dayofhteyear,
         'player': widget.userId,
-        'training': this.trainingId
+        'training': trainingId
       };
 
       final http.Response response = await http.post(
         Uri.parse('${globals.URL_PREFIX}/api/attendance/'),
         headers: {
-          'Authorization': 'Token ${widget.token}',
+          'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: json.encode(body),
@@ -88,8 +79,8 @@ class SetAttendanceState extends State<SetAttendance> {
 
     final response = await http.get(
         Uri.parse(
-            "${globals.URL_PREFIX}/api/training_current/filter?club=${widget.clubId}&season=${widget.season}"),
-        headers: {'Authorization': 'Token ${widget.token}'});
+            "${globals.URL_PREFIX}/api/training_current/filter?club=${globals.clubId}&season=${globals.seasonID}"),
+        headers: {'Authorization': 'Token ${globals.token}'});
 
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
     List<TrainingModel> trainings = items.map<TrainingModel>((json) {
@@ -98,14 +89,14 @@ class SetAttendanceState extends State<SetAttendance> {
 
     SetAttendanceModel setAttendance = SetAttendanceModel(text: "", state: 0);
 
-    if (trainings.length > 0) {
-      this.trainingId = trainings[0].pk;
-      this.dayofhteyear = trainings[0].dayofyear;
+    if (trainings.isNotEmpty) {
+      trainingId = trainings[0].pk;
+      dayofhteyear = trainings[0].dayofyear;
       //Load attendance
       final responseAttend = await http.get(
           Uri.parse(
-              "${globals.URL_PREFIX}/api/attendances/filter?dayofyear=${trainings[0].dayofyear}&player=${widget.userId}&season=${widget.season}"),
-          headers: {'Authorization': 'Token ${widget.token}'});
+              "${globals.URL_PREFIX}/api/attendances/filter?training=${trainings[0].pk}&player=${widget.userId}&season=${globals.seasonID}"),
+          headers: {'Authorization': 'Token ${globals.token}'});
 
       if (responseAttend.statusCode == 200) {
         final items =
@@ -115,34 +106,34 @@ class SetAttendanceState extends State<SetAttendance> {
           return AttendanceModel.fromJson(json);
         }).toList();
 
-        String time_prefix = "Last";
+        String timePrefix = "Last";
 
         if (DateTime.parse(trainings[0].date).compareTo(DateTime.now()) > 0) {
-          time_prefix = "Next";
+          timePrefix = "Next";
         }
 
         setAttendance.text =
-            "$time_prefix training: ${DateTime.parse(trainings[0].date).day}.${DateTime.parse(trainings[0].date).month}.${DateTime.parse(trainings[0].date).year}";
+            "$timePrefix training: ${DateTime.parse(trainings[0].date).day}.${DateTime.parse(trainings[0].date).month}.${DateTime.parse(trainings[0].date).year}";
 
         if (availabilities.length == 1) {
           attendanceId = availabilities[0].pk;
           if (availabilities[0].attended) {
             setAttendance.state = 1;
-            this.state = 1;
+            state = 1;
           } else {
             setAttendance.state = 2;
-            this.state = 2;
+            state = 2;
           }
         } else {
           setAttendance.state = 0;
-          this.state = 0;
-          setAttendance.text = setAttendance.text + "\nPlease set attendancy.";
+          state = 0;
+          setAttendance.text = "${setAttendance.text}\nPlease set attendancy.";
         }
       }
     } else {
       setAttendance.text = "No current training";
       setAttendance.state = -1;
-      this.state = -1;
+      state = -1;
     }
 
     return setAttendance;
@@ -173,13 +164,13 @@ class SetAttendanceState extends State<SetAttendance> {
 
               Icon icon;
 
-              if (this.state == 1) {
+              if (state == 1) {
                 icon = const Icon(Icons.check_circle_outline,
                     color: Colors.green, size: 150);
-              } else if (this.state == 2) {
+              } else if (state == 2) {
                 icon = const Icon(Icons.highlight_off_outlined,
                     color: Colors.red, size: 150);
-              } else if (this.state == 0) {
+              } else if (state == 0) {
                 icon = const Icon(Icons.help_outline,
                     color: Colors.orange, size: 150);
               } else {
@@ -211,9 +202,9 @@ class SetAttendanceState extends State<SetAttendance> {
                         ElevatedButton(
                           onPressed: () {
                             setAttendance.state = 1;
-                            this.state = 1;
+                            state = 1;
                             setState(() {
-                              this.state = 1;
+                              state = 1;
                             });
                             setAttendanceNow(1);
                           },
@@ -225,9 +216,9 @@ class SetAttendanceState extends State<SetAttendance> {
                         ElevatedButton(
                           onPressed: () {
                             setAttendance.state = 2;
-                            this.state = 2;
+                            state = 2;
                             setState(() {
-                              this.state = 2;
+                              state = 2;
                             });
                             setAttendanceNow(2);
                           },

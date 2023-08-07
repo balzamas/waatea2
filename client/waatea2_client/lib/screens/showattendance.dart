@@ -5,10 +5,7 @@ import 'package:waatea2_client/models/trainingattendance_model.dart';
 import '../globals.dart' as globals;
 
 class ShowAttendance extends StatefulWidget {
-  late final String token;
-  late final String season;
-
-  ShowAttendance(this.token, this.season);
+  ShowAttendance();
 
   @override
   _ShowAttendanceState createState() => _ShowAttendanceState();
@@ -26,8 +23,8 @@ class _ShowAttendanceState extends State<ShowAttendance> {
   Future<void> fetchTrainings() async {
     final response = await http.get(
         Uri.parse(
-            '${globals.URL_PREFIX}/api/trainings/?season=${widget.season}'),
-        headers: {'Authorization': 'Token ${widget.token}'});
+            '${globals.URL_PREFIX}/api/trainings/?season=${globals.seasonID}'),
+        headers: {'Authorization': 'Token ${globals.token}'});
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
       setState(() {

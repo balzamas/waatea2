@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 from waateaapp import views
 from rest_framework import routers
 from rest_framework.authtoken import views as restviews
-from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, TrainingAttendanceCountAPIView
+from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, TrainingAttendanceCountAPIView, TrainingAttendanceViewSet
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -17,6 +17,7 @@ router.register('clubs', views.ClubViewSet)
 router.register('gamedetails', views.Game)
 router.register('userdetails', views.User)
 router.register('availabilitydetails', views.Availability)
+router.register('training-attendance', TrainingAttendanceViewSet, basename='training-attendance')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FLUTTER_WEB_APP = os.path.join(BASE_DIR, 'client')
