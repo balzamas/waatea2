@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/showplayerdetail.dart';
+import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -11,8 +12,9 @@ class ShowPlayers extends StatefulWidget {
   late final String token;
   late final String clubId;
   late final int userid;
+  late final String season;
 
-  ShowPlayers(this.token, this.clubId);
+  ShowPlayers(this.token, this.clubId, this.season);
 
   @override
   _ShowPlayersState createState() => _ShowPlayersState();
@@ -55,7 +57,22 @@ class _ShowPlayersState extends State<ShowPlayers> {
           final user = users[index];
           return ListTile(
             title: Text(user.name),
-            subtitle: Text(user.email),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(user.email),
+                Container(
+                    width: 500, // Replace with your desired width
+                    height: 20, // Replace with your desired height
+                    child: ShowPlayerAttendance(
+                      widget.token,
+                      widget.season,
+                      widget.clubId,
+                      user.pk,
+                    ))
+              ],
+            ),
+            trailing: Icon(Icons.person), // Add the icon here
             onTap: () {
               Navigator.push(
                 context,
@@ -64,6 +81,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                     user: user,
                     clubid: widget.clubId,
                     token: widget.token,
+                    season: widget.season,
                   ),
                 ),
               );

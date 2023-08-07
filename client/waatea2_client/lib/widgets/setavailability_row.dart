@@ -95,17 +95,17 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
   Widget build(BuildContext context) {
     Icon icon;
 
-    if (state == 1) {
+    if (state == 3) {
       icon = const Icon(
         Icons.thumb_up_alt_outlined,
         color: Colors.green,
       );
-    } else if (state == 2) {
+    } else if (state == 1) {
       icon = const Icon(
         Icons.thumb_down_alt_outlined,
         color: Colors.red,
       );
-    } else if (state == 3) {
+    } else if (state == 2) {
       icon = const Icon(
         Icons.question_mark,
         color: Colors.orange,

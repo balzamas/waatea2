@@ -46,14 +46,14 @@ class SetAvailabilityState extends State<SetAvailability> {
 
     for (var i = 0; i < games.length; i++) {
       if (i > 0 && games[i].dayofyear == games[i - 1].dayofyear) {
-        DateTime gameDate = DateTime.parse(games[i].date);
+        DateTime gameDate = DateTime.parse(games[i].date).toLocal();
 
         setAvailabilities[setAvailabilities.length - 1]
             .games = setAvailabilities[setAvailabilities.length - 1]
                 .games +
             "\n${formatter_time.format(gameDate)} - ${games[i].home} - ${games[i].away}";
       } else {
-        DateTime gameDate = DateTime.parse(games[i].date);
+        DateTime gameDate = DateTime.parse(games[i].date).toLocal();
         SetAvailabilityModel record = SetAvailabilityModel(
             avail_id: "",
             games:

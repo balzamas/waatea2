@@ -158,13 +158,18 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                     flex: 1,
                     child: Column(
                       children: [
-                        iconAvailable,
-                        Text(
-                          widget.isAvailable.toString(),
-                          textAlign: TextAlign.left,
-                          style: DefaultTextStyle.of(context)
-                              .style
-                              .apply(fontSizeFactor: 1.5),
+                        CircleAvatar(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          radius: 25.0,
+                          child: CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            foregroundColor: Colors.green,
+                            radius: 20.0,
+                            child: Text(widget.isAvailable.toString(),
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ),
                         ),
                       ],
                     ),
@@ -174,13 +179,18 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                     flex: 1,
                     child: Column(
                       children: [
-                        iconNotAvailable,
-                        Text(
-                          widget.isNotAvailable.toString(),
-                          textAlign: TextAlign.left,
-                          style: DefaultTextStyle.of(context)
-                              .style
-                              .apply(fontSizeFactor: 1.5),
+                        CircleAvatar(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          radius: 25.0,
+                          child: CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            foregroundColor: Colors.red,
+                            radius: 20.0,
+                            child: Text(widget.isNotAvailable.toString(),
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ),
                         ),
                       ],
                     ),
@@ -190,13 +200,18 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                     flex: 1,
                     child: Column(
                       children: [
-                        iconMaybe,
-                        Text(
-                          widget.isMaybe.toString(),
-                          textAlign: TextAlign.left,
-                          style: DefaultTextStyle.of(context)
-                              .style
-                              .apply(fontSizeFactor: 1.5),
+                        CircleAvatar(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                          radius: 25.0,
+                          child: CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            foregroundColor: Colors.orange,
+                            radius: 20.0,
+                            child: Text(widget.isMaybe.toString(),
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ),
                         ),
                       ],
                     ),
@@ -206,13 +221,18 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                     flex: 1,
                     child: Column(
                       children: [
-                        iconNotSet,
-                        Text(
-                          widget.isNotSet.toString(),
-                          textAlign: TextAlign.left,
-                          style: DefaultTextStyle.of(context)
-                              .style
-                              .apply(fontSizeFactor: 1.5),
+                        CircleAvatar(
+                          backgroundColor: Colors.grey,
+                          foregroundColor: Colors.white,
+                          radius: 25.0,
+                          child: CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            foregroundColor: Colors.grey,
+                            radius: 20.0,
+                            child: Text(widget.isNotSet.toString(),
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ),
                         ),
                       ],
                     ),

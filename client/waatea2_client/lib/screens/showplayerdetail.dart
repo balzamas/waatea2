@@ -3,13 +3,18 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/setavailability.dart';
+import 'package:waatea2_client/widgets/showplayerattendance.dart';
 
 class ShowPlayerDetail extends StatelessWidget {
   final UserModel user;
   late final String token;
   late final String clubid;
+  late final String season;
   ShowPlayerDetail(
-      {required this.user, required this.token, required this.clubid});
+      {required this.user,
+      required this.token,
+      required this.clubid,
+      required this.season});
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +88,18 @@ class ShowPlayerDetail extends StatelessWidget {
             SizedBox(height: 16),
             Text('Mobile Phone: ${user.mobilePhone}'),
             SizedBox(height: 22),
+            Text('Training attendance',
+                style: Theme.of(context).textTheme.headline6?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    )),
+            SizedBox(height: 10),
+            Container(
+              width: 500, // Replace with your desired width
+              height: 20, // Replace with your desired height
+              child: ShowPlayerAttendance(token, season, clubid, user.pk),
+            ),
+            SizedBox(height: 22),
             Text('Availability',
                 style: Theme.of(context).textTheme.headline6?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -92,7 +109,7 @@ class ShowPlayerDetail extends StatelessWidget {
               width: 500, // Replace with your desired width
               height: 300, // Replace with your desired height
               child: SetAvailability(token, clubid, user.pk),
-            )
+            ),
           ],
         ),
       ),

@@ -89,7 +89,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         if (myListFiltered.length == 1) {
           players[i].state = myListFiltered.first.state;
           if (myListFiltered.first.updated != "") {
-            DateTime updated = DateTime.parse(myListFiltered.first.updated);
+            DateTime updated =
+                DateTime.parse(myListFiltered.first.updated).toLocal();
             players[i].updated =
                 '${updated.day}.${updated.month}.${updated.year} ${updated.hour}:${updated.minute}';
           }
@@ -142,6 +143,10 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               PopupMenuItem(
                 value: SortOption.updated,
                 child: Text('Sort by Updated'),
+              ),
+              PopupMenuItem(
+                value: SortOption.name,
+                child: Text('Sort by Name'),
               ),
             ],
           ),

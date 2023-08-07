@@ -118,15 +118,17 @@ class AttendanceFilterAPIView(generics.ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         player = self.request.query_params.get('player')
-        dayofyear = self.request.query_params.get('dayofyear')
+        training = self.request.query_params.get('training')
         season = self.request.query_params.get('season')
 
-        if dayofyear and player and season:
-            queryset = queryset.filter(dayofyear=dayofyear, player=player, season=season)
+        if training and player and season:
+            queryset = queryset.filter(training=training, player=player, season=season)
         elif player and season:
             queryset = queryset.filter(player=player, season=season)
-        elif dayofyear and season:
-            queryset = queryset.filter(dayofyear=dayofyear, season=season)
+        elif training and season:
+            queryset = queryset.filter(training=training, season=season)
+        elif training and player:
+            queryset = queryset.filter(training=training, player=player)
 
         return queryset
 class AttendanceUpdateAPIView(UpdateAPIView):

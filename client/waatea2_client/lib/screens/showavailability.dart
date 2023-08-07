@@ -75,11 +75,11 @@ class ShowAvailabilityState extends State<ShowAvailability> {
         int isNotSet = 0;
 
         for (var availability in availabilities) {
-          if (availability.state == 1) {
+          if (availability.state == 3) {
             isAvailable++;
-          } else if (availability.state == 2) {
+          } else if (availability.state == 1) {
             isNotAvailable++;
-          } else if (availability.state == 3) {
+          } else if (availability.state == 2) {
             isMaybe++;
           }
         }
