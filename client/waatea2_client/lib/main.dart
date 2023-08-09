@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waatea2_client/screens/setattendance.dart';
 
 import './screens/login.dart';
 
@@ -17,6 +18,7 @@ class App extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
+        '/training': (context) => SetAttendance(),
       },
     );
   }

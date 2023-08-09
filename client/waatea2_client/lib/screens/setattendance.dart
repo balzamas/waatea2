@@ -11,8 +11,7 @@ import '../models/training_model.dart';
 //Todo: programmiert mit Kindergeschrei im Hintergrund, total mess, aufräumen
 
 class SetAttendance extends StatefulWidget {
-  late final int userId;
-  SetAttendance(this.userId);
+  SetAttendance();
   @override
   SetAttendanceState createState() => SetAttendanceState();
 }
@@ -53,8 +52,9 @@ class SetAttendanceState extends State<SetAttendance> {
       final Map<String, dynamic> body = {
         'attended': boolState,
         'dayofyear': dayofhteyear,
-        'player': widget.userId,
-        'training': trainingId
+        'player': globals.playerId,
+        'training': trainingId,
+        'season': globals.seasonID
       };
 
       final http.Response response = await http.post(
@@ -95,7 +95,7 @@ class SetAttendanceState extends State<SetAttendance> {
       //Load attendance
       final responseAttend = await http.get(
           Uri.parse(
-              "${globals.URL_PREFIX}/api/attendances/filter?training=${trainings[0].pk}&player=${widget.userId}&season=${globals.seasonID}"),
+              "${globals.URL_PREFIX}/api/attendances/filter?training=${trainings[0].pk}&player=${globals.playerId}&season=${globals.seasonID}"),
           headers: {'Authorization': 'Token ${globals.token}'});
 
       if (responseAttend.statusCode == 200) {
