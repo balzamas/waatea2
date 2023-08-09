@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:random_avatar/random_avatar.dart';
+import 'package:waatea2_client/helper.dart';
+import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -55,15 +58,59 @@ class HomeState extends State<UserProfile> {
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 var data = snapshot.data[index];
-                return Card(
-                  child: ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text(
-                      data.name,
-                      style: TextStyle(fontSize: 20),
+                return Column(children: [
+                  SizedBox(height: 24),
+                  RandomAvatar(data.name, height: 80, width: 80),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(
+                        data.name,
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
-                );
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.email),
+                      title: Text(
+                        data.email,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.phone),
+                      title: Text(
+                        data.mobilePhone,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
+                        leading: Icon(Icons.category),
+                        title: Column(
+                          children: [
+                            returnLevelIcon(data.profile.level),
+                            Text(returnLevelText(data.profile.level)),
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        )),
+                  ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.fitness_center),
+                      title: Container(
+                        width: 500, // Replace with your desired width
+                        height: 30, // Replace with your desired height
+                        child: ShowPlayerAttendance(
+                            globals.playerId, 15, MainAxisAlignment.start),
+                      ),
+                    ),
+                  ),
+                ]);
               },
             );
           },

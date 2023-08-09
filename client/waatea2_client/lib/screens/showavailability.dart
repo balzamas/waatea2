@@ -101,7 +101,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     return Scaffold(
       key: availabilityListKey,
       appBar: AppBar(
-        title: const Text('Game List'),
+        title: const Text('Game list'),
       ),
       body: Center(
         child: FutureBuilder<List<ShowAvailabilityModel>>(

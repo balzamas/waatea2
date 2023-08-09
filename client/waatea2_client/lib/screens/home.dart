@@ -37,11 +37,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Set Training Attendance'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.list_alt_outlined),
+                  icon: Icon(Icons.emoji_events_outlined),
                   label: Text('Show Availabilities'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.playlist_add_check),
+                  icon: Icon(Icons.recent_actors_outlined),
                   label: Text('Show Training Attendance'),
                 ),
                 NavigationRailDestination(
@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return SetAvailability(globals.playerId);
       case 1:
-        return SetAttendance(globals.playerId);
+        return SetAttendance();
       case 2:
         return ShowAvailability();
       case 3:

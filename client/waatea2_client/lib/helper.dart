@@ -64,3 +64,25 @@ Icon returnLevelIcon(int level) {
       );
   }
 }
+
+String returnLevelText(int level) {
+  switch (level) {
+    case 0:
+      return "High performance, performance motivation";
+    case 1:
+      return "Basic performance, performance motivation";
+    case 2:
+      return "High performance, time deficit";
+
+    case 3:
+      return "High performance, social motivation";
+
+    case 4:
+      return "Basic performance, social motivation";
+
+    case 5:
+      return "Newcomer";
+    default:
+      return "None";
+  }
+}
