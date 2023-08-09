@@ -12,7 +12,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         appBarTheme: AppBarTheme(
-            iconTheme: IconThemeData(color: Colors.black), color: Colors.black),
+            iconTheme: IconThemeData(color: Colors.white), color: Colors.black),
       ),
       initialRoute: '/',
       routes: {

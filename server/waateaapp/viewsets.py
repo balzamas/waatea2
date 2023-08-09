@@ -46,7 +46,7 @@ class TrainingFilterAPIView(generics.ListAPIView):
         return queryset
 
 class TrainingCurrentFilterAPIView(generics.ListAPIView):
-    queryset = Training.objects.filter(date__gte=(datetime.today()-timedelta(hours=23))).filter(date__lte=(datetime.today()+timedelta(hours=23))).order_by('date')
+    queryset = Training.objects.filter(date__gte=(datetime.now()-timedelta(hours=23))).filter(date__lte=(datetime.now()+timedelta(hours=23))).order_by('date')
     serializer_class = TrainingSerializer
     ordering = ['date']
 
