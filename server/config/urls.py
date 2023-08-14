@@ -8,7 +8,10 @@ from django.views.generic import TemplateView
 from waateaapp import views
 from rest_framework import routers
 from rest_framework.authtoken import views as restviews
-from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, TrainingAttendanceCountAPIView, TrainingAttendanceViewSet
+from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, \
+    AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, \
+    AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, \
+    TrainingAttendanceCountAPIView, TrainingAttendanceViewSet, TrainingCreateAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -48,6 +51,8 @@ urlpatterns = [
 
     path('api/trainings/filter/', TrainingFilterAPIView.as_view(), name='training-filter'),
     path('api/training_current/filter/', TrainingCurrentFilterAPIView.as_view(), name='training-current-filter'),
+    path('api/training/', TrainingCreateAPIView.as_view(), name='training-create'),
+
 
     path('api/attendances/filter/', AttendanceFilterAPIView.as_view(), name='attendance-filter'),
     path('api/attendance/<uuid:pk>/', AttendanceUpdateAPIView.as_view(), name='attendance-update'),

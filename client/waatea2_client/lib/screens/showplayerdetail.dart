@@ -28,6 +28,8 @@ class ShowPlayerDetail extends StatelessWidget {
             RandomAvatar(user.name, height: 80, width: 80),
             returnLevelIcon(user.profile.level),
             SizedBox(height: 16),
+            Text('Is playing: ${user.profile.isPlaying.toString()}'),
+            SizedBox(height: 16),
             Text(user.name),
             SizedBox(height: 16),
             Text('Email: ${user.email}'),

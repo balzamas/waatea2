@@ -75,9 +75,12 @@ class UserFilterAPIView(generics.ListAPIView):
         queryset = super().get_queryset()
         email = self.request.query_params.get('email')
         club = self.request.query_params.get('club')
+        is_playing = self.request.query_params.get('is_playing')
 
         if email:
             queryset = queryset.filter(email=email)
+        elif is_playing and club:
+            queryset = queryset.filter(userprofile__is_playing=is_playing)
         elif club:
             queryset = queryset.filter(club=club)
 
@@ -145,6 +148,10 @@ class AttendanceUpdateAPIView(UpdateAPIView):
 class AttendanceCreateAPIView(CreateAPIView):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
+
+class TrainingCreateAPIView(CreateAPIView):
+    queryset = Training.objects.all()
+    serializer_class = TrainingSerializer
 
 class CurrentSeasonFilterAPIView(generics.ListAPIView):
     queryset = CurrentSeason.objects.all()

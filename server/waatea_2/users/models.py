@@ -50,6 +50,7 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     level = models.IntegerField(choices=LEVEL_CHOICES, default=5)
+    is_playing = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.user.email} - Level {self.level}"

@@ -1,5 +1,3 @@
-// user_list_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:random_avatar/random_avatar.dart';
@@ -19,6 +17,7 @@ class ShowPlayers extends StatefulWidget {
 
 class _ShowPlayersState extends State<ShowPlayers> {
   List<UserModel> users = [];
+  bool showOnlyActive = false;
 
   @override
   void initState() {
@@ -28,12 +27,13 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
   Future<void> fetchUsers() async {
     final response = await http.get(
-        Uri.parse(
-            '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}'),
-        headers: {
-          'Authorization': 'Token ${globals.token}',
-          'Content-Type': 'application/json; charset=UTF-8',
-        });
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}'),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
       setState(() {
@@ -42,19 +42,42 @@ class _ShowPlayersState extends State<ShowPlayers> {
     }
   }
 
+  List<UserModel> getFilteredUsers() {
+    if (showOnlyActive) {
+      return users.where((user) => user.profile.isPlaying).toList();
+    } else {
+      return users;
+    }
+  }
+
+  void onFilterChanged(bool newValue) {
+    setState(() {
+      showOnlyActive = newValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('User List'),
+        actions: [
+          IconButton(
+            icon: Icon(showOnlyActive
+                ? Icons.check_box
+                : Icons.check_box_outline_blank),
+            onPressed: () {
+              onFilterChanged(!showOnlyActive);
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
-        itemCount: users.length,
+        itemCount: getFilteredUsers().length,
         itemBuilder: (context, index) {
-          final user = users[index];
+          final user = getFilteredUsers()[index];
           return ListTile(
             leading: RandomAvatar(user.name, height: 40, width: 40),
-
             title: Text(
               user.name,
               style:
@@ -64,10 +87,11 @@ class _ShowPlayersState extends State<ShowPlayers> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                    width: 500, // Replace with your desired width
-                    height: 40, // Replace with your desired height
-                    child: ShowPlayerAttendance(
-                        user.pk, 6, MainAxisAlignment.start))
+                  width: 500, // Replace with your desired width
+                  height: 40, // Replace with your desired height
+                  child:
+                      ShowPlayerAttendance(user.pk, 6, MainAxisAlignment.start),
+                ),
               ],
             ),
             trailing: returnLevelIcon(user.profile.level), // Add the icon here

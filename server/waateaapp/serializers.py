@@ -35,7 +35,7 @@ class GameSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('level',)
+        fields = ('level','is_playing',)
 
 class UserSerializer(serializers.ModelSerializer):
     club = ClubSerializer()
