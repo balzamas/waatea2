@@ -17,6 +17,7 @@ dependencies:
   graphql_flutter: ^5.1.2
   shared_preferences: ^2.2.0
   intl: ^0.18.1
+  random_avatar: any
 
 dev_dependencies:
   flutter_test:

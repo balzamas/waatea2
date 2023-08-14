@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:random_avatar/random_avatar.dart';
+import 'package:waatea2_client/helper.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/showplayerdetail.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
@@ -50,57 +52,9 @@ class _ShowPlayersState extends State<ShowPlayers> {
         itemCount: users.length,
         itemBuilder: (context, index) {
           final user = users[index];
-          String LevelText = "";
-          Icon levelIcon = const Icon(
-            Icons.warning_amber_rounded,
-            color: Colors.red,
-          );
-
-          switch (user.profile.level) {
-            case 0:
-              LevelText = "High performance, performance motivation";
-              levelIcon = const Icon(
-                Icons.star,
-                color: Colors.black,
-              );
-              break;
-            case 1:
-              LevelText = "Basic performance, performance motivation";
-              levelIcon = const Icon(
-                Icons.star_border,
-                color: Colors.black,
-              );
-              break;
-            case 2:
-              LevelText = "High performance, time deficit";
-              levelIcon = const Icon(
-                Icons.lock_clock,
-                color: Colors.black,
-              );
-              break;
-            case 3:
-              LevelText = "High performance, social motivation";
-              levelIcon = const Icon(
-                Icons.local_bar,
-                color: Colors.black,
-              );
-              break;
-            case 4:
-              LevelText = "Basic performance, social motivation";
-              levelIcon = const Icon(
-                Icons.liquor,
-                color: Colors.black,
-              );
-              break;
-            case 5:
-              LevelText = "Newcomer";
-              levelIcon = const Icon(
-                Icons.pets,
-                color: Colors.black,
-              );
-              break;
-          }
           return ListTile(
+            leading: RandomAvatar(user.name, height: 40, width: 40),
+
             title: Text(
               user.name,
               style:
@@ -116,7 +70,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                         user.pk, 6, MainAxisAlignment.start))
               ],
             ),
-            trailing: levelIcon, // Add the icon here
+            trailing: returnLevelIcon(user.profile.level), // Add the icon here
             onTap: () {
               Navigator.push(
                 context,

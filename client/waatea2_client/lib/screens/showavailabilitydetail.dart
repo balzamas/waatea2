@@ -50,15 +50,15 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
   Future<List<ShowAvailabilityDetailModel>> getPlayerList() async {
     //Get players
-    final response_player = await http.get(
+    final responsePlayer = await http.get(
         Uri.parse(
             "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}"),
         headers: {'Authorization': 'Token ${globals.token}'});
 
-    final items_players =
-        json.decode(response_player.body).cast<Map<String, dynamic>>();
+    final itemsPlayers =
+        json.decode(responsePlayer.body).cast<Map<String, dynamic>>();
     List<ShowAvailabilityDetailModel> players =
-        items_players.map<ShowAvailabilityDetailModel>((json) {
+        itemsPlayers.map<ShowAvailabilityDetailModel>((json) {
       return ShowAvailabilityDetailModel.fromJson(json);
     }).toList();
 
@@ -68,10 +68,10 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         headers: {'Authorization': 'Token ${globals.token}'});
 
     if (responseAvail.statusCode == 200) {
-      final items_availability =
+      final itemsAvailability =
           json.decode(responseAvail.body).cast<Map<String, dynamic>>();
       List<AvailabilityModel> availabilities =
-          items_availability.map<AvailabilityModel>((json) {
+          itemsAvailability.map<AvailabilityModel>((json) {
         return AvailabilityModel.fromJson(json);
       }).toList();
 
@@ -125,19 +125,19 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
           PopupMenuButton<SortOption>(
             onSelected: onSortOptionChanged,
             itemBuilder: (BuildContext context) => [
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: SortOption.state,
                 child: Text('Sort by State'),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: SortOption.level,
                 child: Text('Sort by Level'),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: SortOption.updated,
                 child: Text('Sort by Updated'),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: SortOption.name,
                 child: Text('Sort by Name'),
               ),

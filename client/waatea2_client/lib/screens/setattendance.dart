@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -210,7 +211,7 @@ class SetAttendanceState extends State<SetAttendance> {
                             });
                             setAttendanceNow(1);
                           },
-                          child: Text("Yes",
+                          child: Text("Yey!",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold)),
                         ),

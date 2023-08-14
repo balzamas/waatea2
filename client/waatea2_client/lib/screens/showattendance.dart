@@ -51,7 +51,7 @@ class _ShowAttendanceState extends State<ShowAttendance> {
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-          columns: [
+          columns: const [
             DataColumn(label: Text('Training')),
             DataColumn(label: Text('Attending')),
           ],

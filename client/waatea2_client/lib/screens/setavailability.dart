@@ -27,8 +27,8 @@ class SetAvailabilityState extends State<SetAvailability> {
   }
 
   Future<List<SetAvailabilityModel>> getGameList() async {
-    final formatter_date = DateFormat('dd.MM.yyyy EEEE');
-    final formatter_time = DateFormat('HH:mm');
+    final formatterDate = DateFormat('dd.MM.yyyy EEEE');
+    final formatterTime = DateFormat('HH:mm');
 
     final response = await http.get(
         Uri.parse(
@@ -47,15 +47,15 @@ class SetAvailabilityState extends State<SetAvailability> {
         DateTime gameDate = DateTime.parse(games[i].date);
 
         setAvailabilities[setAvailabilities.length - 1].games =
-            "${setAvailabilities[setAvailabilities.length - 1].games}\n${formatter_time.format(gameDate)} - ${games[i].home} - ${games[i].away}";
+            "${setAvailabilities[setAvailabilities.length - 1].games}\n${formatterTime.format(gameDate)} - ${games[i].home} - ${games[i].away}";
       } else {
         DateTime gameDate = DateTime.parse(games[i].date);
         SetAvailabilityModel record = SetAvailabilityModel(
             avail_id: "",
             games:
-                "${formatter_time.format(gameDate)} - ${games[i].home} - ${games[i].away}",
+                "${formatterTime.format(gameDate)} - ${games[i].home} - ${games[i].away}",
             dayofyear: games[i].dayofyear,
-            date: formatter_date.format(gameDate),
+            date: formatterDate.format(gameDate),
             state: 0,
             season: games[i].season);
         final responseAvail = await http.get(

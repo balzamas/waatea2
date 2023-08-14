@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+from django.utils import timezone
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason
@@ -46,11 +46,12 @@ class TrainingFilterAPIView(generics.ListAPIView):
         return queryset
 
 class TrainingCurrentFilterAPIView(generics.ListAPIView):
-    queryset = Training.objects.filter(date__gte=(datetime.now()-timedelta(hours=23))).filter(date__lte=(datetime.now()+timedelta(hours=23))).order_by('date')
+    queryset = Training.objects.filter(date__gte=(timezone.now-timedelta(hours=23))).filter(date__lte=(timezone.now+timedelta(hours=23))).order_by('date')
     serializer_class = TrainingSerializer
     ordering = ['date']
 
     def get_queryset(self):
+        print(datetime.now())
         queryset = super().get_queryset()
         club = self.request.query_params.get('club')
         season = self.request.query_params.get('season')

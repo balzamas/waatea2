@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/signup.dart';
 import '../models/currentseason_model.dart';
 import 'home.dart';
@@ -73,16 +74,16 @@ class _LoginScreenState extends State<LoginScreen> {
           String clubid = json.decode(response2.body)[0]['club']['pk'];
           int userid = json.decode(response2.body)[0]['pk'];
 
-          final response_currentseason = await http.get(
+          final responseCurrentseason = await http.get(
               Uri.parse(
                   "${globals.URL_PREFIX}/api/currentseason/filter?club=$clubid"),
               headers: {'Authorization': 'Token $token'});
 
-          final items_currentseason = json
-              .decode(response_currentseason.body)
+          final itemsCurrentseason = json
+              .decode(responseCurrentseason.body)
               .cast<Map<String, dynamic>>();
           List<CurrentSeasonModel> currentseason =
-              items_currentseason.map<CurrentSeasonModel>((json) {
+              itemsCurrentseason.map<CurrentSeasonModel>((json) {
             return CurrentSeasonModel.fromJson(json);
           }).toList();
 

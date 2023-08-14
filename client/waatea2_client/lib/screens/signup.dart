@@ -139,6 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _emailController,
               decoration: InputDecoration(labelText: "Email"),
             ),
+            SizedBox(height: 24),
             DropdownButtonFormField<ClubModel>(
               value: _selectedClub,
               onChanged: (ClubModel? newValue) {
