@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
-from django.utils import timezone
+
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer
 from rest_framework.permissions import IsAuthenticated
+from django.utils.timezone import make_aware
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
@@ -46,7 +47,7 @@ class TrainingFilterAPIView(generics.ListAPIView):
         return queryset
 
 class TrainingCurrentFilterAPIView(generics.ListAPIView):
-    queryset = Training.objects.filter(date__gte=(timezone.now-timedelta(hours=23))).filter(date__lte=(timezone.now+timedelta(hours=23))).order_by('date')
+    queryset = Training.objects.filter(date__gte=(make_aware(datetime.now())-timedelta(hours=23))).filter(date__lte=(make_aware(datetime.now())+timedelta(hours=23))).order_by('date')
     serializer_class = TrainingSerializer
     ordering = ['date']
 
