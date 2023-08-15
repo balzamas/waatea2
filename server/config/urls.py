@@ -11,7 +11,8 @@ from rest_framework.authtoken import views as restviews
 from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, \
     AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, \
     AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, \
-    TrainingAttendanceCountAPIView, TrainingAttendanceViewSet, TrainingCreateAPIView
+    TrainingAttendanceCountAPIView, TrainingAttendanceViewSet, TrainingCreateAPIView, UserProfileDetail, \
+    UserDetailAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -39,6 +40,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("waatea_2.users.urls", namespace="users")),
+    path('api/user-profile/<int:pk>/', UserProfileDetail.as_view(), name='user-profile-detail'),
     path("accounts/", include("allauth.urls")),
     path('api/', include(router.urls)),
     path('api-token-auth/', restviews.obtain_auth_token, name='api-token-auth'),

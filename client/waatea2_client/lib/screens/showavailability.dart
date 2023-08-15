@@ -29,7 +29,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     //Get number of players
     final response_user = await http.get(
         Uri.parse(
-            "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}"),
+            "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}&is_playing=True"),
         headers: {'Authorization': 'Token ${globals.token}'});
 
     final items_user =

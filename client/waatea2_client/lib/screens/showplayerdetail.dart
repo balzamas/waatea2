@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/models/user_model.dart';
+import 'package:waatea2_client/screens/editplayerdetail.dart';
 import 'package:waatea2_client/screens/setavailability.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 
@@ -19,7 +20,20 @@ class ShowPlayerDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Detail'),
+        title: Text(user.name),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditPlayerDetail(user: user),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -28,13 +42,10 @@ class ShowPlayerDetail extends StatelessWidget {
             RandomAvatar(user.name, height: 80, width: 80),
             returnLevelIcon(user.profile.level),
             SizedBox(height: 16),
-            Text('Is playing: ${user.profile.isPlaying.toString()}'),
-            SizedBox(height: 16),
-            Text(user.name),
+            Text('Is active: ${user.profile.isPlaying.toString()}'),
             SizedBox(height: 16),
             Text('Email: ${user.email}'),
             SizedBox(height: 16),
-            Text('Level:'),
             Text(returnLevelText(user.profile.level)),
             SizedBox(height: 16),
             Text('Mobile Phone: ${user.mobilePhone}'),

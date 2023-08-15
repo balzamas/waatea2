@@ -5,6 +5,7 @@ import '../globals.dart' as globals;
 import '../models/club.dart';
 import 'login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -17,11 +18,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmController =
       TextEditingController();
-
   final TextEditingController _mobilephoneController = TextEditingController();
+
+  final _mobilephoneFormatter = FilteringTextInputFormatter.digitsOnly;
 
   List<ClubModel> _clubs = [];
   ClubModel? _selectedClub;
+
+  bool _formSubmitted = false;
 
   @override
   void initState() {
@@ -34,6 +38,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
       }
     });
+  }
+
+  bool _isValidEmail(String email) {
+    final RegExp emailRegExp = RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$');
+    return emailRegExp.hasMatch(email);
   }
 
   Future<void> _fetchClubs() async {
@@ -103,7 +112,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context: context,
         builder: (_) => AlertDialog(
           title: Text("Error"),
-          content: Text("Failed to register user. Please try again."),
+          content: Text(
+              "Failed to register user. Please try again.\n\nError:\n${response.body}"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -127,17 +137,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: "Name"),
+              decoration: InputDecoration(
+                labelText: "Name and last name",
+                errorText: _formSubmitted && _nameController.text.isEmpty
+                    ? "Field is required"
+                    : null,
+              ),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _mobilephoneController,
-              decoration: InputDecoration(labelText: "Mobile phone"),
+              inputFormatters: [_mobilephoneFormatter],
+              decoration: InputDecoration(
+                labelText: "Mobile phone (format: 41798257004)",
+                errorText: _formSubmitted && _mobilephoneController.text.isEmpty
+                    ? "Field is required"
+                    : null,
+              ),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: "Email"),
+              decoration: InputDecoration(
+                labelText: "Email",
+                errorText: _formSubmitted && _emailController.text.isEmpty
+                    ? "Field is required"
+                    : _formSubmitted && !_isValidEmail(_emailController.text)
+                        ? "Enter a valid email"
+                        : null,
+              ),
             ),
             SizedBox(height: 24),
             DropdownButtonFormField<ClubModel>(
@@ -156,23 +184,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
               decoration: InputDecoration(
                 labelText: "Club",
                 border: OutlineInputBorder(),
+                errorText: _formSubmitted && _selectedClub == null
+                    ? "Field is required"
+                    : null,
               ),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: "Password"),
+              decoration: InputDecoration(
+                labelText: "Password",
+                errorText: _formSubmitted && _passwordController.text.isEmpty
+                    ? "Field is required"
+                    : null,
+              ),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _passwordConfirmController,
               obscureText: true,
-              decoration: InputDecoration(labelText: "Confirm Password"),
+              decoration: InputDecoration(
+                labelText: "Confirm Password",
+                errorText:
+                    _formSubmitted && _passwordConfirmController.text.isEmpty
+                        ? "Field is required"
+                        : null,
+              ),
             ),
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
+                setState(() {
+                  _formSubmitted = true;
+                });
+
                 if (_passwordController.text ==
                     _passwordConfirmController.text) {
                   _registerUser();

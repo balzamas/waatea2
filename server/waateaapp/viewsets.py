@@ -2,8 +2,12 @@ from datetime import datetime, timedelta
 
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
+
+from waatea_2.users.models import UserProfile
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason
-from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer
+from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
+    TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
+    UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 
@@ -89,6 +93,14 @@ class UserFilterAPIView(generics.ListAPIView):
 class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class UserProfileDetail(generics.RetrieveUpdateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+          return UserProfile.objects.get(user_id=self.kwargs['pk'])
 
 class AvailabilityViewSet(viewsets.ModelViewSet):
     queryset = Availability.objects.all()

@@ -37,6 +37,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ('level','is_playing',)
 
+    def update(self, instance, validated_data):
+        print(instance.level)
+        print(instance.is_playing)
+        instance.level = validated_data.get('level', instance.level)
+        instance.is_playing = validated_data.get('is_playing', instance.is_playing)
+        print(instance)
+        print(instance.save())
+
+        return instance
+
 class UserSerializer(serializers.ModelSerializer):
     club = ClubSerializer()
     profile = UserProfileSerializer(source='userprofile')

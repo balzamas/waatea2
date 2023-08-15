@@ -72,6 +72,15 @@ class HomeState extends State<UserProfile> {
                   ),
                   Card(
                     child: ListTile(
+                      leading: Icon(Icons.check_box),
+                      title: Text(
+                        "Active: ${data.profile.isPlaying.toString()}",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
                       leading: Icon(Icons.email),
                       title: Text(
                         data.email,
