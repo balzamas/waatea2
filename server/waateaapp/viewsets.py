@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
-
+from rest_framework.decorators import api_view
 from waatea_2.users.models import UserProfile
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
@@ -10,6 +10,8 @@ from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer,
     UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
+from rest_framework.response import Response
+from rest_framework import status
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
@@ -216,3 +218,16 @@ class TrainingAttendanceViewSet(viewsets.ReadOnlyModelViewSet):
         context = super().get_serializer_context()
         context['user_id'] = self.request.query_params.get('user_id')
         return context
+
+@api_view(['POST'])
+def change_password(request):
+    user = request.user
+    new_password = request.data.get('new_password')
+
+    if not new_password:
+        return Response({'error': 'New password is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(new_password)
+    user.save()
+
+    return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)

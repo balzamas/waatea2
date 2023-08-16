@@ -12,7 +12,7 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, \
     AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, \
     TrainingAttendanceCountAPIView, TrainingAttendanceViewSet, TrainingCreateAPIView, UserProfileDetail, \
-    UserDetailAPIView
+    UserDetailAPIView, change_password
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -64,6 +64,7 @@ urlpatterns = [
 
     path('api/trainings/', TrainingAttendanceCountAPIView.as_view(), name='training-list'),
 
+    path('api/change-password/', change_password, name='change_password'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
