@@ -18,6 +18,8 @@ dependencies:
   shared_preferences: ^2.2.0
   intl: ^0.18.1
   random_avatar: any
+  url_launcher: ^6.1.12
+  whatsapp_unilink: ^2.1.0
 
 dev_dependencies:
   flutter_test:

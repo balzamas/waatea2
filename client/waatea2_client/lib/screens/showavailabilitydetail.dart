@@ -256,11 +256,13 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                     var data = filteredPlayers[index];
 
                     return ShowAvailabilityDetailRow(
-                      name: data.name,
-                      state: data.state,
-                      level: data.level,
-                      updated: data.updated,
-                    );
+                        name: data.name,
+                        phonenumber: data.mobilephone,
+                        state: data.state,
+                        level: data.level,
+                        updated: data.updated,
+                        game:
+                            "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}");
                   },
                 );
               },

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/helper.dart';
 import '../globals.dart' as globals;
+import 'package:url_launcher/url_launcher.dart';
 
 class ShowAvailabilityDetailRow extends StatefulWidget {
   final String name;
+  final String phonenumber;
   final int level;
   final int state;
   final String updated;
+  final String game;
 
   const ShowAvailabilityDetailRow(
       {Key? key,
       required this.name,
+      required this.phonenumber,
       required this.level,
       required this.state,
-      required this.updated})
+      required this.updated,
+      required this.game})
       : super(key: key);
 
   @override
@@ -63,6 +68,25 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [levelIcon])),
+              Expanded(
+                  flex: 1,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            String text = "Hello World !! Hey There";
+                            String url =
+                                "https://wa.me/${widget.phonenumber}?text=Are you available for ${widget.game}? Please update Waatea!";
+                            await launchUrl(Uri.parse(url),
+                                mode: LaunchMode.externalApplication);
+                          },
+                          child: Icon(
+                            Icons.message,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ])),
               Expanded(
                 flex: 1,
                 child: Column(
