@@ -74,6 +74,12 @@ class _LoginScreenState extends State<LoginScreen> {
           String clubid = json.decode(response2.body)[0]['club']['pk'];
           int userid = json.decode(response2.body)[0]['pk'];
 
+          final itemsUser =
+              json.decode(response2.body).cast<Map<String, dynamic>>();
+          List<UserModel> users = itemsUser.map<UserModel>((json) {
+            return UserModel.fromJson(json);
+          }).toList();
+
           final responseCurrentseason = await http.get(
               Uri.parse(
                   "${globals.URL_PREFIX}/api/currentseason/filter?club=$clubid"),
@@ -94,10 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
           globals.clubId = clubid;
           globals.seasonID = season;
           globals.token = token;
+          globals.player = users[0];
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MyHomePage(username),
+              builder: (context) => MyHomePage(initialIndex: 0),
             ),
           );
         }

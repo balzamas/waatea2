@@ -8,16 +8,23 @@ import 'userprofile.dart';
 import '../globals.dart' as globals;
 
 class MyHomePage extends StatefulWidget {
-  final String user;
+  final int initialIndex; // Add this parameter
 
-  MyHomePage(this.user);
+  MyHomePage({this.initialIndex = 0}); // Provide a default value
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _currentIndex = 0;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex =
+        widget.initialIndex; // Initialize _currentIndex using initialIndex
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 4:
         return ShowPlayers();
       case 5:
-        return UserProfile(globals.token, widget.user);
+        return UserProfile(globals.token, globals.player.email);
       default:
         return Container();
     }

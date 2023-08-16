@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/models/user_model.dart';
+import 'package:waatea2_client/screens/home.dart';
 import 'package:waatea2_client/screens/showplayers.dart';
 import '../globals.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -94,7 +95,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => ShowPlayers(),
+                    builder: (_) => MyHomePage(initialIndex: 4),
                   ),
                 );
               },
