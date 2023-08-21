@@ -24,17 +24,23 @@ class Command(BaseCommand):
         with open(file_path, 'r') as csv_file:
             reader = csv.reader(csv_file)
             for row in reader:
-                user, created = User.objects.get_or_create(
-                    email=row[0],
-                    name=row[1],
-                    mobile_phone=row[2],
-                    club=club,
-                )
+                try:
 
-                # Set password for the user
-                user.set_password('rcw12345')
-                user.save()
+                    user, created = User.objects.get_or_create(
+                        email=row[0],
+                        name=row[1],
+                        mobile_phone=row[2],
+                        club=club,
+                    )
 
-                self.stdout.write(self.style.SUCCESS(f'Successfully created user: {row[0]}'))
-                # Process each row as needed
-                print(row[0])
+                    # Set password for the user
+                    user.set_password('rcw12345')
+                    user.save()
+
+                    self.stdout.write(self.style.SUCCESS(f'Successfully created user: {row[0]}'))
+                    # Process each row as needed
+                    print(row[0])
+                except:
+                    self.stdout.write(self.style.ERROR(f'Failed to create user: {row[0]}'))
+
+
