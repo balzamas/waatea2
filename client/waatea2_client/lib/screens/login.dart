@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/signup.dart';
@@ -104,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MyHomePage(initialIndex: 0),
+              builder: (context) => MyHomePage(initialIndex: 1),
             ),
           );
         }
@@ -122,44 +123,60 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username/Email'),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Login'),
-            ),
-            SizedBox(height: 55),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the login screen
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SignUpScreen(),
+    return RawKeyboardListener(
+        focusNode:
+            FocusNode(), // Create a focus node to capture keyboard events
+        onKey: (event) {
+          if (event.logicalKey == LogicalKeyboardKey.enter) {
+            _login(); // Call _login() when Enter key is pressed
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Login')),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextField(
+                  controller: _usernameController,
+                  decoration:
+                      const InputDecoration(labelText: 'Username/Email'),
+                  onSubmitted: (_) =>
+                      _login(), // Call _login() when Enter key is pressed
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                  onSubmitted: (_) =>
+                      _login(), // Call _login() when Enter key is pressed
+                ),
+                const SizedBox(height: 32),
+                Focus(
+                  autofocus: true,
+                  child: ElevatedButton(
+                    onPressed: _login,
+                    child: const Text('Login'),
                   ),
-                );
-              },
-              child: const Text('Register'),
+                ),
+                SizedBox(height: 55),
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to the login screen
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SignUpScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('Register'),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

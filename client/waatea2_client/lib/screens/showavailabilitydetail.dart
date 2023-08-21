@@ -1,11 +1,16 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../globals.dart' as globals;
-
+import 'package:csv/csv.dart'; // Import the csv package
 import '../models/availability_model.dart';
 import '../models/showavailabilitydetail_model.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import '../widgets/showavailabilitydetail_row.dart';
 
 enum SortOption { state, level, updated, name }
@@ -46,6 +51,45 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
   void initState() {
     super.initState();
     games = getPlayerList();
+  }
+
+  Future<void> saveCSVToFile(List<ShowAvailabilityDetailModel> players) async {
+    List<List<dynamic>> csvData = [
+      ['Name', 'Level', 'Availability']
+    ];
+
+    for (var player in players) {
+      var availabilityText = '';
+      switch (player.state) {
+        case 0:
+          availabilityText = 'Not Set';
+          break;
+        case 1:
+          availabilityText = 'Available';
+          break;
+        case 2:
+          availabilityText = 'Maybe';
+          break;
+        case 3:
+          availabilityText = 'Not Available';
+          break;
+      }
+
+      csvData.add([player.name, player.level, availabilityText]);
+    }
+
+    String csv = const ListToCsvConverter().convert(csvData);
+
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+
+      final file = File('${directory.path}/${widget.game}.csv');
+      await file.writeAsString(csv);
+
+      print('CSV file saved to: ${file.path}');
+    } catch (e) {
+      print('Error saving CSV file: $e');
+    }
   }
 
   Future<List<ShowAvailabilityDetailModel>> getPlayerList() async {
@@ -122,6 +166,13 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         title: Text(
             "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}"),
         actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: () async {
+              var players = await games; // Await the completion of the Future
+              saveCSVToFile(players);
+            },
+          ),
           PopupMenuButton<SortOption>(
             onSelected: onSortOptionChanged,
             itemBuilder: (BuildContext context) => [
