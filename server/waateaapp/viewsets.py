@@ -20,7 +20,7 @@ class GameViewSet(viewsets.ModelViewSet):
     ordering = ['date']
 
 class GameCurrentFilterAPIView(generics.ListAPIView):
-    queryset = Game.objects.filter(make_aware(date__gte=datetime.today())).order_by('date')
+    queryset = Game.objects.filter(date__gte=make_aware(datetime.today())).order_by('date')
     serializer_class = GameSerializer
     ordering = ['date']
 
