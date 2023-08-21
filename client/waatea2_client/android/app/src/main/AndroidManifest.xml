@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.waatea2_client">
+    package="ch.atomikzopht.waatea">
    <application
-        android:label="waatea2_client"
+        android:label="Waatea"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

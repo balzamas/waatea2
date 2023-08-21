@@ -76,12 +76,18 @@ class _ShowPlayersState extends State<ShowPlayers> {
         itemCount: getFilteredUsers().length,
         itemBuilder: (context, index) {
           final user = getFilteredUsers()[index];
+          Color playerColor = Colors.black;
+          if (!user.profile.isPlaying) {
+            playerColor = Colors.red;
+          }
+
           return ListTile(
             leading: RandomAvatar(user.name, height: 40, width: 40),
             title: Text(
               user.name,
-              style:
-                  DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5),
+              style: DefaultTextStyle.of(context)
+                  .style
+                  .apply(fontSizeFactor: 1.5, color: playerColor),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
