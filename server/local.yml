@@ -16,6 +16,7 @@ services:
       - mailhog
     volumes:
       - .:/app:z
+      - ./data:/app/data  # Mount the local data directory to /app/data in the container
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres

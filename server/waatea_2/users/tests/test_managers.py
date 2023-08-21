@@ -39,7 +39,7 @@ class TestUserManager:
 
 @pytest.mark.django_db
 def test_createsuperuser_command():
-    """Ensure createsuperuser command works with our custom manager."""
+    """Ensure createsuperuser commands works with our custom manager."""
     out = StringIO()
     command_result = call_command(
         "createsuperuser",
