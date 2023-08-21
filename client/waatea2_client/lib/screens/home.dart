@@ -48,17 +48,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Show Availabilities'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.recent_actors_outlined),
-                  label: Text('Show Training Attendance'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.face),
-                  label: Text('Show Players'),
-                ),
-                NavigationRailDestination(
                   icon: Icon(Icons.settings),
                   label: Text('User Profile'),
                 ),
+                if (globals.player.profile.permission >= 1)
+                  NavigationRailDestination(
+                    icon: Icon(Icons.recent_actors_outlined),
+                    label: Text('Show Training Attendance'),
+                  ),
+                if (globals.player.profile.permission >= 1)
+                  NavigationRailDestination(
+                    icon: Icon(Icons.face),
+                    label: Text('Show Players'),
+                  ),
               ],
               selectedIndex: _currentIndex,
               onDestinationSelected: (value) {
@@ -88,11 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         return ShowAvailability();
       case 3:
-        return ShowAttendance();
-      case 4:
-        return ShowPlayers();
-      case 5:
         return UserProfile(globals.token, globals.player.email);
+      case 4:
+        return ShowAttendance();
+      case 5:
+        return ShowPlayers();
+
       default:
         return Container();
     }

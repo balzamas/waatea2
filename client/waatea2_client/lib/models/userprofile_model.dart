@@ -1,13 +1,16 @@
 class UserProfileModel {
   final int level;
   final bool isPlaying;
+  final int permission;
   // Add other profile fields as needed
 
-  UserProfileModel({required this.level, required this.isPlaying});
+  UserProfileModel(
+      {required this.level, required this.isPlaying, required this.permission});
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    return UserProfileModel(level: json['level'], isPlaying: json['is_playing']
-        // Parse other profile fields from JSON if available
-        );
+    return UserProfileModel(
+        level: json['level'],
+        isPlaying: json['is_playing'],
+        permission: json['permission']);
   }
 }

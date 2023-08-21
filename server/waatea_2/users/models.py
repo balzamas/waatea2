@@ -48,8 +48,16 @@ class UserProfile(models.Model):
         (5, 'Newcomer'),
     ]
 
+    PERMISSION_CHOICES = [
+        (0, 'Player'),
+        (1, 'Coach'),
+        (2, 'Admin'),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     level = models.IntegerField(choices=LEVEL_CHOICES, default=5)
+    permission = models.IntegerField(choices=PERMISSION_CHOICES, default=0)
+
     is_playing = models.BooleanField(default=True)
 
     def __str__(self):

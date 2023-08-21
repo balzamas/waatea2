@@ -55,24 +55,26 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          // Navigate to the ShowAvailabilityDetail screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ShowAvailabilityDetail(
-                widget.gameId,
-                widget.game,
-                widget.gameDate,
-                widget.dayofyear,
-                widget.season,
-                widget.isAvailable,
-                widget.isNotAvailable,
-                widget.isMaybe,
-                widget.isNotSet,
+          if (globals.player.profile.permission > 0) {
+            // Navigate to the ShowAvailabilityDetail screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ShowAvailabilityDetail(
+                  widget.gameId,
+                  widget.game,
+                  widget.gameDate,
+                  widget.dayofyear,
+                  widget.season,
+                  widget.isAvailable,
+                  widget.isNotAvailable,
+                  widget.isMaybe,
+                  widget.isNotSet,
+                ),
+                // Pass any other necessary parameters to ShowAvailabilityDetail constructor
               ),
-              // Pass any other necessary parameters to ShowAvailabilityDetail constructor
-            ),
-          );
+            );
+          }
         },
         child: Container(
           color: Color.fromARGB(255, 245, 245, 245),

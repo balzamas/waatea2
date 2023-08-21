@@ -1,4 +1,4 @@
-package com.example.waatea2_client
+package ch.atomikzopht.waatea
 
 import io.flutter.embedding.android.FlutterActivity
 
