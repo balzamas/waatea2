@@ -4,6 +4,7 @@ class ShowAvailabilityDetailModel {
   final String email;
   final int level;
   final String mobilephone;
+  final int abonnement;
   int state;
   String updated;
 
@@ -14,6 +15,7 @@ class ShowAvailabilityDetailModel {
       required this.level,
       required this.mobilephone,
       required this.state,
+      required this.abonnement,
       required this.updated});
 
   factory ShowAvailabilityDetailModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class ShowAvailabilityDetailModel {
         email: json['email'],
         level: json['profile']['level'],
         mobilephone: json['mobile_phone'],
+        abonnement: json['profile']['abonnement'],
         state: 0,
         updated: "");
   }

@@ -4,14 +4,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:waatea2_client/helper.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 import 'package:csv/csv.dart'; // Import the csv package
 import '../models/availability_model.dart';
 import '../models/showavailabilitydetail_model.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import '../widgets/showavailabilitydetail_row.dart';
+import 'dart:io';
+import 'package:universal_html/html.dart' as html;
 
 enum SortOption { state, level, updated, name }
 
@@ -53,9 +55,28 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     games = getPlayerList();
   }
 
+  Future<void> saveAndDownloadFile(String fileName, String content) async {
+    if (html.window.navigator.platform!.contains('Mac') ||
+        html.window.navigator.platform!.contains('Win')) {
+      // Handle file saving for desktop platforms using path_provider
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/$fileName';
+      final file = File(filePath);
+      await file.writeAsString(content);
+    } else {
+      // Handle file download for web platforms
+      final blob = html.Blob([Uint8List.fromList(content.codeUnits)]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', '$fileName')
+        ..click();
+      html.Url.revokeObjectUrl(url);
+    }
+  }
+
   Future<void> saveCSVToFile(List<ShowAvailabilityDetailModel> players) async {
     List<List<dynamic>> csvData = [
-      ['Name', 'Level', 'Availability']
+      ['Name', 'Level', 'Availability', 'Abonnement']
     ];
 
     for (var player in players) {
@@ -75,21 +96,15 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
           break;
       }
 
-      csvData.add([player.name, player.level, availabilityText]);
+      String abonnementText = returnAbonnementText(player.abonnement);
+
+      csvData
+          .add([player.name, player.level, availabilityText, abonnementText]);
     }
 
     String csv = const ListToCsvConverter().convert(csvData);
 
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-
-      final file = File('${directory.path}/${widget.game}.csv');
-      await file.writeAsString(csv);
-
-      print('CSV file saved to: ${file.path}');
-    } catch (e) {
-      print('Error saving CSV file: $e');
-    }
+    saveAndDownloadFile('${widget.game}.csv', csv);
   }
 
   Future<List<ShowAvailabilityDetailModel>> getPlayerList() async {
