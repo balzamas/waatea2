@@ -135,7 +135,8 @@ class HomeState extends State<UserProfile> {
             "${globals.URL_PREFIX}/api/users/filter?email=${widget.user}"),
         headers: {'Authorization': 'Token ${widget.token}'});
 
-    final items = json.decode(response.body).cast<Map<String, dynamic>>();
+    String responseBody = utf8.decode(response.bodyBytes);
+    final items = json.decode(responseBody).cast<Map<String, dynamic>>();
     List<UserModel> employees = items.map<UserModel>((json) {
       return UserModel.fromJson(json);
     }).toList();
@@ -207,6 +208,16 @@ class HomeState extends State<UserProfile> {
                           children: [
                             returnLevelIcon(data.profile.level),
                             Text(returnLevelText(data.profile.level)),
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        )),
+                  ),
+                  Card(
+                    child: ListTile(
+                        leading: Icon(Icons.train),
+                        title: Column(
+                          children: [
+                            Text(returnAbonnementText(data.profile.abonnement)),
                           ],
                           crossAxisAlignment: CrossAxisAlignment.start,
                         )),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:waatea2_client/helper.dart';
 import '../globals.dart' as globals;
 import '../models/club.dart';
 import 'login.dart';
@@ -24,6 +25,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   List<ClubModel> _clubs = [];
   ClubModel? _selectedClub;
+  int _selectedSubscription = 0;
 
   bool _formSubmitted = false;
 
@@ -168,6 +170,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             SizedBox(height: 24),
+            // DropdownButtonFormField<int>(
+            //   value: _selectedSubscription,
+            //   onChanged: (int? newValue) {
+            //     setState(() {
+            //       _selectedSubscription = newValue!;
+            //     });
+            //   },
+            //   items: List<DropdownMenuItem<int>>.generate(4, (index) {
+            //     return DropdownMenuItem<int>(
+            //       value: index,
+            //       child: Text(returnAbonnementText(index)),
+            //     );
+            //   }),
+            //   decoration: InputDecoration(
+            //     labelText: "Subscription",
+            //     border: OutlineInputBorder(),
+            //     errorText: _formSubmitted && _selectedSubscription == null
+            //         ? "Field is required"
+            //         : null,
+            //   ),
+            // ),
+            // SizedBox(height: 24),
             DropdownButtonFormField<ClubModel>(
               value: _selectedClub,
               onChanged: (ClubModel? newValue) {

@@ -86,3 +86,19 @@ String returnLevelText(int level) {
       return "None";
   }
 }
+
+String returnAbonnementText(int val) {
+  switch (val) {
+    case 0:
+      return "Not set";
+    case 1:
+      return "None";
+    case 2:
+      return "Halbtax/Half fare";
+
+    case 3:
+      return "GA/AG";
+    default:
+      return "Not Set";
+  }
+}

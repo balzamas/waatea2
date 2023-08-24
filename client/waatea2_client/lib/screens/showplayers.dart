@@ -35,7 +35,8 @@ class _ShowPlayersState extends State<ShowPlayers> {
       },
     );
     if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body);
+      String responseBody = utf8.decode(response.bodyBytes);
+      List<dynamic> data = jsonDecode(responseBody);
       setState(() {
         users = data.map((item) => UserModel.fromJson(item)).toList();
       });

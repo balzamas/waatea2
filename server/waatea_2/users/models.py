@@ -37,6 +37,8 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"pk": self.id})
+    def __str__(self):
+        return f"{self.name} - {self.email}"
 
 class UserProfile(models.Model):
     LEVEL_CHOICES = [
@@ -54,11 +56,20 @@ class UserProfile(models.Model):
         (2, 'Admin'),
     ]
 
+    ABONNEMENT_CHOICES = [
+        (0, 'Not Set'),
+        (1, 'None'),
+        (2, 'Half fare'),
+        (3, 'GA'),
+
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     level = models.IntegerField(choices=LEVEL_CHOICES, default=5)
     permission = models.IntegerField(choices=PERMISSION_CHOICES, default=0)
+    abonnement = models.IntegerField(choices=ABONNEMENT_CHOICES, default=0)
 
     is_playing = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.user.email} - Level {self.level}"
+        return f"{self.user.name}"

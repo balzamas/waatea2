@@ -99,8 +99,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
             "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}&is_playing=True"),
         headers: {'Authorization': 'Token ${globals.token}'});
 
-    final itemsPlayers =
-        json.decode(responsePlayer.body).cast<Map<String, dynamic>>();
+    String responseBody = utf8.decode(responsePlayer.bodyBytes);
+    final itemsPlayers = json.decode(responseBody).cast<Map<String, dynamic>>();
     List<ShowAvailabilityDetailModel> players =
         itemsPlayers.map<ShowAvailabilityDetailModel>((json) {
       return ShowAvailabilityDetailModel.fromJson(json);

@@ -75,8 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
           String clubid = json.decode(response2.body)[0]['club']['pk'];
           int userid = json.decode(response2.body)[0]['pk'];
 
+          String responseBody = utf8.decode(response2.bodyBytes);
+
           final itemsUser =
-              json.decode(response2.body).cast<Map<String, dynamic>>();
+              json.decode(responseBody).cast<Map<String, dynamic>>();
           List<UserModel> users = itemsUser.map<UserModel>((json) {
             return UserModel.fromJson(json);
           }).toList();

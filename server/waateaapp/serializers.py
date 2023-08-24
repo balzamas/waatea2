@@ -35,7 +35,7 @@ class GameSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('level','is_playing','permission')
+        fields = ('level','is_playing','permission', 'abonnement')
 
     def update(self, instance, validated_data):
         print(instance.level)
