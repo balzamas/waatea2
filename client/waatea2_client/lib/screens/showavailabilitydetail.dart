@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +77,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
   Future<void> saveCSVToFile(List<ShowAvailabilityDetailModel> players) async {
     List<List<dynamic>> csvData = [
-      ['Name', 'Level', 'Availability', 'Abonnement']
+      ['Name', 'Level', 'Availability', 'Abonnement', 'Training l10']
     ];
 
     for (var player in players) {
@@ -96,10 +97,38 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
           break;
       }
 
-      String abonnementText = returnAbonnementText(player.abonnement);
+      int trainings = 0;
+      int attended = 0;
 
-      csvData
-          .add([player.name, player.level, availabilityText, abonnementText]);
+      List<AttendedViewModel> trainingsX = [];
+      final response = await http.get(
+          Uri.parse(
+              '${globals.URL_PREFIX}/api/training-attendance?season=${globals.seasonID}&club=${globals.clubId}&user_id=${player.pk}&last_n=10'),
+          headers: {'Authorization': 'Token ${globals.token}'});
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+
+        trainingsX = data
+            .map((item) => AttendedViewModel(
+                  date: item['date'],
+                  attended: item['attended'],
+                ))
+            .toList();
+        for (AttendedViewModel training in trainingsX) {
+          trainings = trainings + 1;
+          if (training.attended) {
+            attended = attended + 1;
+          }
+        }
+      }
+
+      csvData.add([
+        player.name,
+        returnLevelText(player.level),
+        availabilityText,
+        returnAbonnementText(player.abonnement),
+        attended
+      ]);
     }
 
     String csv = const ListToCsvConverter().convert(csvData);

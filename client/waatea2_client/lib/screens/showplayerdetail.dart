@@ -49,6 +49,8 @@ class ShowPlayerDetail extends StatelessWidget {
             Text(returnLevelText(user.profile.level)),
             SizedBox(height: 16),
             Text('Mobile Phone: ${user.mobilePhone}'),
+            SizedBox(height: 16),
+            Text('Abo: ${returnAbonnementText(user.profile.abonnement)}'),
             SizedBox(height: 22),
             Text('Training attendance',
                 style: Theme.of(context).textTheme.headline6?.copyWith(
