@@ -61,7 +61,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: const Text('User List'),
         actions: [
           IconButton(
             icon: Icon(showOnlyActive

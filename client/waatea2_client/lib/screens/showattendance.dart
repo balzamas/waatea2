@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/models/trainingattendance_model.dart';
 import '../globals.dart' as globals;
@@ -51,7 +52,7 @@ class _ShowAttendanceState extends State<ShowAttendance> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: Text("Add New Training"),
+              title: const Text("Add New Training"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -72,11 +73,11 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                     },
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.calendar_today),
-                        SizedBox(width: 10),
+                        const Icon(Icons.calendar_today),
+                        const SizedBox(width: 10),
                         Text(
                           "${selectedDateTime.toLocal()}".split(' ')[0],
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
@@ -101,11 +102,12 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                     },
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.access_time),
-                        SizedBox(width: 10),
+                        const Icon(Icons.access_time),
+                        const SizedBox(width: 10),
                         Text(
-                          "${TimeOfDay.fromDateTime(selectedDateTime).format(context)}",
-                          style: TextStyle(fontSize: 16),
+                          TimeOfDay.fromDateTime(selectedDateTime)
+                              .format(context),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
@@ -114,13 +116,13 @@ class _ShowAttendanceState extends State<ShowAttendance> {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text("Cancel"),
+                  child: const Text("Cancel"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 TextButton(
-                  child: Text("Add"),
+                  child: const Text("Add"),
                   onPressed: () async {
                     final requestData = {
                       "date": selectedDateTime.toUtc().toIso8601String(),
@@ -162,10 +164,10 @@ class _ShowAttendanceState extends State<ShowAttendance> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trainings'),
+        title: const Text('Trainings'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_circle_outline),
+            icon: const Icon(Icons.add_circle_outline),
             onPressed: () {
               _showAddTrainingDialog(context);
             },

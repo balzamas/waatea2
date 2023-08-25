@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/helper.dart';
 import 'dart:convert';
@@ -9,6 +10,7 @@ import '../globals.dart' as globals;
 import 'package:csv/csv.dart'; // Import the csv package
 import '../models/availability_model.dart';
 import '../models/showavailabilitydetail_model.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
 import '../widgets/showavailabilitydetail_row.dart';
 import 'dart:io';
@@ -22,7 +24,7 @@ class ShowAvailabilityDetail extends StatefulWidget {
   late final String gameDate;
   late final int dayofyear;
   late final String season;
-  late final isAvailable;
+  late final int isAvailable;
   late final int isNotAvailable;
   late final int isMaybe;
   late final int isNotSet;
@@ -209,7 +211,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
             "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}"),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
             onPressed: () async {
               var players = await games; // Await the completion of the Future
               saveCSVToFile(players);
@@ -260,53 +262,53 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                     foregroundColor: Colors.white,
                     radius: 25.0,
                     child: CircleAvatar(
-                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
                       foregroundColor: Colors.green,
                       radius: 20.0,
                       child: Text(widget.isAvailable.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   CircleAvatar(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
                     radius: 25.0,
                     child: CircleAvatar(
-                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
                       foregroundColor: Colors.orange,
                       radius: 20.0,
                       child: Text(widget.isMaybe.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   CircleAvatar(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                     radius: 25.0,
                     child: CircleAvatar(
-                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
                       foregroundColor: Colors.red,
                       radius: 20.0,
                       child: Text(widget.isNotAvailable.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   CircleAvatar(
                     backgroundColor: Colors.grey,
                     foregroundColor: Colors.white,
                     radius: 25.0,
                     child: CircleAvatar(
-                      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
                       foregroundColor: Colors.grey,
                       radius: 20.0,
                       child: Text(widget.isNotSet.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
@@ -317,7 +319,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               future: games,
               builder: (BuildContext context,
                   AsyncSnapshot<List<ShowAvailabilityDetailModel>> snapshot) {
-                if (!snapshot.hasData) return CircularProgressIndicator();
+                if (!snapshot.hasData) return const CircularProgressIndicator();
 
                 // Apply filtering
                 var filteredPlayers = snapshot.data!.where((player) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:waatea2_client/models/game_model.dart';
@@ -94,14 +95,14 @@ class SetAvailabilityState extends State<SetAvailability> {
       appBar: isTopLevelScreen
           ? null
           : AppBar(
-              title: Text('Set availability'),
+              title: const Text('Set availability'),
             ),
       body: Center(
         child: FutureBuilder<List<SetAvailabilityModel>>(
           future: games,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (!snapshot.hasData) return const CircularProgressIndicator();
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,

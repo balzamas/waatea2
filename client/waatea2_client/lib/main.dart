@@ -12,13 +12,13 @@ class App extends StatelessWidget {
       title: 'Waatea 2',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
             iconTheme: IconThemeData(color: Colors.white), color: Colors.black),
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
-        '/training': (context) => SetAttendance(),
+        '/training': (context) => const SetAttendance(),
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/signup.dart';
@@ -115,12 +116,12 @@ class _LoginScreenState extends State<LoginScreen> {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: Text("Error"),
+            title: const Text("Error"),
             content: Text("Failed to log in.\n\nError:\n${response.body}"),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
+                child: const Text("OK"),
               ),
             ],
           ),
@@ -130,12 +131,12 @@ class _LoginScreenState extends State<LoginScreen> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text("Error"),
-          content: Text("Failed to log in.\n\nError:\n${e}"),
+          title: const Text("Error"),
+          content: Text("Failed to log in.\n\nError:\n$e"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         ),
@@ -186,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text('Login'),
                   ),
                 ),
-                SizedBox(height: 55),
+                const SizedBox(height: 55),
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to the login screen

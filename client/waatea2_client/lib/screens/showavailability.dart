@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../globals.dart' as globals;
@@ -27,14 +28,14 @@ class ShowAvailabilityState extends State<ShowAvailability> {
 
   Future<List<ShowAvailabilityModel>> getGameList() async {
     //Get number of players
-    final response_user = await http.get(
+    final responseUser = await http.get(
         Uri.parse(
             "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}&is_playing=True"),
         headers: {'Authorization': 'Token ${globals.token}'});
 
-    final items_user =
-        json.decode(response_user.body).cast<Map<String, dynamic>>();
-    List<UserModel> users = items_user.map<UserModel>((json) {
+    final itemsUser =
+        json.decode(responseUser.body).cast<Map<String, dynamic>>();
+    List<UserModel> users = itemsUser.map<UserModel>((json) {
       return UserModel.fromJson(json);
     }).toList();
 

@@ -35,29 +35,29 @@ class _MyHomePageState extends State<MyHomePage> {
             child: NavigationRail(
               extended: false,
               destinations: [
-                NavigationRailDestination(
+                const NavigationRailDestination(
                   icon: Icon(Icons.sports_rugby_outlined),
                   label: Text('Set Availabilities'),
                 ),
-                NavigationRailDestination(
+                const NavigationRailDestination(
                   icon: Icon(Icons.fitness_center),
                   label: Text('Set Training Attendance'),
                 ),
-                NavigationRailDestination(
+                const NavigationRailDestination(
                   icon: Icon(Icons.emoji_events_outlined),
                   label: Text('Show Availabilities'),
                 ),
-                NavigationRailDestination(
+                const NavigationRailDestination(
                   icon: Icon(Icons.settings),
                   label: Text('User Profile'),
                 ),
                 if (globals.player.profile.permission >= 1)
-                  NavigationRailDestination(
+                  const NavigationRailDestination(
                     icon: Icon(Icons.recent_actors_outlined),
                     label: Text('Show Training Attendance'),
                   ),
                 if (globals.player.profile.permission >= 1)
-                  NavigationRailDestination(
+                  const NavigationRailDestination(
                     icon: Icon(Icons.face),
                     label: Text('Show Players'),
                   ),
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return SetAvailability(globals.playerId);
       case 1:
-        return SetAttendance();
+        return const SetAttendance();
       case 2:
         return ShowAvailability();
       case 3:

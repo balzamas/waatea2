@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:random_avatar/random_avatar.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -12,7 +11,7 @@ import '../models/training_model.dart';
 //Todo: programmiert mit Kindergeschrei im Hintergrund, total mess, aufräumen
 
 class SetAttendance extends StatefulWidget {
-  SetAttendance();
+  const SetAttendance();
   @override
   SetAttendanceState createState() => SetAttendanceState();
 }
@@ -22,8 +21,8 @@ class SetAttendanceState extends State<SetAttendance> {
   final availabilityListKey = GlobalKey<SetAttendanceState>();
   int state = 0;
   String? attendanceId = "";
-  String? trainingId = null;
-  int? dayofhteyear = null;
+  String? trainingId;
+  int? dayofhteyear;
 
   @override
   void initState() {
@@ -36,7 +35,7 @@ class SetAttendanceState extends State<SetAttendance> {
     if (state == 1) {
       boolState = true;
     }
-    if (this.attendanceId != "") {
+    if (attendanceId != "") {
       final Map<String, bool> body = {
         'attended': boolState,
       };
@@ -71,13 +70,9 @@ class SetAttendanceState extends State<SetAttendance> {
 
       attendanceId = data["pk"];
     }
-    name(params) {}
   }
 
   Future<SetAttendanceModel> getCurrentTraining() async {
-    final formatter_date = DateFormat('dd.MM.yyyy EEEE');
-    final formatter_time = DateFormat('HH:mm');
-
     final response = await http.get(
         Uri.parse(
             "${globals.URL_PREFIX}/api/training_current/filter?club=${globals.clubId}&season=${globals.seasonID}"),
@@ -153,14 +148,14 @@ class SetAttendanceState extends State<SetAttendance> {
           builder: (BuildContext context,
               AsyncSnapshot<SetAttendanceModel> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
               final setAttendance = snapshot.data;
 
               if (setAttendance == null) {
-                return Text('Loading...');
+                return const Text('Loading...');
               }
 
               Icon icon;
@@ -185,18 +180,19 @@ class SetAttendanceState extends State<SetAttendance> {
                 children: [
                   Text(
                     setAttendance.text,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   icon,
-                  if (this.state > -1) ...[
-                    SizedBox(height: 20),
-                    Text(
+                  if (state > -1) ...[
+                    const SizedBox(height: 20),
+                    const Text(
                       "Attending/Attended?",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -211,11 +207,11 @@ class SetAttendanceState extends State<SetAttendance> {
                             });
                             setAttendanceNow(1);
                           },
-                          child: Text("Yey!",
+                          child: const Text("Yey!",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black),
@@ -227,7 +223,7 @@ class SetAttendanceState extends State<SetAttendance> {
                             });
                             setAttendanceNow(2);
                           },
-                          child: Text("No",
+                          child: const Text("No",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold)),
                         ),

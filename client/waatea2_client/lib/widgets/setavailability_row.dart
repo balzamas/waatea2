@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/helper.dart';
 import '../globals.dart' as globals;
@@ -118,7 +119,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
                 children: [
                   Text(
                     widget.date,
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
@@ -128,7 +129,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
                   ),
                   Text(
                     widget.game,
-                    style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.black54,
                           fontSize: 12,
                         ),

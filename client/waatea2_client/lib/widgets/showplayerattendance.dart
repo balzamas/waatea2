@@ -25,12 +25,12 @@ class AttendedViewModel {
 }
 
 class _ShowPlayerAttendanceState extends State<ShowPlayerAttendance> {
-  late Future<List<AttendedViewModel>> train_attend_list_x;
+  late Future<List<AttendedViewModel>> train_attend_list;
 
   @override
   void initState() {
     super.initState();
-    train_attend_list_x = fetchTrainings();
+    train_attend_list = fetchTrainings();
   }
 
   Future<List<AttendedViewModel>> fetchTrainings() async {
@@ -58,10 +58,10 @@ class _ShowPlayerAttendanceState extends State<ShowPlayerAttendance> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: FutureBuilder<List<AttendedViewModel>>(
-          future: train_attend_list_x,
+          future: train_attend_list,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (!snapshot.hasData) return const CircularProgressIndicator();
             // Render icons with dates under each icon
             return Container(
               color: Colors.transparent, // Set transparent background

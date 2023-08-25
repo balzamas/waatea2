@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/helper.dart';
-import '../globals.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
 
 class ShowAvailabilityDetailRow extends StatefulWidget {
@@ -46,7 +45,7 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
         behavior: HitTestBehavior.translucent,
         onTap: () {},
         child: Container(
-          color: Color.fromARGB(255, 238, 236, 236),
+          color: const Color.fromARGB(255, 238, 236, 236),
           child: Row(
             children: [
               Expanded(
@@ -81,7 +80,7 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                             await launchUrl(Uri.parse(url),
                                 mode: LaunchMode.externalApplication);
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.message,
                             color: Colors.black,
                           ),

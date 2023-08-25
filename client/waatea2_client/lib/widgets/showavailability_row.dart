@@ -39,15 +39,6 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
     super.initState();
   }
 
-  Future<void> _submitMutation(
-    BuildContext context,
-    String gameId,
-    int state,
-    String token,
-  ) async {
-    //ToDo: open details
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -77,7 +68,7 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
           }
         },
         child: Container(
-          color: Color.fromARGB(255, 245, 245, 245),
+          color: const Color.fromARGB(255, 245, 245, 245),
           child: Column(
             children: [
               Row(
@@ -113,7 +104,7 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                         Text(
                           "${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}",
                           style:
-                              Theme.of(context).textTheme.bodyText2?.copyWith(
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: Colors.black54,
                                     fontSize: 18,
                                   ),
@@ -131,11 +122,12 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor:
+                                const Color.fromARGB(255, 245, 245, 245),
                             foregroundColor: Colors.green,
                             radius: 20.0,
                             child: Text(widget.isAvailable.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -152,11 +144,12 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor:
+                                const Color.fromARGB(255, 245, 245, 245),
                             foregroundColor: Colors.red,
                             radius: 20.0,
                             child: Text(widget.isNotAvailable.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -173,11 +166,12 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor:
+                                const Color.fromARGB(255, 245, 245, 245),
                             foregroundColor: Colors.orange,
                             radius: 20.0,
                             child: Text(widget.isMaybe.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -194,11 +188,12 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor: Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor:
+                                const Color.fromARGB(255, 245, 245, 245),
                             foregroundColor: Colors.grey,
                             radius: 20.0,
                             child: Text(widget.isNotSet.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                         ),

@@ -23,7 +23,7 @@ class ShowPlayerDetail extends StatelessWidget {
         title: Text(user.name),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () {
               Navigator.push(
                 context,
@@ -44,9 +44,9 @@ class ShowPlayerDetail extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 returnLevelIcon(user.profile.level),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 RandomAvatar(user.name, height: 80, width: 80),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Icon(
                   user.profile.isPlaying ? Icons.check : Icons.close,
                   color: user.profile.isPlaying ? Colors.green : Colors.red,
@@ -56,36 +56,36 @@ class ShowPlayerDetail extends StatelessWidget {
 
             // SizedBox(height: 16),
             // Text('Email: ${user.email}'),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(returnLevelText(user.profile.level)),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.phone),
-                Text('${user.mobilePhone}'),
-                SizedBox(width: 16),
-                Icon(Icons.train),
-                Text('${returnAbonnementText(user.profile.abonnement)}'),
+                const Icon(Icons.phone),
+                Text(user.mobilePhone),
+                const SizedBox(width: 16),
+                const Icon(Icons.train),
+                Text(returnAbonnementText(user.profile.abonnement)),
               ],
             ),
-            SizedBox(height: 22),
+            const SizedBox(height: 22),
             Text('Training attendance',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     )),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               width: 500, // Replace with your desired width
               height: 30, // Replace with your desired height
               child:
                   ShowPlayerAttendance(user.pk, 10, MainAxisAlignment.center),
             ),
-            SizedBox(height: 22),
+            const SizedBox(height: 22),
             Text('Availability',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     )),

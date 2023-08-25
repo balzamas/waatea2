@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:waatea2_client/helper.dart';
 import '../globals.dart' as globals;
 import '../models/club.dart';
 import 'login.dart';
@@ -25,7 +24,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   List<ClubModel> _clubs = [];
   ClubModel? _selectedClub;
-  int _selectedSubscription = 0;
 
   bool _formSubmitted = false;
 
@@ -48,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _fetchClubs() async {
-    final String apiUrl = "${globals.URL_PREFIX}/api/clubs/allclubs";
+    const String apiUrl = "${globals.URL_PREFIX}/api/clubs/allclubs";
     final http.Response response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
@@ -63,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _registerUser() async {
-    final String apiUrl = "${globals.URL_PREFIX}/api/register/";
+    const String apiUrl = "${globals.URL_PREFIX}/api/register/";
 
     final Map<String, dynamic> data = {
       "name": _nameController.text.trim(),
@@ -90,8 +88,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text("Success"),
-          content: Text("User registered successfully!"),
+          title: const Text("Success"),
+          content: const Text("User registered successfully!"),
           actions: [
             TextButton(
               onPressed: () {
@@ -103,7 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 );
               },
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         ),
@@ -113,13 +111,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text("Error"),
+          title: const Text("Error"),
           content: Text(
               "Failed to register user. Please try again.\n\nError:\n${response.body}"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         ),
@@ -130,9 +128,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Sign Up")),
+      appBar: AppBar(title: const Text("Sign Up")),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -146,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     : null,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _mobilephoneController,
               inputFormatters: [_mobilephoneFormatter],
@@ -157,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     : null,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -169,7 +167,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         : null,
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             // DropdownButtonFormField<int>(
             //   value: _selectedSubscription,
             //   onChanged: (int? newValue) {
@@ -207,13 +205,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               }).toList(),
               decoration: InputDecoration(
                 labelText: "Club",
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 errorText: _formSubmitted && _selectedClub == null
                     ? "Field is required"
                     : null,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -224,7 +222,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     : null,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _passwordConfirmController,
               obscureText: true,
@@ -236,7 +234,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         : null,
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -250,19 +248,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   showDialog(
                     context: context,
                     builder: (_) => AlertDialog(
-                      title: Text("Password Mismatch"),
-                      content: Text("Please make sure both passwords match."),
+                      title: const Text("Password Mismatch"),
+                      content:
+                          const Text("Please make sure both passwords match."),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text("OK"),
+                          child: const Text("OK"),
                         ),
                       ],
                     ),
                   );
                 }
               },
-              child: Text("Sign Up"),
+              child: const Text("Sign Up"),
             ),
           ],
         ),

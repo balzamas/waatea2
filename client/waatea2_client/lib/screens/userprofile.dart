@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_avatar/random_avatar.dart';
@@ -41,11 +42,11 @@ class HomeState extends State<UserProfile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Success'),
-          content: Text('Password updated successfully.'),
+          title: const Text('Success'),
+          content: const Text('Password updated successfully.'),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -92,38 +93,39 @@ class HomeState extends State<UserProfile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Change Password'),
+          title: const Text('Change Password'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
                 controller: newPasswordController,
-                decoration: InputDecoration(labelText: 'New Password'),
+                decoration: const InputDecoration(labelText: 'New Password'),
                 obscureText: true,
               ),
               TextField(
                 controller: confirmPasswordController,
-                decoration: InputDecoration(labelText: 'Confirm New Password'),
+                decoration:
+                    const InputDecoration(labelText: 'Confirm New Password'),
                 obscureText: true,
               ),
             ],
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Change Password'),
+              child: const Text('Change Password'),
               onPressed: () {
                 String newPassword = newPasswordController.text;
                 String confirmPassword = confirmPasswordController.text;
 
                 if (newPassword != confirmPassword) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Passwords do not match.')),
+                    const SnackBar(content: Text('Passwords do not match.')),
                   );
                   return;
                 }
@@ -166,75 +168,75 @@ class HomeState extends State<UserProfile> {
           future: userinfo,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (!snapshot.hasData) return const CircularProgressIndicator();
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 var data = snapshot.data[index];
                 return Column(children: [
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   RandomAvatar(data.name, height: 80, width: 80),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.person),
+                      leading: const Icon(Icons.person),
                       title: Text(
                         data.name,
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.check_box),
+                      leading: const Icon(Icons.check_box),
                       title: Text(
                         "Active: ${data.profile.isPlaying.toString()}",
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.email),
+                      leading: const Icon(Icons.email),
                       title: Text(
                         data.email,
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.phone),
+                      leading: const Icon(Icons.phone),
                       title: Text(
                         data.mobilePhone,
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
                   Card(
                     child: ListTile(
-                        leading: Icon(Icons.category),
+                        leading: const Icon(Icons.category),
                         title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             returnLevelIcon(data.profile.level),
                             Text(returnLevelText(data.profile.level)),
                           ],
-                          crossAxisAlignment: CrossAxisAlignment.start,
                         )),
                   ),
                   Card(
                     child: ListTile(
-                        leading: Icon(Icons.train),
+                        leading: const Icon(Icons.train),
                         title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(returnAbonnementText(data.profile.abonnement)),
                           ],
-                          crossAxisAlignment: CrossAxisAlignment.start,
                         )),
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.fitness_center),
+                      leading: const Icon(Icons.fitness_center),
                       title: Container(
                         width: 500, // Replace with your desired width
                         height: 30, // Replace with your desired height
@@ -244,12 +246,12 @@ class HomeState extends State<UserProfile> {
                     ),
                   ),
                   Text('Waatea version: ${_version.toString()}'),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   ElevatedButton(
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     onPressed: _showChangePasswordDialog,
-                    child: Text('Change Password',
+                    child: const Text('Change Password',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
