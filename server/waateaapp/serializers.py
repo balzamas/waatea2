@@ -42,8 +42,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         print(instance.is_playing)
         instance.level = validated_data.get('level', instance.level)
         instance.is_playing = validated_data.get('is_playing', instance.is_playing)
-        print(instance)
-        print(instance.save())
+        instance.abonnement = validated_data.get('abonnement', instance.abonnement)
+
+        instance.save()
 
         return instance
 

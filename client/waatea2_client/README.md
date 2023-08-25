@@ -1,16 +1,12 @@
-# waatea2_client
+# Waatea 2 Client
 
-A new Flutter project.
+Rewrite of Waatea - the availability tool
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+You need to have a running server, set the URL in globals.dart.
+Optimized for Web
 
-A few resources to get you started if this is your first Flutter project:
+## Git repository
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+https://github.com/balzamas/waatea2

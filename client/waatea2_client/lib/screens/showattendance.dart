@@ -177,7 +177,7 @@ class _ShowAttendanceState extends State<ShowAttendance> {
         child: DataTable(
           columns: const [
             DataColumn(label: Text('Training')),
-            DataColumn(label: Text('Attending')),
+            DataColumn(label: Text('Attendance')),
           ],
           rows: trainings.map((training) {
             return DataRow(cells: [

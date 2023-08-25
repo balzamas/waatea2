@@ -112,11 +112,34 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } else {
-        // Login failed, show an error message
-        print('Login failed. Status code: ${response.statusCode}');
-        // TODO: Show error message to the user
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Error"),
+            content: Text("Failed to log in.\n\nError:\n${response.body}"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
       }
     } catch (e) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text("Error"),
+          content: Text("Failed to log in.\n\nError:\n${e}"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
       // Error occurred while making the API call
       print('Error: $e');
       // TODO: Show error message to the user

@@ -3,7 +3,6 @@ class UserProfileModel {
   final bool isPlaying;
   final int permission;
   final int abonnement;
-  // Add other profile fields as needed
 
   UserProfileModel(
       {required this.level,

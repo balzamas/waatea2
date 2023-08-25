@@ -20,23 +20,31 @@ class EditPlayerDetail extends StatefulWidget {
 
 class _EditPlayerDetailState extends State<EditPlayerDetail> {
   bool _isPlaying = false;
-  int _selectedLevel =
-      1; // Default level, you can adjust this based on your levels
+  int _selectedLevel = 1;
+  int _selectedAbonnement = 0;
 
   @override
   void initState() {
     super.initState();
     _isPlaying = widget.user.profile.isPlaying;
     _selectedLevel = widget.user.profile.level;
+    _selectedAbonnement = widget.user.profile.abonnement;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<DropdownMenuItem<int>>? itemsx = [];
+    List<DropdownMenuItem<int>>? itemsLevel = [];
     for (var i = 0; i < 6; i++) {
-      itemsx.add(DropdownMenuItem(
+      itemsLevel.add(DropdownMenuItem(
         value: i,
         child: Text(returnLevelText(i)),
+      ));
+    }
+    List<DropdownMenuItem<int>>? itemsAbonnement = [];
+    for (var i = 0; i < 4; i++) {
+      itemsAbonnement.add(DropdownMenuItem(
+        value: i,
+        child: Text(returnAbonnementText(i)),
       ));
     }
     return Scaffold(
@@ -69,14 +77,26 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                   _selectedLevel = value!;
                 });
               },
-              items: itemsx,
+              items: itemsLevel,
+            ),
+            SizedBox(height: 16),
+            Text('Select Abo'),
+            DropdownButton<int>(
+              value: _selectedAbonnement,
+              onChanged: (value) {
+                setState(() {
+                  _selectedAbonnement = value!;
+                });
+              },
+              items: itemsAbonnement,
             ),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
                 final Map<String, dynamic> body = {
                   'is_playing': _isPlaying,
-                  'level': _selectedLevel
+                  'level': _selectedLevel,
+                  'abonnement': _selectedAbonnement
                 };
 
                 final http.Response response = await http.patch(
@@ -95,7 +115,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => MyHomePage(initialIndex: 4),
+                    builder: (_) => MyHomePage(initialIndex: 5),
                   ),
                 );
               },

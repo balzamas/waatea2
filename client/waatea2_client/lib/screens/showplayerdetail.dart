@@ -39,18 +39,37 @@ class ShowPlayerDetail extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            RandomAvatar(user.name, height: 80, width: 80),
-            returnLevelIcon(user.profile.level),
-            SizedBox(height: 16),
-            Text('Is active: ${user.profile.isPlaying.toString()}'),
-            SizedBox(height: 16),
-            Text('Email: ${user.email}'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                returnLevelIcon(user.profile.level),
+                SizedBox(width: 16),
+                RandomAvatar(user.name, height: 80, width: 80),
+                SizedBox(width: 16),
+                Icon(
+                  user.profile.isPlaying ? Icons.check : Icons.close,
+                  color: user.profile.isPlaying ? Colors.green : Colors.red,
+                ),
+              ],
+            ),
+
+            // SizedBox(height: 16),
+            // Text('Email: ${user.email}'),
             SizedBox(height: 16),
             Text(returnLevelText(user.profile.level)),
             SizedBox(height: 16),
-            Text('Mobile Phone: ${user.mobilePhone}'),
-            SizedBox(height: 16),
-            Text('Abo: ${returnAbonnementText(user.profile.abonnement)}'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.phone),
+                Text('${user.mobilePhone}'),
+                SizedBox(width: 16),
+                Icon(Icons.train),
+                Text('${returnAbonnementText(user.profile.abonnement)}'),
+              ],
+            ),
             SizedBox(height: 22),
             Text('Training attendance',
                 style: Theme.of(context).textTheme.headline6?.copyWith(

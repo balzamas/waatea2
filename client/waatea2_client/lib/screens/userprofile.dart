@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/helper.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
@@ -19,11 +20,20 @@ class UserProfile extends StatefulWidget {
 class HomeState extends State<UserProfile> {
   late Future<List<UserModel>> userinfo;
   final employeeListKey = GlobalKey<HomeState>();
-
+  String? _version;
   @override
   void initState() {
     super.initState();
     userinfo = getUserInfo();
+    _getAppVersion();
+  }
+
+  void _getAppVersion() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final version = packageInfo.version;
+    setState(() {
+      _version = version;
+    });
   }
 
   void _showSuccessDialog() {
@@ -233,6 +243,7 @@ class HomeState extends State<UserProfile> {
                       ),
                     ),
                   ),
+                  Text('Waatea version: ${_version.toString()}'),
                   SizedBox(height: 24),
                   ElevatedButton(
                     style:
