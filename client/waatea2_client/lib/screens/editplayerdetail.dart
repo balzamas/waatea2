@@ -92,6 +92,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
               onPressed: () async {
                 final Map<String, dynamic> body = {
                   'is_playing': _isPlaying,

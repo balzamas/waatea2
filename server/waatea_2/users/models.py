@@ -3,6 +3,7 @@ from django.db.models import CharField, EmailField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.db import models
+from django.db.models import JSONField
 
 import waateaapp
 from waatea_2.users.managers import UserManager
@@ -68,7 +69,7 @@ class UserProfile(models.Model):
     level = models.IntegerField(choices=LEVEL_CHOICES, default=5)
     permission = models.IntegerField(choices=PERMISSION_CHOICES, default=0)
     abonnement = models.IntegerField(choices=ABONNEMENT_CHOICES, default=0)
-
+    comment = models.TextField(default="[]")
     is_playing = models.BooleanField(default=True)
 
     def __str__(self):

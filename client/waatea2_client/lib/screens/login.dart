@@ -183,12 +183,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 Focus(
                   autofocus: true,
                   child: ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     onPressed: _login,
                     child: const Text('Login'),
                   ),
                 ),
                 const SizedBox(height: 55),
                 ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.black),
                   onPressed: () {
                     // Navigate to the login screen
                     Navigator.pushReplacement(

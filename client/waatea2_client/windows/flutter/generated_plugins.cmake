@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   file_saver
   file_selector_windows
+  pasteboard
   url_launcher_windows
 )
 

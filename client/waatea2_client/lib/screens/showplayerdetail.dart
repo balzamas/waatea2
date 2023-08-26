@@ -3,9 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/models/user_model.dart';
+import 'package:waatea2_client/screens/editplayercomment.dart';
 import 'package:waatea2_client/screens/editplayerdetail.dart';
 import 'package:waatea2_client/screens/setavailability.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
+import 'package:flutter_quill/extensions.dart';
+import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 
 import '../helper.dart';
 
@@ -22,6 +26,17 @@ class ShowPlayerDetail extends StatelessWidget {
       appBar: AppBar(
         title: Text(user.name),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.contact_page),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditPlayerComment(user: user),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
