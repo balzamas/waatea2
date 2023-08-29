@@ -71,6 +71,6 @@ class UserProfile(models.Model):
     abonnement = models.IntegerField(choices=ABONNEMENT_CHOICES, default=0)
     comment = models.TextField(default="[]")
     is_playing = models.BooleanField(default=True)
-    sportlomo_id = models.CharField(max_length=200)
+    sportlomo_id = models.CharField(max_length=200, blank=True)
     def __str__(self):
         return f"{self.user.name}"

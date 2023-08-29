@@ -10,8 +10,6 @@
 - **New Feature:** Importer for Sportlomo game history
 - **New Feature:** Basic game history list in User Profile and User Detail
 
-
-
 ## V0.0.3
 - **Miscellaneous:** Add Changelog
 - **New Feature:** Show Waatea Client version in Userprofile
@@ -20,7 +18,6 @@
 - **Enhancement:** Show error messages in log in screen
 
 ## Templates
-
 - **New Feature:** abc
 - **Enhancement:** abc
 - **Bug Fix:** abc
