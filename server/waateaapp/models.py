@@ -87,3 +87,15 @@ class CurrentSeason(models.Model):
 
     def __str__(self):
         return self.club.name
+
+
+class HistoricalGame(models.Model):
+    played_for = models.CharField(max_length=200)
+    played_against = models.CharField(max_length=200)
+    player = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    position = models.CharField(max_length=200)
+    competition = models.CharField(max_length=200)
+
+    class Meta:
+       unique_together = ("played_for", "played_against", "date", "player")

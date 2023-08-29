@@ -44,7 +44,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     //Get games
     final response = await http.get(
         Uri.parse(
-            "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}"),
+            "${globals.URL_PREFIX}/api/games_current_avail/filter?club=${globals.clubId}"),
         headers: {'Authorization': 'Token ${globals.token}'});
 
     String responseBody = utf8.decode(response.bodyBytes);
@@ -54,47 +54,6 @@ class ShowAvailabilityState extends State<ShowAvailability> {
         items.map<ShowAvailabilityModel>((json) {
       return ShowAvailabilityModel.fromJson(json);
     }).toList();
-
-    //Get availabilities
-    for (var i = 0; i < games.length; i++) {
-      final responseAvail = await http.get(
-          Uri.parse(
-              "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&season=${games[i].season}"),
-          headers: {'Authorization': 'Token ${globals.token}'});
-
-      if (responseAvail.statusCode == 200) {
-        final items =
-            json.decode(responseAvail.body).cast<Map<String, dynamic>>();
-        List<AvailabilityModel> availabilities =
-            items.map<AvailabilityModel>((json) {
-          return AvailabilityModel.fromJson(json);
-        }).toList();
-
-        int isAvailable = 0;
-        int isNotAvailable = 0;
-        int isMaybe = 0;
-        int isNotSet = 0;
-
-        for (var availability in availabilities) {
-          if (availability.state == 3) {
-            isAvailable++;
-          } else if (availability.state == 1) {
-            isNotAvailable++;
-          } else if (availability.state == 2) {
-            isMaybe++;
-          }
-        }
-
-        isNotSet = totalUsers - isAvailable - isNotAvailable - isMaybe;
-
-        if (availabilities.isNotEmpty) {
-          games[i].isAvailable = isAvailable;
-          games[i].isNotAvailable = isNotAvailable;
-          games[i].isMaybe = isMaybe;
-          games[i].isNotSet = isNotSet;
-        }
-      }
-    }
 
     return games;
   }
@@ -111,7 +70,8 @@ class ShowAvailabilityState extends State<ShowAvailability> {
           future: games,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (!snapshot.hasData)
+              return CircularProgressIndicator(color: Colors.black);
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,

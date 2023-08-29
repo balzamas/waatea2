@@ -119,10 +119,9 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
                 children: [
                   Text(
                     widget.date,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .apply(fontSizeFactor: 1.5),
                   ),
                   const SizedBox(
                     height: 10,

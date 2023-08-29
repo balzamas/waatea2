@@ -31,13 +31,13 @@ class _ShowAttendanceState extends State<ShowAttendance> {
       setState(() {
         trainings = data
             .map((item) => TrainingAttendanceModel(
-                  pk: item['id'],
-                  date: item['date'],
-                  club: item['club'],
-                  season: item['season'],
-                  dayofyear: item['dayofyear'],
-                  attendanceCount: item['attendance_count'],
-                ))
+                pk: item['id'],
+                date: item['date'],
+                club: item['club'],
+                season: item['season'],
+                dayofyear: item['dayofyear'],
+                attendanceCount: item['attendance_count'],
+                current: item['current']))
             .toList();
       });
     }
@@ -182,11 +182,20 @@ class _ShowAttendanceState extends State<ShowAttendance> {
             DataColumn(label: Text('Attendance')),
           ],
           rows: trainings.map((training) {
-            return DataRow(cells: [
-              DataCell(Text(
-                  "${DateTime.parse(training.date).day}.${DateTime.parse(training.date).month}.${DateTime.parse(training.date).year}")),
-              DataCell(Text(training.attendanceCount.toString())),
-            ]);
+            if (training.current) {
+              print(training.date);
+            }
+            return DataRow(
+                color: training.current
+                    ? MaterialStateColor.resolveWith(
+                        (states) => Colors.lightGreenAccent)
+                    : MaterialStateColor.resolveWith(
+                        (states) => Colors.transparent),
+                cells: [
+                  DataCell(Text(
+                      "${DateTime.parse(training.date).day}.${DateTime.parse(training.date).month}.${DateTime.parse(training.date).year}")),
+                  DataCell(Text(training.attendanceCount.toString())),
+                ]);
           }).toList(),
         ),
       ),

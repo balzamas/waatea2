@@ -148,7 +148,9 @@ class SetAttendanceState extends State<SetAttendance> {
           builder: (BuildContext context,
               AsyncSnapshot<SetAttendanceModel> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return const CircularProgressIndicator(
+                color: Colors.black,
+              );
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {

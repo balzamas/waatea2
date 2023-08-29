@@ -5,6 +5,7 @@ class TrainingAttendanceModel {
   final String date;
   final String club;
   final int attendanceCount;
+  final bool current;
 
   TrainingAttendanceModel(
       {required this.pk,
@@ -12,7 +13,8 @@ class TrainingAttendanceModel {
       required this.season,
       required this.date,
       required this.club,
-      required this.attendanceCount});
+      required this.attendanceCount,
+      required this.current});
 
   factory TrainingAttendanceModel.fromJson(Map<String, dynamic> json) {
     return TrainingAttendanceModel(
@@ -21,6 +23,7 @@ class TrainingAttendanceModel {
         season: json['season'],
         date: json['date'],
         club: json['club'],
-        attendanceCount: json['attendanceCount']);
+        attendanceCount: json['attendanceCount'],
+        current: json['current']);
   }
 }

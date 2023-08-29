@@ -49,15 +49,15 @@ class SetAvailabilityState extends State<SetAvailability> {
         DateTime gameDate = DateTime.parse(games[i].date);
 
         setAvailabilities[setAvailabilities.length - 1].games =
-            "${setAvailabilities[setAvailabilities.length - 1].games}\n${formatterTime.format(gameDate)} - ${games[i].home} - ${games[i].away}";
+            "${setAvailabilities[setAvailabilities.length - 1].games}\n${formatterTime.format(gameDate.toLocal())} - ${games[i].home} - ${games[i].away}";
       } else {
         DateTime gameDate = DateTime.parse(games[i].date);
         SetAvailabilityModel record = SetAvailabilityModel(
             avail_id: "",
             games:
-                "${formatterTime.format(gameDate)} - ${games[i].home} - ${games[i].away}",
+                "${formatterTime.format(gameDate.toLocal())} - ${games[i].home} - ${games[i].away}",
             dayofyear: games[i].dayofyear,
-            date: formatterDate.format(gameDate),
+            date: formatterDate.format(gameDate.toLocal()),
             state: 0,
             season: games[i].season);
         final responseAvail = await http.get(
@@ -102,7 +102,10 @@ class SetAvailabilityState extends State<SetAvailability> {
           future: games,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData) return const CircularProgressIndicator();
+            if (!snapshot.hasData)
+              return const CircularProgressIndicator(
+                color: Colors.black,
+              );
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,

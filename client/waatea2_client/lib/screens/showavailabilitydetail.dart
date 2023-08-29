@@ -319,7 +319,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               future: games,
               builder: (BuildContext context,
                   AsyncSnapshot<List<ShowAvailabilityDetailModel>> snapshot) {
-                if (!snapshot.hasData) return const CircularProgressIndicator();
+                if (!snapshot.hasData)
+                  return const CircularProgressIndicator(color: Colors.black);
 
                 // Apply filtering
                 var filteredPlayers = snapshot.data!.where((player) {

@@ -90,17 +90,17 @@ class _ShowPlayersState extends State<ShowPlayers> {
                   .style
                   .apply(fontSizeFactor: 1.5, color: playerColor),
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 500, // Replace with your desired width
-                  height: 40, // Replace with your desired height
-                  child:
-                      ShowPlayerAttendance(user.pk, 6, MainAxisAlignment.start),
-                ),
-              ],
-            ),
+            // subtitle: Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     Container(
+            //       width: 500, // Replace with your desired width
+            //       height: 40, // Replace with your desired height
+            //       child:
+            //           ShowPlayerAttendance(user.pk, 6, MainAxisAlignment.start),
+            //     ),
+            //   ],
+            // ),
             trailing: returnLevelIcon(user.profile.level), // Add the icon here
             onTap: () {
               Navigator.push(

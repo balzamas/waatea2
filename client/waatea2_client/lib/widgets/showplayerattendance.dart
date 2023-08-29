@@ -18,10 +18,7 @@ class AttendedViewModel {
   final String date;
   final bool attended;
 
-  AttendedViewModel({
-    required this.date,
-    required this.attended,
-  });
+  AttendedViewModel({required this.date, required this.attended});
 }
 
 class _ShowPlayerAttendanceState extends State<ShowPlayerAttendance> {
@@ -61,7 +58,8 @@ class _ShowPlayerAttendanceState extends State<ShowPlayerAttendance> {
           future: train_attend_list,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData) return const CircularProgressIndicator();
+            if (!snapshot.hasData)
+              return const CircularProgressIndicator(color: Colors.black);
             // Render icons with dates under each icon
             return Container(
               color: Colors.transparent, // Set transparent background

@@ -46,10 +46,44 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
     }
   }
 
+  Future<void> _saveData(BuildContext context) async {
+    final Map<String, dynamic> body = {
+      'comment': jsonEncode(
+        _controller.document.toDelta().toJson(),
+      ),
+    };
+
+    final http.Response response = await http.patch(
+      Uri.parse(
+        '${globals.URL_PREFIX}/api/user-profile/${widget.user.pk}/',
+      ),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: json.encode(body),
+    );
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MyHomePage(initialIndex: 5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              _saveData(context);
+            },
+          ),
+        ],
         title: Text(widget.user.name),
       ),
       body: Padding(
@@ -74,36 +108,14 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-              onPressed: () async {
-                final Map<String, dynamic> body = {
-                  'comment': jsonEncode(
-                    _controller.document.toDelta().toJson(),
-                  ),
-                };
-
-                final http.Response response = await http.patch(
-                  Uri.parse(
-                    '${globals.URL_PREFIX}/api/user-profile/${widget.user.pk}/',
-                  ),
-                  headers: {
-                    'Authorization': 'Token ${globals.token}',
-                    'Content-Type': 'application/json; charset=UTF-8',
-                  },
-                  body: json.encode(body),
-                );
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MyHomePage(initialIndex: 5),
-                  ),
-                );
-              },
-              child: const Text('Save'),
-            ),
+            // const SizedBox(height: 16),
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+            //   onPressed: () async {
+            //     _saveData(context);
+            //   },
+            //   child: const Text('Save'),
+            // ),
           ],
         ),
       ),

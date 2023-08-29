@@ -31,10 +31,10 @@ class ShowAvailabilityModel {
       date: json['date'],
       dayofyear: json['dayofyear'],
       season: json['season'],
-      isAvailable: 0,
-      isNotAvailable: 0,
-      isMaybe: 0,
-      isNotSet: 0,
+      isAvailable: json['avail'],
+      isNotAvailable: json['noavail'],
+      isMaybe: json['maybe'],
+      isNotSet: json['notset'],
     );
   }
 

@@ -1,12 +1,23 @@
 # Waatea Changelog
 
-## Version 0.0.3
+## V0.0.4
+- **Enhancement:** In training list show current training in green, show all trainings
+- **Miscellaneous:** Do not show training attendance in player list anymore (performance)
+- **Enhancement:** Save icon in player detail text
+- **Enhancement:** Rearrange columns in game availability overview 
+- **Enhancement:** Use new endpoint to get players availability in one request
+- **Bug Fix:** Show times in CET/Local time
+- **New Feature:** Importer for Sportlomo game history
+- **New Feature:** Basic game history list in User Profile and User Detail
+
+
+
+## V0.0.3
 - **Miscellaneous:** Add Changelog
 - **New Feature:** Show Waatea Client version in Userprofile
 - **New Feature:** Comment on player level, Rich text editor for comment
 - **Enhancement:** Coaches/Admins can edit abonnement type of players
 - **Enhancement:** Show error messages in log in screen
-
 
 ## Templates
 

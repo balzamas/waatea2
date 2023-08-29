@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason
+from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame
 from waatea_2.users.models import UserProfile
 
 admin.site.register(Club)
@@ -25,4 +25,8 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ["user", "level", "permission", "is_playing"]
     ordering = ['user']
 
+@admin.register(HistoricalGame)
+class HistoricalGameAdmin(admin.ModelAdmin):
+    list_display = ["played_for", "played_against", "player", "date", "position", "competition"]
+    ordering = ['player__name']
 

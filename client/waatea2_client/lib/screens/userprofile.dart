@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/helper.dart';
+import 'package:waatea2_client/models/historicalgame_model.dart';
+import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
@@ -156,19 +158,79 @@ class HomeState extends State<UserProfile> {
     return employees;
   }
 
+  Future<void> _showHistoricalGamesDialog() async {
+    List<HistoricalGameModel> historicalGames = [];
+
+    final response = await http.get(
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/historical_games/filter?player=${globals.playerId}'),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      List<dynamic> data = jsonDecode(responseBody);
+      setState(() {
+        historicalGames =
+            data.map((item) => HistoricalGameModel.fromJson(item)).toList();
+      });
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Historical Games'),
+          content: ListView.builder(
+            itemCount: historicalGames.length,
+            itemBuilder: (BuildContext context, int index) {
+              var game = historicalGames[index];
+              return ListTile(
+                title: Text('Played For: ${game.played_for}'),
+                subtitle: Text('Played Against: ${game.played_against}'),
+                // You can display more information about the game here
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: employeeListKey,
-      appBar: AppBar(
-        title: const Text('User Info'),
-      ),
+      appBar: AppBar(title: const Text('User Info'), actions: [
+        IconButton(
+          icon: const Icon(Icons.history_edu_rounded),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      HistoricalGamesScreen(playerId: globals.playerId),
+                ));
+          },
+        ),
+      ]),
       body: Center(
         child: FutureBuilder<List<UserModel>>(
           future: userinfo,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData) return const CircularProgressIndicator();
+            if (!snapshot.hasData)
+              return const CircularProgressIndicator(color: Colors.black);
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,

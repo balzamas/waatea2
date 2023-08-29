@@ -1,7 +1,20 @@
 from rest_framework import serializers
+from django.utils.timezone import make_aware
+from datetime import datetime, timedelta
 
-from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason
+from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame
 from waatea_2.users.models import UserProfile
+
+class HistoricalGameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoricalGame
+        fields = [
+        'played_for',
+        'played_against',
+        'position',
+        'competition',
+        'date'
+        ]
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
@@ -31,6 +44,44 @@ class GameSerializer(serializers.ModelSerializer):
         'dayofyear',
         'season'
         ]
+
+class GameAvailCountSerializer(serializers.ModelSerializer):
+    home = TeamSerializer()
+    away = TeamSerializer()
+    avail = serializers.SerializerMethodField()
+    noavail = serializers.SerializerMethodField()
+    maybe = serializers.SerializerMethodField()
+    notset = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Game
+        fields = [
+        'pk',
+        'home',
+        'away',
+        'club',
+        'date',
+        'dayofyear',
+        'season',
+            'avail',
+            'noavail',
+            'maybe',
+            'notset',
+        ]
+
+    def get_avail(self, obj):
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=3).count()
+
+    def get_maybe(self, obj):
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=2).count()
+
+    def get_noavail(self, obj):
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=1).count()
+
+    def get_notset(selfself, obj):
+        usercount = User.objects.filter(club=obj.club, userprofile__is_playing=True).count()
+        return usercount - Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season).count()
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -101,9 +152,17 @@ class TrainingSerializer(serializers.ModelSerializer):
 
 class TrainingAttendanceCountSerializer(serializers.ModelSerializer):
     attendance_count = serializers.SerializerMethodField()
+    current = serializers.SerializerMethodField()
 
     def get_attendance_count(self, obj):
         return obj.attendances.filter(attended=True).count()
+    def get_current(self, obj):
+        date = obj.date
+
+        if date > (make_aware(datetime.now())-timedelta(hours=23)) and date < (make_aware(datetime.now())+timedelta(hours=23)):
+            return True
+        else:
+            return False
 
     class Meta:
         model = Training

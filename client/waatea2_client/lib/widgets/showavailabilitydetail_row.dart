@@ -62,19 +62,20 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   ],
                 ),
               ),
+              stateIcon,
+              const SizedBox(width: 40),
               Expanded(
                   flex: 1,
                   child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [levelIcon])),
               Expanded(
                   flex: 1,
                   child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
                           onTap: () async {
-                            String text = "Hello World !! Hey There";
                             String url =
                                 "https://wa.me/${widget.phonenumber}?text=Are you available for ${widget.game}? Please update Waatea!";
                             await launchUrl(Uri.parse(url),
@@ -100,7 +101,6 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   ],
                 ),
               ),
-              stateIcon,
             ],
           ),
         ),

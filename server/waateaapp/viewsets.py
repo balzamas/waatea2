@@ -4,10 +4,10 @@ from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
 from waatea_2.users.models import UserProfile
-from .models import Game, User, Availability, Attendance, Training, CurrentSeason
+from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
-    UserProfileSerializer
+    UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -19,6 +19,19 @@ class GameViewSet(viewsets.ModelViewSet):
     ordering_fields = ['date']
     ordering = ['date']
 
+class HistoricalGameFilterAPIView(generics.ListAPIView):
+    queryset = HistoricalGame.objects.order_by('-date')
+    serializer_class = HistoricalGameSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        player = self.request.query_params.get('player')
+
+        if player:
+            queryset = queryset.filter(player=player)
+
+        return queryset
 class GameCurrentFilterAPIView(generics.ListAPIView):
     queryset = Game.objects.filter(date__gte=make_aware(datetime.today())).order_by('date')
     serializer_class = GameSerializer
@@ -34,6 +47,23 @@ class GameCurrentFilterAPIView(generics.ListAPIView):
         if club and season:
             queryset = queryset.filter(club=club, season=season)
 
+
+        return queryset
+
+class GameCurrentAvailCountFilterAPIView(generics.ListAPIView):
+    queryset = Game.objects.filter(date__gte=make_aware(datetime.today())).order_by('date')
+    serializer_class = GameAvailCountSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+        season = self.request.query_params.get('season')
+
+        if club:
+            queryset = queryset.filter(club=club)
+        if club and season:
+            queryset = queryset.filter(club=club, season=season)
 
         return queryset
 
@@ -182,14 +212,17 @@ class CurrentSeasonFilterAPIView(generics.ListAPIView):
         return queryset
 
 class TrainingAttendanceCountAPIView(generics.ListAPIView):
-    queryset = Training.objects.filter(date__lte=(datetime.today()+timedelta(hours=24))).order_by('-date')
+    queryset = Training.objects.order_by('-date')
     serializer_class = TrainingAttendanceCountSerializer
 
     def get_queryset(self):
         queryset = super().get_queryset()
         season = self.request.query_params.get('season')
+        club = self.request.query_params.get('club')
 
-        if season:
+        if season and club:
+            queryset = queryset.filter(season=season, club=club)
+        elif season:
             queryset = queryset.filter(season=season)
 
         return queryset

@@ -5,6 +5,7 @@ import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/editplayercomment.dart';
 import 'package:waatea2_client/screens/editplayerdetail.dart';
+import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/screens/setavailability.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:flutter_quill/extensions.dart';
@@ -46,6 +47,17 @@ class ShowPlayerDetail extends StatelessWidget {
                   builder: (context) => EditPlayerDetail(user: user),
                 ),
               );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.history_edu_rounded),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        HistoricalGamesScreen(playerId: user.pk),
+                  ));
             },
           ),
         ],
