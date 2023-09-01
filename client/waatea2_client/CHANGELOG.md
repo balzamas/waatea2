@@ -1,5 +1,7 @@
 # Waatea Changelog
 
+## V0.0.5
+
 ## V0.0.4
 - **Enhancement:** In training list show current training in green, show all trainings
 - **Miscellaneous:** Do not show training attendance in player list anymore (performance)
