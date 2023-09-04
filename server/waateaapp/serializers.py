@@ -19,7 +19,7 @@ class HistoricalGameSerializer(serializers.ModelSerializer):
 class LinksSerializer(serializers.ModelSerializer):
     class Meta:
         model = Links
-        fields = ['pk', 'name', 'icon']
+        fields = ['pk', 'name', 'icon', 'url']
 
 class ClassificationSerializer(serializers.ModelSerializer):
     class Meta:

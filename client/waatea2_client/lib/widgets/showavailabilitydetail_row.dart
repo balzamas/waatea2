@@ -76,8 +76,8 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                         Icon(
                           widget.player.classification?.icon != null
                               ? IconData(
-                                  int.parse(widget.player.classification!.icon,
-                                      radix: 16),
+                                  int.parse(
+                                      '0x${widget.player.classification!.icon}'),
                                   fontFamily: 'MaterialIcons',
                                 )
                               : Icons.highlight_off,

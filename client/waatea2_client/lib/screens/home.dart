@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waatea2_client/screens/links.dart';
 import 'package:waatea2_client/screens/showattendance.dart';
 import 'package:waatea2_client/screens/showplayers.dart';
 import 'setattendance.dart';
@@ -48,6 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Show Availabilities'),
                 ),
                 const NavigationRailDestination(
+                  icon: Icon(Icons.link),
+                  label: Text('Links'),
+                ),
+                const NavigationRailDestination(
                   icon: Icon(Icons.settings),
                   label: Text('User Profile'),
                 ),
@@ -90,10 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         return ShowAvailability();
       case 3:
-        return UserProfile(globals.token, globals.player.email);
+        return ShowLinks();
       case 4:
-        return ShowAttendance();
+        return UserProfile(globals.token, globals.player.email);
       case 5:
+        return ShowAttendance();
+      case 6:
         return ShowPlayers();
 
       default:

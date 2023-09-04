@@ -17,7 +17,7 @@ class Command(BaseCommand):
         filename = kwargs['filename']
         clubid=kwargs['clubid']
         print(filename)
-        file_path = f'/app/data/{filename}'  # Path to the mounted CSV file
+        file_path = filename  # Path to the mounted CSV file
 
         club = Club.objects.get(pk=clubid)
 
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     )
 
                     # Set password for the user
-                    user.set_password('rcw12345')
+                    user.set_password(row[0].split("@")[0] + '12345')
                     user.save()
 
                     self.stdout.write(self.style.SUCCESS(f'Successfully created user: {row[0]}'))

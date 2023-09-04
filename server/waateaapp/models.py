@@ -89,6 +89,7 @@ class CurrentSeason(models.Model):
         return self.club.name
 
 class Links(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     url = models.CharField(max_length=200)
@@ -100,6 +101,7 @@ class Links(models.Model):
         return self.club.name
 
 class HistoricalGame(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     played_for = models.CharField(max_length=200)
     played_against = models.CharField(max_length=200)
     player = models.ForeignKey(User, on_delete=models.CASCADE)

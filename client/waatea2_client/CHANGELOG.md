@@ -2,7 +2,8 @@
 
 ## V0.0.6
 - **Enhancement:** Add classification for players
-- **Enhancement:** Players can edit their abo-type and phone number
+- **New Feature:** List of links
+- **New Feature:** Players can edit their abo-type and phone number
 
 ## V0.0.5
 - **Enhancement:** Better game history overview

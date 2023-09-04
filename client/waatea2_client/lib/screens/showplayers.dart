@@ -111,8 +111,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                           right: 8.0), // Adjust spacing as needed
                       child: Icon(
                         IconData(
-                            int.parse(user.profile.classification!.icon,
-                                radix: 16),
+                            int.parse('0x${user.profile.classification!.icon}'),
                             fontFamily: 'MaterialIcons'),
                       )),
                 returnLevelIcon(user.profile.level), // Add the level icon here
