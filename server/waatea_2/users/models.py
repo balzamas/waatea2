@@ -81,7 +81,7 @@ class UserProfile(models.Model):
         (1, 'None'),
         (2, 'Half fare'),
         (3, 'GA'),
-
+        (4, 'ZVV'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)

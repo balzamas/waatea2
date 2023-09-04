@@ -5,6 +5,7 @@
 - **New Feature:** List of links
 - **New Feature:** Players can edit their abo-type and phone number
 - **Enhancement:** Status pop up when exporting the CSV file
+- **Enhancement:** Abo type can be set at sign up
 
 ## V0.0.5
 - **Enhancement:** Better game history overview

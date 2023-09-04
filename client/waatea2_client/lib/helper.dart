@@ -98,6 +98,8 @@ String returnAbonnementText(int val) {
 
     case 3:
       return "GA/AG";
+    case 4:
+      return "ZVV";
     default:
       return "Not Set";
   }

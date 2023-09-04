@@ -79,7 +79,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
       ));
     }
     List<DropdownMenuItem<int>>? itemsAbonnement = [];
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 5; i++) {
       itemsAbonnement.add(DropdownMenuItem(
         value: i,
         child: Text(returnAbonnementText(i)),
@@ -164,7 +164,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
 
                 final http.Response response = await http.patch(
                   Uri.parse(
-                      '${globals.URL_PREFIX}/api/user-profile/${widget.user.pk}/'),
+                      '${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/'),
                   headers: {
                     'Authorization': 'Token ${globals.token}',
                     'Content-Type': 'application/json; charset=UTF-8',
@@ -178,7 +178,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => MyHomePage(initialIndex: 5),
+                    builder: (_) => MyHomePage(initialIndex: 6),
                   ),
                 );
               },

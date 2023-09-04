@@ -40,7 +40,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("waatea_2.users.urls", namespace="users")),
-    path('api/user-profile/<int:pk>/', UserProfileDetail.as_view(), name='user-profile-detail'),
+    path('api/user-profile/<str:email>/', UserProfileDetail.as_view(), name='user-profile-detail'),
     path("accounts/", include("allauth.urls")),
     path('api/', include(router.urls)),
     path('api-token-auth/', restviews.obtain_auth_token, name='api-token-auth'),

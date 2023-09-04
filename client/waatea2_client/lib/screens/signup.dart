@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:waatea2_client/helper.dart';
 import '../globals.dart' as globals;
 import '../models/club.dart';
 import 'login.dart';
@@ -24,6 +25,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   List<ClubModel> _clubs = [];
   ClubModel? _selectedClub;
+  int _selectedAbonnement = 0;
 
   bool _formSubmitted = false;
 
@@ -67,7 +69,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "name": _nameController.text.trim(),
       "email": _emailController.text.trim(),
       "password": _passwordController.text,
-      "mobile_phone": _mobilephoneController.text.trim(),
       "club": _selectedClub!.pk
     };
 
@@ -81,6 +82,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (response.statusCode == 201) {
       // User successfully registered, handle success
+      const String apiUrl = "${globals.URL_PREFIX}/api-token-auth/";
+      final Map<String, String> headers = {'Content-Type': 'application/json'};
+      final Map<String, String> body = {
+        'username': _emailController.text,
+        'password': _passwordController.text
+      };
+
+      final http.Response responseLogin = await http.post(Uri.parse(apiUrl),
+          headers: headers, body: json.encode(body));
+
+      if (responseLogin.statusCode == 200) {
+        // Login successful, extract the token from the response
+        String token = json.decode(responseLogin.body)['token'];
+
+        final Map<String, dynamic> body = {
+          'abonnement': _selectedAbonnement,
+          'mobile_phone': _mobilephoneController.text.trim(),
+        };
+
+        final http.Response response = await http.patch(
+          Uri.parse(
+              '${globals.URL_PREFIX}/api/user-profile/${_emailController.text}/'),
+          headers: {
+            'Authorization': 'Token ${token}',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(body),
+        );
+      }
+
       final sharedPreferences = await SharedPreferences.getInstance();
       sharedPreferences.setString('email', _emailController.text);
       sharedPreferences.setString('password', _passwordController.text);
@@ -168,28 +199,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            // DropdownButtonFormField<int>(
-            //   value: _selectedSubscription,
-            //   onChanged: (int? newValue) {
-            //     setState(() {
-            //       _selectedSubscription = newValue!;
-            //     });
-            //   },
-            //   items: List<DropdownMenuItem<int>>.generate(4, (index) {
-            //     return DropdownMenuItem<int>(
-            //       value: index,
-            //       child: Text(returnAbonnementText(index)),
-            //     );
-            //   }),
-            //   decoration: InputDecoration(
-            //     labelText: "Subscription",
-            //     border: OutlineInputBorder(),
-            //     errorText: _formSubmitted && _selectedSubscription == null
-            //         ? "Field is required"
-            //         : null,
-            //   ),
-            // ),
-            // SizedBox(height: 24),
+            DropdownButtonFormField<int>(
+              value: _selectedAbonnement,
+              onChanged: (int? newValue) {
+                setState(() {
+                  _selectedAbonnement = newValue!;
+                });
+              },
+              items: List<DropdownMenuItem<int>>.generate(5, (index) {
+                return DropdownMenuItem<int>(
+                  value: index,
+                  child: Text(returnAbonnementText(index)),
+                );
+              }),
+              decoration: InputDecoration(
+                labelText: "Abonnement",
+                border: OutlineInputBorder(),
+                errorText: _formSubmitted && _selectedAbonnement == null
+                    ? "Field is required"
+                    : null,
+              ),
+            ),
+            SizedBox(height: 24),
             DropdownButtonFormField<ClubModel>(
               value: _selectedClub,
               onChanged: (ClubModel? newValue) {

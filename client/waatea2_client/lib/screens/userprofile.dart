@@ -158,7 +158,7 @@ class HomeState extends State<UserProfile> {
         return StatefulBuilder(
           builder: (BuildContext context, setState) {
             List<DropdownMenuItem<int>> itemsAbonnement = [];
-            for (var i = 0; i < 4; i++) {
+            for (var i = 0; i < 5; i++) {
               itemsAbonnement.add(DropdownMenuItem(
                 value: i,
                 child: Text(returnAbonnementText(i)),
@@ -174,6 +174,7 @@ class HomeState extends State<UserProfile> {
                     decoration:
                         const InputDecoration(labelText: 'Phone Number'),
                   ),
+                  const SizedBox(height: 32),
                   const Text('Select Abo'),
                   DropdownButton<int>(
                     value: _selectedAbonnement,
@@ -207,7 +208,7 @@ class HomeState extends State<UserProfile> {
 
                     final http.Response response = await http.patch(
                       Uri.parse(
-                          '${globals.URL_PREFIX}/api/user-profile/${globals.player.pk}/'),
+                          '${globals.URL_PREFIX}/api/user-profile/${globals.player.email}/'),
                       headers: {
                         'Authorization': 'Token ${globals.token}',
                         'Content-Type': 'application/json; charset=UTF-8',
@@ -215,7 +216,6 @@ class HomeState extends State<UserProfile> {
                       body: json.encode(body),
                     );
 
-                    Navigator.of(context).pop(); // Close the dialog
                     final http.Response response2 = await http.get(
                         Uri.parse(
                             '${globals.URL_PREFIX}/api/users/filter?email=${globals.player.email}'),
@@ -232,6 +232,14 @@ class HomeState extends State<UserProfile> {
                       }).toList();
 
                       globals.player = users[0];
+
+                      Navigator.of(context).pop(); // Close the dialog
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MyHomePage(initialIndex: 1),
+                        ),
+                      );
                     }
                   },
                 ),

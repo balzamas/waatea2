@@ -55,7 +55,7 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
 
     final http.Response response = await http.patch(
       Uri.parse(
-        '${globals.URL_PREFIX}/api/user-profile/${widget.user.pk}/',
+        '${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/',
       ),
       headers: {
         'Authorization': 'Token ${globals.token}',

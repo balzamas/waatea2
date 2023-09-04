@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
@@ -125,13 +125,17 @@ class LevelFilterAPIView(generics.ListAPIView):
         return queryset
 
 class TrainingCurrentFilterAPIView(generics.ListAPIView):
-    queryset = Training.objects.filter(date__gte=(make_aware(datetime.now())-timedelta(hours=23))).filter(date__lte=(make_aware(datetime.now())+timedelta(hours=23))).order_by('date')
     serializer_class = TrainingSerializer
     ordering = ['date']
 
     def get_queryset(self):
-        print(datetime.now())
-        queryset = super().get_queryset()
+        current_time = make_aware(datetime.now())
+        print(current_time)
+        queryset = Training.objects.filter(
+            date__gte=current_time - timedelta(hours=23),
+            date__lte=current_time + timedelta(hours=23)
+        ).order_by('date')
+
         club = self.request.query_params.get('club')
         season = self.request.query_params.get('season')
 
@@ -174,7 +178,7 @@ class UserProfileDetail(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-          return UserProfile.objects.get(user_id=self.kwargs['pk'])
+          return UserProfile.objects.get(user__email=self.kwargs['email'])
 
 class AvailabilityViewSet(viewsets.ModelViewSet):
     queryset = Availability.objects.all()

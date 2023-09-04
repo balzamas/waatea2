@@ -30,7 +30,7 @@ class ShowAvailabilityDetailModel {
         email: json['email'],
         level: json['profile']['level'],
         playerProfile: UserProfileModel.fromJson(json['profile']),
-        mobilephone: json['mobile_phone'],
+        mobilephone: json['profile']['mobile_phone'],
         abonnement: json['profile']['abonnement'],
         state: 0,
         updated: "");

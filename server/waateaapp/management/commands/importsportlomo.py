@@ -20,7 +20,7 @@ class Command(BaseCommand):
         for filename in files:
             print(filename)
             print(filename)
-            workbook = load_workbook(filename=file_path + "/" + str(filename))
+            workbook = load_workbook(filename=str(filename))
             sheet = workbook.active
 
             sportlomo_id = sheet.cell(row=1, column=3).value
