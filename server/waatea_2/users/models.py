@@ -41,6 +41,26 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.name} - {self.email}"
 
+class Level(models.Model):
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    icon = models.CharField(max_length=200)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name + " / " + self.club.name
+
+class Classification(models.Model):
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    icon = models.CharField(max_length=200)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name + " / " + self.club.name
+
 class UserProfile(models.Model):
     LEVEL_CHOICES = [
         (0, 'High performance, performance motivation'),
@@ -72,5 +92,7 @@ class UserProfile(models.Model):
     comment = models.TextField(default="[]")
     is_playing = models.BooleanField(default=True)
     sportlomo_id = models.CharField(max_length=200, blank=True)
+    classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, blank=True, null=True)
+
     def __str__(self):
         return f"{self.user.name}"

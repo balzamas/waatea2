@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
-from waatea_2.users.models import UserProfile
-from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame
+from waatea_2.users.models import UserProfile, Level, Classification
+from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
-    UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer
+    UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, LevelSerializer, ClassificationSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -79,6 +79,48 @@ class TrainingFilterAPIView(generics.ListAPIView):
 
         if club and season:
             queryset = queryset.filter(club=club, season=season)
+
+        return queryset
+
+class LinksFilterAPIView(generics.ListAPIView):
+    queryset = Links.objects.order_by('name')
+    serializer_class = LinksSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
+
+        return queryset
+
+class ClassificationFilterAPIView(generics.ListAPIView):
+    queryset = Classification.objects.order_by('name')
+    serializer_class = ClassificationSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
+
+        return queryset
+
+class LevelFilterAPIView(generics.ListAPIView):
+    queryset = Level.objects.order_by('name')
+    serializer_class = LevelSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
 
         return queryset
 

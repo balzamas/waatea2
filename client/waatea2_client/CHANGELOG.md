@@ -1,6 +1,11 @@
 # Waatea Changelog
 
+## V0.0.6
+- **Enhancement:** Add classification for players
+- **Enhancement:** Players can edit their abo-type and phone number
+
 ## V0.0.5
+- **Enhancement:** Better game history overview
 
 ## V0.0.4
 - **Enhancement:** In training list show current training in green, show all trainings

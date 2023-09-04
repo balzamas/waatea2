@@ -88,6 +88,16 @@ class CurrentSeason(models.Model):
     def __str__(self):
         return self.club.name
 
+class Links(models.Model):
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    url = models.CharField(max_length=200)
+    icon = models.CharField(max_length=200)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.club.name
 
 class HistoricalGame(models.Model):
     played_for = models.CharField(max_length=200)
@@ -99,3 +109,5 @@ class HistoricalGame(models.Model):
 
     class Meta:
        unique_together = ("played_for", "played_against", "date", "player")
+
+

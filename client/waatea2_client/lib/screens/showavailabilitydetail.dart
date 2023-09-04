@@ -77,7 +77,14 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
   Future<void> saveCSVToFile(List<ShowAvailabilityDetailModel> players) async {
     List<List<dynamic>> csvData = [
-      ['Name', 'Level', 'Availability', 'Abonnement', 'Training l10']
+      [
+        'Name',
+        'Level',
+        'Classification',
+        'Availability',
+        'Abonnement',
+        'Training l10'
+      ]
     ];
 
     for (var player in players) {
@@ -125,6 +132,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
       csvData.add([
         player.name,
         returnLevelText(player.level),
+        player.playerProfile.classification?.name ?? 'Not Set',
         availabilityText,
         returnAbonnementText(player.abonnement),
         attended
@@ -357,6 +365,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                         state: data.state,
                         level: data.level,
                         updated: data.updated,
+                        player: data.playerProfile,
                         game:
                             "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}");
                   },

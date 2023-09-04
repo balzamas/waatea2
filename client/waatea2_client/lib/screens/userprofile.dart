@@ -24,6 +24,10 @@ class HomeState extends State<UserProfile> {
   late Future<List<UserModel>> userinfo;
   final employeeListKey = GlobalKey<HomeState>();
   String? _version;
+  int _selectedAbonnement = 0;
+
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController abonnementController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -158,6 +162,71 @@ class HomeState extends State<UserProfile> {
     return employees;
   }
 
+  void _showEditDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        List<DropdownMenuItem<int>>? itemsAbonnement = [];
+        for (var i = 0; i < 4; i++) {
+          itemsAbonnement.add(DropdownMenuItem(
+            value: i,
+            child: Text(returnAbonnementText(i)),
+          ));
+        }
+        return AlertDialog(
+          title: const Text('Edit Profile'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: phoneNumberController,
+                decoration: const InputDecoration(labelText: 'Phone Number'),
+              ),
+              const Text('Select Abo'),
+              DropdownButton<int>(
+                value: _selectedAbonnement,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedAbonnement = value!;
+                  });
+                },
+                items: itemsAbonnement,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Save Changes'),
+              onPressed: () {
+                // Save the changes to the server and update the UI as needed
+                String newPhoneNumber = phoneNumberController.text;
+                String newAbonnementType = abonnementController.text;
+
+                // Perform the necessary API calls to update the values
+                // You may need to add error handling and validation here
+
+                // Update the UI with the new values
+                // setState(() {
+                //   data.mobilePhone = newPhoneNumber;
+                //   // Update abonnement type based on your logic
+                //   data.profile.abonnement = newAbonnementType;
+                // });
+
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _showHistoricalGamesDialog() async {
     List<HistoricalGameModel> historicalGames = [];
 
@@ -213,6 +282,13 @@ class HomeState extends State<UserProfile> {
       key: employeeListKey,
       appBar: AppBar(title: const Text('User Info'), actions: [
         IconButton(
+          icon: const Icon(Icons.edit),
+          onPressed: () {
+            // Show the edit dialog
+            _showEditDialog();
+          },
+        ),
+        IconButton(
           icon: const Icon(Icons.history_edu_rounded),
           onPressed: () {
             Navigator.push(
@@ -236,6 +312,9 @@ class HomeState extends State<UserProfile> {
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 var data = snapshot.data[index];
+                phoneNumberController.text = data.mobilePhone;
+                abonnementController.text =
+                    returnAbonnementText(data.profile.abonnement);
                 return Column(children: [
                   const SizedBox(height: 24),
                   RandomAvatar(data.name, height: 80, width: 80),

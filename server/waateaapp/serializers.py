@@ -2,8 +2,8 @@ from rest_framework import serializers
 from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 
-from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame
-from waatea_2.users.models import UserProfile
+from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links
+from waatea_2.users.models import UserProfile, Classification, Level
 
 class HistoricalGameSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,6 +15,22 @@ class HistoricalGameSerializer(serializers.ModelSerializer):
         'competition',
         'date'
         ]
+
+class LinksSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Links
+        fields = ['pk', 'name', 'icon']
+
+class ClassificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Classification
+        fields = ['pk', 'name', 'icon']
+
+class LevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Level
+        fields = ['__all__'        ]
+
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
@@ -83,22 +99,62 @@ class GameAvailCountSerializer(serializers.ModelSerializer):
         return usercount - Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season).count()
 
 
+class ClassificationField(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, obj):
+        # Serialize the Classification object when retrieving data
+        classification = Classification.objects.get(id=obj)
+        return ClassificationSerializer(classification).data
+
+    def to_internal_value(self, data):
+        # Accept an integer for updating
+        try:
+            return Classification.objects.get(id=data)
+        except Classification.DoesNotExist:
+            raise serializers.ValidationError("Invalid Classification ID")
+
+
+class ClassificationField(serializers.PrimaryKeyRelatedField):
+    def __init__(self, **kwargs):
+        kwargs['queryset'] = Classification.objects.all()
+        kwargs['allow_null'] = True  # Allow the classification field to be null
+        super().__init__(**kwargs)
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
+    classification = ClassificationField()
+
     class Meta:
         model = UserProfile
-        fields = ('level','is_playing','permission', 'abonnement', 'comment')
+        fields = ('level', 'is_playing', 'permission', 'abonnement', 'comment', 'classification')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        classification_id = data.get('classification')
+        if classification_id is not None:
+            classification = Classification.objects.get(id=classification_id)
+            data['classification'] = ClassificationSerializer(classification).data
+        return data
 
     def update(self, instance, validated_data):
-        print(instance.level)
-        print(instance.is_playing)
         instance.level = validated_data.get('level', instance.level)
         instance.is_playing = validated_data.get('is_playing', instance.is_playing)
         instance.abonnement = validated_data.get('abonnement', instance.abonnement)
         instance.comment = validated_data.get('comment', instance.comment)
+        classification = validated_data.get('classification')
+
+        if classification is None:
+            instance.classification = None  # Handle null value
+        elif isinstance(classification, Classification):
+            instance.classification = classification
+        else:
+            try:
+                instance.classification = Classification.objects.get(id=classification)
+            except Classification.DoesNotExist:
+                raise serializers.ValidationError("Invalid Classification ID")
 
         instance.save()
-
         return instance
+
 
 class UserSerializer(serializers.ModelSerializer):
     club = ClubSerializer()

@@ -70,6 +70,17 @@ class ShowPlayerDetail extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                if (user.profile.classification != null &&
+                    user.profile.classification?.icon != null)
+                  Padding(
+                      padding: EdgeInsets.only(
+                          right: 8.0), // Adjust spacing as needed
+                      child: Icon(
+                        IconData(
+                            int.parse(user.profile.classification!.icon,
+                                radix: 16),
+                            fontFamily: 'MaterialIcons'),
+                      )),
                 returnLevelIcon(user.profile.level),
                 const SizedBox(width: 16),
                 RandomAvatar(user.name, height: 80, width: 80),

@@ -101,7 +101,23 @@ class _ShowPlayersState extends State<ShowPlayers> {
             //     ),
             //   ],
             // ),
-            trailing: returnLevelIcon(user.profile.level), // Add the icon here
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (user.profile.classification != null &&
+                    user.profile.classification?.icon != null)
+                  Padding(
+                      padding: EdgeInsets.only(
+                          right: 8.0), // Adjust spacing as needed
+                      child: Icon(
+                        IconData(
+                            int.parse(user.profile.classification!.icon,
+                                radix: 16),
+                            fontFamily: 'MaterialIcons'),
+                      )),
+                returnLevelIcon(user.profile.level), // Add the level icon here
+              ],
+            ),
             onTap: () {
               Navigator.push(
                 context,
