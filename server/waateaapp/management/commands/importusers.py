@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 import csv
 
-from waatea_2.users.models import User
+from waatea_2.users.models import User, UserProfile
 from waateaapp.model_club import Club
 
 
@@ -29,7 +29,6 @@ class Command(BaseCommand):
                     user, created = User.objects.get_or_create(
                         email=row[0],
                         name=row[1],
-                        mobile_phone=row[2],
                         club=club,
                     )
 
@@ -37,10 +36,17 @@ class Command(BaseCommand):
                     user.set_password(row[0].split("@")[0] + '12345')
                     user.save()
 
+                    if created:
+                        profile, _ = UserProfile.objects.get_or_create(user=user)
+
+                    # Update the mobile_phone field in the profile
+                    profile.mobile_phone = row[2]  # Set the actual mobile phone value
+                    profile.save()
+
                     self.stdout.write(self.style.SUCCESS(f'Successfully created user: {row[0]}'))
                     # Process each row as needed
                     print(row[0])
                 except:
-                    self.stdout.write(self.style.ERROR(f'Failed to create user: {row[0]}'))
+                   self.stdout.write(self.style.ERROR(f'Failed to create user: {row[0]}'))
 
 

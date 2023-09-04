@@ -18,6 +18,8 @@ import 'package:universal_html/html.dart' as html;
 
 enum SortOption { state, level, updated, name }
 
+enum FileGenerationStatus { idle, generating, complete, error }
+
 class ShowAvailabilityDetail extends StatefulWidget {
   late final String gameid;
   late final String game;
@@ -49,6 +51,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
   SortOption currentSortOption = SortOption.name;
   bool showOnlyAvailableMaybe = false;
   bool sortByNameAscending = true;
+  FileGenerationStatus generationStatus = FileGenerationStatus.idle;
+  String filePathGlobal = '';
 
   @override
   void initState() {
@@ -57,25 +61,44 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
   }
 
   Future<void> saveAndDownloadFile(String fileName, String content) async {
-    if (html.window.navigator.platform!.contains('Mac') ||
-        html.window.navigator.platform!.contains('Win')) {
-      // Handle file saving for desktop platforms using path_provider
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/$fileName';
-      final file = File(filePath);
-      await file.writeAsString(content);
-    } else {
-      // Handle file download for web platforms
-      final blob = html.Blob([Uint8List.fromList(content.codeUnits)]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', '$fileName')
-        ..click();
-      html.Url.revokeObjectUrl(url);
+    try {
+      if (html.window.navigator.platform!.contains('Mac') ||
+          html.window.navigator.platform!.contains('Win')) {
+        // Handle file saving for desktop platforms using path_provider
+        final directory = await getApplicationDocumentsDirectory();
+        final filePath = '${directory.path}/$fileName';
+        final file = File(filePath);
+        await file.writeAsString(content);
+        //Navigator.of(context).pop(); // Close the generation status dialog
+        setState(() {
+          generationStatus = FileGenerationStatus.complete;
+          filePathGlobal = filePath;
+        });
+      } else {
+        // Handle file download for web platforms
+        final blob = html.Blob([Uint8List.fromList(content.codeUnits)]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.AnchorElement(href: url)
+          ..setAttribute('download', '$fileName')
+          ..click();
+        html.Url.revokeObjectUrl(url);
+        setState(() {
+          generationStatus = FileGenerationStatus.complete;
+        });
+      }
+    } catch (e) {
+      print('Error generating file: $e');
+      Navigator.of(context).pop(); // Close the generation status dialog
+      setState(() {
+        generationStatus = FileGenerationStatus.error;
+      });
     }
   }
 
   Future<void> saveCSVToFile(List<ShowAvailabilityDetailModel> players) async {
+    setState(() {
+      generationStatus = FileGenerationStatus.generating;
+    });
     List<List<dynamic>> csvData = [
       [
         'Name',
@@ -210,6 +233,40 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     });
   }
 
+  void showGenerationStatusDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, setState) {
+            return AlertDialog(
+              title: Text('File Generation Status'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (generationStatus == FileGenerationStatus.generating)
+                    Text('Generating...'),
+                  if (generationStatus == FileGenerationStatus.complete)
+                    Text('File generated successfully. Path: $filePathGlobal'),
+                  if (generationStatus == FileGenerationStatus.error)
+                    Text('Error generating file.'),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,8 +278,42 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () async {
-              var players = await games; // Await the completion of the Future
-              saveCSVToFile(players);
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Generating File...'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(color: Colors.black),
+                        Text('Please wait while the file is being generated.'),
+                      ],
+                    ),
+                  );
+                },
+              );
+              try {
+                setState(() {
+                  generationStatus = FileGenerationStatus.generating;
+                  filePathGlobal = ''; // Reset the file path
+                });
+
+                var players = await games; // Await the completion of the Future
+                await saveCSVToFile(players);
+                Navigator.of(context).pop();
+                setState(() {
+                  generationStatus = FileGenerationStatus.complete;
+                });
+              } catch (e) {
+                print('Error generating file: $e');
+                setState(() {
+                  generationStatus = FileGenerationStatus.error;
+                });
+              }
+
+              // Show the dialog after the file generation is complete
+              showGenerationStatusDialog(context);
             },
           ),
           PopupMenuButton<SortOption>(

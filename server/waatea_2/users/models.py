@@ -21,7 +21,6 @@ class User(AbstractUser):
     name = CharField(_("Name of User"), blank=True, max_length=255)
     email = EmailField(_("email address"), unique=True)
     username = None  # type: ignore
-    mobile_phone = CharField(_("Mobile phone number (format: 41798257004)"), blank=True, max_length=255)
     club = models.ForeignKey(Club, on_delete=models.CASCADE, blank=True, null=True)
 
 
@@ -93,6 +92,7 @@ class UserProfile(models.Model):
     is_playing = models.BooleanField(default=True)
     sportlomo_id = models.CharField(max_length=200, blank=True)
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, blank=True, null=True)
+    mobile_phone = CharField(_("Mobile phone number (format: 41798257004)"), blank=True, max_length=255)
 
     def __str__(self):
         return f"{self.user.name}"

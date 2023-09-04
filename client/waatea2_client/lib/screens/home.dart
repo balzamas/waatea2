@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         return ShowLinks();
       case 4:
-        return UserProfile(globals.token, globals.player.email);
+        return UserProfile();
       case 5:
         return ShowAttendance();
       case 6:

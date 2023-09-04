@@ -101,7 +101,7 @@ class ShowPlayerDetail extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(Icons.phone),
-                Text(user.mobilePhone),
+                Text(user.profile.mobilePhone),
                 const SizedBox(width: 16),
                 const Icon(Icons.train),
                 Text(returnAbonnementText(user.profile.abonnement)),

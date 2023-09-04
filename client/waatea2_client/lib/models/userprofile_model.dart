@@ -6,6 +6,8 @@ class UserProfileModel {
   final int permission;
   final int abonnement;
   final String comment;
+  final String mobilePhone;
+
   final ClassificationModel? classification;
 
   UserProfileModel(
@@ -14,6 +16,7 @@ class UserProfileModel {
       required this.permission,
       required this.abonnement,
       required this.comment,
+      required this.mobilePhone,
       required this.classification});
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +26,7 @@ class UserProfileModel {
       permission: json['permission'],
       abonnement: json['abonnement'],
       comment: json['comment'],
+      mobilePhone: json['mobile_phone'],
       classification: json['classification'] != null
           ? ClassificationModel.fromJson(json['classification'])
           : null,

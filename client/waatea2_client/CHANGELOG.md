@@ -4,6 +4,7 @@
 - **Enhancement:** Add classification for players
 - **New Feature:** List of links
 - **New Feature:** Players can edit their abo-type and phone number
+- **Enhancement:** Status pop up when exporting the CSV file
 
 ## V0.0.5
 - **Enhancement:** Better game history overview

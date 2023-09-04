@@ -125,7 +125,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('level', 'is_playing', 'permission', 'abonnement', 'comment', 'classification')
+        fields = ('level', 'is_playing', 'permission', 'abonnement', 'comment', 'classification', 'mobile_phone')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -140,6 +140,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.is_playing = validated_data.get('is_playing', instance.is_playing)
         instance.abonnement = validated_data.get('abonnement', instance.abonnement)
         instance.comment = validated_data.get('comment', instance.comment)
+        instance.mobile_phone = validated_data.get('mobile_phone', instance.mobile_phone)
+
         classification = validated_data.get('classification')
 
         if classification is None:
@@ -166,7 +168,6 @@ class UserSerializer(serializers.ModelSerializer):
         'name',
         'email',
         'club',
-        'mobile_phone',
         'profile'
         ]
 
