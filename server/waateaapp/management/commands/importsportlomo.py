@@ -56,6 +56,9 @@ class Command(BaseCommand):
                             self.stderr.write(self.style.ERROR(f'Player {sportlomo_id} not found'))
                         except IntegrityError as e:
                             self.stderr.write(self.style.ERROR(f'Record exists'))
+                        except:
+                            self.stderr.write(self.style.ERROR(f'Something failed'))
+
 
                 row_count = row_count + 1
 
