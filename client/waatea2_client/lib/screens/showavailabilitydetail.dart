@@ -52,7 +52,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
   bool showOnlyAvailableMaybe = false;
   bool sortByNameAscending = true;
   FileGenerationStatus generationStatus = FileGenerationStatus.idle;
-  String filePathGlobal = '';
 
   @override
   void initState() {
@@ -233,7 +232,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                   if (generationStatus == FileGenerationStatus.generating)
                     Text('Generating...'),
                   if (generationStatus == FileGenerationStatus.complete)
-                    Text('File generated successfully. Path: $filePathGlobal'),
+                    Text('File generated successfully.'),
                   if (generationStatus == FileGenerationStatus.error)
                     Text('Error generating file.'),
                 ],
@@ -282,7 +281,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               try {
                 setState(() {
                   generationStatus = FileGenerationStatus.generating;
-                  filePathGlobal = ''; // Reset the file path
                 });
 
                 var players = await games; // Await the completion of the Future

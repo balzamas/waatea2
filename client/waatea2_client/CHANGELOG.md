@@ -1,5 +1,11 @@
 # Waatea Changelog
 
+## V0.0.7
+- **Miscellaneous:** Security stuff
+- **Bug Fix:** CSV download Mac/Windows
+- **New Feature:** Importer old Waatea availbilities
+
+
 ## V0.0.6
 - **Enhancement:** Add classification for players
 - **New Feature:** List of links

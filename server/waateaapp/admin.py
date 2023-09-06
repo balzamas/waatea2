@@ -5,12 +5,17 @@ from waatea_2.users.models import UserProfile, Level, Classification
 admin.site.register(Club)
 admin.site.register(Team)
 admin.site.register(Season)
-admin.site.register(Availability)
 admin.site.register(Attendance)
 admin.site.register(CurrentSeason)
 admin.site.register(Links)
 admin.site.register(Classification)
 admin.site.register(Level)
+
+@admin.register(Availability)
+class AvailabilityAdmin(admin.ModelAdmin):
+    list_display = ["player", "season", "state", "dayofyear"]
+    list_filter = ["season"]
+    ordering = ["season"]
 @admin.register(Training)
 class TrainingAdmin(admin.ModelAdmin):
     list_display = ["date", "season", "club"]

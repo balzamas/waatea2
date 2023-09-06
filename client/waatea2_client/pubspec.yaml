@@ -8,6 +8,26 @@ version: 0.0.7+1
 environment:
   sdk: '>=2.12.0 <4.0.0'
 
+fonts:
+  - family: KaTeX
+    fonts:
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Main-Regular.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Main-Bold.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Main-Italic.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Main-BoldItalic.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Math-Italic.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_SansSerif-Regular.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_SansSerif-Bold.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_SansSerif-Italic.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_SansSerif-BoldItalic.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Typewriter-Regular.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Typewriter-Bold.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Fraktur-Regular.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Fraktur-Bold.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Fraktur-Italic.ttf
+      - asset: packages/flutter_math_fork/fonts/KaTeX_Fraktur-BoldItalic.ttf
+
+
 dependencies:
   flutter:
     sdk: flutter
