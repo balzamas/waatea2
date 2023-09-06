@@ -61,7 +61,7 @@ services:
       - "TRAEFIK_LOG_LEVEL=INFO"
       - "TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_EMAIL=d.berger@dontsniff.co.uk"
       - "TRAEFIK_CERTIFICATESRESOLVERS_LE_ACME_STORAGE=/etc/traefik/acme/acme.json"
-      - "TRAEFIK_API_INSECURE=true"
+      - "TRAEFIK_API_INSECURE=false"
 
   redis:
     image: redis:6

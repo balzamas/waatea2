@@ -12,6 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
 from rest_framework import status
+from django.middleware import csrf
+from django.http import JsonResponse
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
@@ -311,3 +313,7 @@ def change_password(request):
     user.save()
 
     return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+
+def get_csrf_token(request):
+    csrf_token = csrf.get_token(request)
+    return JsonResponse({'csrf_token': csrf_token})

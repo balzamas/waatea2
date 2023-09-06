@@ -42,6 +42,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
+  Future<String> getCSRFToken() async {
+    final response =
+        await http.get(Uri.parse('${globals.URL_PREFIX}/get-csrf-token/'));
+    if (response.statusCode == 200) {
+      return response.headers['set-cookie'].toString();
+    } else {
+      throw Exception('Failed to load CSRF token');
+    }
+  }
+
   bool _isValidEmail(String email) {
     final RegExp emailRegExp = RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$');
     return emailRegExp.hasMatch(email);
@@ -72,11 +82,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "club": _selectedClub!.pk
     };
 
+    final csrfToken = await getCSRFToken();
+
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
       body: jsonEncode(data),
     );
 

@@ -7,7 +7,6 @@ from django.views.generic import DetailView, RedirectView, UpdateView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from django.views.decorators.csrf import csrf_exempt
 from .serializers import UserSerializer
 from rest_framework.permissions import AllowAny
 
@@ -48,9 +47,10 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 user_redirect_view = UserRedirectView.as_view()
 
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@csrf_exempt
 def register_user(request):
     print(request.data)
     serializer = UserSerializer(data=request.data)

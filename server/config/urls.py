@@ -12,7 +12,7 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, \
     AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, \
     TrainingAttendanceCountAPIView, TrainingAttendanceViewSet, TrainingCreateAPIView, UserProfileDetail, \
-    UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, LinksFilterAPIView, ClassificationFilterAPIView, LevelFilterAPIView
+    UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, LinksFilterAPIView, ClassificationFilterAPIView, LevelFilterAPIView, get_csrf_token
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -36,6 +36,7 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
 
+    path('get-csrf-token/', get_csrf_token, name='get-csrf-token'),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management

@@ -14,7 +14,7 @@ import '../models/showavailabilitydetail_model.dart';
 import 'package:path_provider/path_provider.dart';
 import '../widgets/showavailabilitydetail_row.dart';
 import 'dart:io';
-import 'package:universal_html/html.dart' as html;
+import 'package:universal_html/html.dart' as uh;
 
 enum SortOption { state, level, updated, name }
 
@@ -62,26 +62,25 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
   Future<void> saveAndDownloadFile(String fileName, String content) async {
     try {
-      if (html.window.navigator.platform!.contains('Mac') ||
-          html.window.navigator.platform!.contains('Win')) {
+      if (uh.window.navigator.platform!.contains('Mac') ||
+          uh.window.navigator.platform!.contains('Win')) {
         // Handle file saving for desktop platforms using path_provider
         final directory = await getApplicationDocumentsDirectory();
         final filePath = '${directory.path}/$fileName';
         final file = File(filePath);
         await file.writeAsString(content);
-        //Navigator.of(context).pop(); // Close the generation status dialog
         setState(() {
           generationStatus = FileGenerationStatus.complete;
           filePathGlobal = filePath;
         });
       } else {
         // Handle file download for web platforms
-        final blob = html.Blob([Uint8List.fromList(content.codeUnits)]);
-        final url = html.Url.createObjectUrlFromBlob(blob);
-        final anchor = html.AnchorElement(href: url)
+        final blob = uh.Blob([Uint8List.fromList(content.codeUnits)]);
+        final url = uh.Url.createObjectUrlFromBlob(blob);
+        final anchor = uh.AnchorElement(href: url)
           ..setAttribute('download', '$fileName')
           ..click();
-        html.Url.revokeObjectUrl(url);
+        uh.Url.revokeObjectUrl(url);
         setState(() {
           generationStatus = FileGenerationStatus.complete;
         });
