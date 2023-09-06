@@ -62,29 +62,16 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
   Future<void> saveAndDownloadFile(String fileName, String content) async {
     try {
-      if (uh.window.navigator.platform!.contains('Mac') ||
-          uh.window.navigator.platform!.contains('Win')) {
-        // Handle file saving for desktop platforms using path_provider
-        final directory = await getApplicationDocumentsDirectory();
-        final filePath = '${directory.path}/$fileName';
-        final file = File(filePath);
-        await file.writeAsString(content);
-        setState(() {
-          generationStatus = FileGenerationStatus.complete;
-          filePathGlobal = filePath;
-        });
-      } else {
-        // Handle file download for web platforms
-        final blob = uh.Blob([Uint8List.fromList(content.codeUnits)]);
-        final url = uh.Url.createObjectUrlFromBlob(blob);
-        final anchor = uh.AnchorElement(href: url)
-          ..setAttribute('download', '$fileName')
-          ..click();
-        uh.Url.revokeObjectUrl(url);
-        setState(() {
-          generationStatus = FileGenerationStatus.complete;
-        });
-      }
+      // Handle file download for web platforms
+      final blob = uh.Blob([Uint8List.fromList(content.codeUnits)]);
+      final url = uh.Url.createObjectUrlFromBlob(blob);
+      final anchor = uh.AnchorElement(href: url)
+        ..setAttribute('download', '$fileName')
+        ..click();
+      uh.Url.revokeObjectUrl(url);
+      setState(() {
+        generationStatus = FileGenerationStatus.complete;
+      });
     } catch (e) {
       print('Error generating file: $e');
       Navigator.of(context).pop(); // Close the generation status dialog
