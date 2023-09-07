@@ -3,7 +3,7 @@ from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 
 from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links
-from waatea_2.users.models import UserProfile, Classification, Level
+from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
 
 class HistoricalGameSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,10 +26,15 @@ class ClassificationSerializer(serializers.ModelSerializer):
         model = Classification
         fields = ['pk', 'name', 'icon']
 
-class LevelSerializer(serializers.ModelSerializer):
+class AssessmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Level
-        fields = ['__all__'        ]
+        model = Assessment
+        fields = ['pk', 'name', 'icon']
+
+class AbonnementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Abonnement
+        fields = ['pk', 'name']
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
@@ -125,7 +130,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('level', 'is_playing', 'permission', 'abonnement', 'comment', 'classification', 'mobile_phone')
+        fields = ('assessment', 'is_playing', 'permission', 'abo', 'comment', 'classification', 'mobile_phone')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -133,12 +138,21 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if classification_id is not None:
             classification = Classification.objects.get(id=classification_id)
             data['classification'] = ClassificationSerializer(classification).data
+
+        assessment_id = data.get('assessment')
+        if assessment_id is not None:
+            assessment = Assessment.objects.get(id=assessment_id)
+            data['assessment'] = AssessmentSerializer(assessment).data
+
+        abonnement_id = data.get('abo')
+        if abonnement_id is not None:
+            abonnement = Abonnement.objects.get(id=abonnement_id)
+            data['abonnement'] = AbonnementSerializer(abonnement).data
+
         return data
 
     def update(self, instance, validated_data):
-        instance.level = validated_data.get('level', instance.level)
         instance.is_playing = validated_data.get('is_playing', instance.is_playing)
-        instance.abonnement = validated_data.get('abonnement', instance.abonnement)
         instance.comment = validated_data.get('comment', instance.comment)
         instance.mobile_phone = validated_data.get('mobile_phone', instance.mobile_phone)
 
@@ -153,6 +167,31 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 instance.classification = Classification.objects.get(id=classification)
             except Classification.DoesNotExist:
                 raise serializers.ValidationError("Invalid Classification ID")
+
+        assessment = validated_data.get('assessment')
+
+        if assessment is None:
+            instance.assessment = None  # Handle null value
+        elif isinstance(assessment, Assessment):
+            instance.assessment = assessment
+        else:
+            try:
+                instance.assessment = Assessment.objects.get(id=assessment)
+            except Assessment.DoesNotExist:
+                raise serializers.ValidationError("Invalid Assessment ID")
+
+
+        abo = validated_data.get('abo')
+
+        if abo is None:
+            instance.abo = None  # Handle null value
+        elif isinstance(abo, Abonnement):
+            instance.abo = abo
+        else:
+            try:
+                instance.abo = Abonnement.objects.get(id=abo)
+            except Abonnement.DoesNotExist:
+                raise serializers.ValidationError("Invalid Abonnement ID")
 
         instance.save()
         return instance

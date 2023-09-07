@@ -1,5 +1,9 @@
 # Waatea Changelog
 
+## V0.0.8
+- **Enhancement:** Make Abo and Assessment (ex-Level) Models and customizable
+
+
 ## V0.0.7
 - **Miscellaneous:** Security stuff
 - **Bug Fix:** CSV download Mac/Windows

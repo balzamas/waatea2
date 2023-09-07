@@ -3,11 +3,11 @@ from datetime import datetime, timedelta, timezone
 from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
-from waatea_2.users.models import UserProfile, Level, Classification
+from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
-    UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, LevelSerializer, ClassificationSerializer
+    UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, AbonnementSerializer, ClassificationSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -112,9 +112,23 @@ class ClassificationFilterAPIView(generics.ListAPIView):
 
         return queryset
 
-class LevelFilterAPIView(generics.ListAPIView):
-    queryset = Level.objects.order_by('name')
-    serializer_class = LevelSerializer
+class AssessmentFilterAPIView(generics.ListAPIView):
+    queryset = Assessment.objects.order_by('name')
+    serializer_class = AssessmentSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
+
+        return queryset
+
+class AbonnementFilterAPIView(generics.ListAPIView):
+    queryset = Abonnement.objects.order_by('name')
+    serializer_class = AbonnementSerializer
     ordering = ['date']
 
     def get_queryset(self):

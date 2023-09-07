@@ -20,17 +20,11 @@ class EditPlayerComment extends StatefulWidget {
 }
 
 class _EditPlayerCommentState extends State<EditPlayerComment> {
-  bool _isPlaying = false;
-  int _selectedLevel = 1;
-  int _selectedAbonnement = 0;
   QuillController _controller = QuillController.basic();
 
   @override
   void initState() {
     super.initState();
-    _isPlaying = widget.user.profile.isPlaying;
-    _selectedLevel = widget.user.profile.level;
-    _selectedAbonnement = widget.user.profile.abonnement;
 
     final List<dynamic> operations = json.decode(widget.user.profile.comment);
     final Delta delta = Delta.fromJson(operations);

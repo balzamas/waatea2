@@ -80,7 +80,16 @@ class ShowPlayerDetail extends StatelessWidget {
                             int.parse('0x${user.profile.classification!.icon}'),
                             fontFamily: 'MaterialIcons'),
                       )),
-                returnLevelIcon(user.profile.level),
+                if (user.profile.assessment != null &&
+                    user.profile.assessment?.icon != null)
+                  Padding(
+                      padding: EdgeInsets.only(
+                          right: 8.0), // Adjust spacing as needed
+                      child: Icon(
+                        IconData(
+                            int.parse('0x${user.profile.assessment!.icon}'),
+                            fontFamily: 'MaterialIcons'),
+                      )),
                 const SizedBox(width: 16),
                 RandomAvatar(user.name, height: 80, width: 80),
                 const SizedBox(width: 16),
@@ -94,7 +103,9 @@ class ShowPlayerDetail extends StatelessWidget {
             // SizedBox(height: 16),
             // Text('Email: ${user.email}'),
             const SizedBox(height: 16),
-            Text(returnLevelText(user.profile.level)),
+            if (user.profile.assessment != null &&
+                user.profile.assessment?.icon != null)
+              Text(user.profile.assessment!.name),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -104,7 +115,9 @@ class ShowPlayerDetail extends StatelessWidget {
                 Text(user.profile.mobilePhone),
                 const SizedBox(width: 16),
                 const Icon(Icons.train),
-                Text(returnAbonnementText(user.profile.abonnement)),
+                if (user.profile.abonnement != null &&
+                    user.profile.abonnement?.name != null)
+                  Text(user.profile.abonnement!.name),
               ],
             ),
             const SizedBox(height: 22),

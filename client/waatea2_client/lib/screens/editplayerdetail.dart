@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:waatea2_client/models/abonnement_model.dart';
+import 'package:waatea2_client/models/assessment_model.dart';
 import 'package:waatea2_client/models/classification_model.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/home.dart';
@@ -20,18 +22,17 @@ class EditPlayerDetail extends StatefulWidget {
 
 class _EditPlayerDetailState extends State<EditPlayerDetail> {
   bool _isPlaying = false;
-  int _selectedLevel = 1;
-  int _selectedAbonnement = 0;
+  AssessmentModel? _selectedAssessment;
+  AbonnementModel? _selectedAbonnement;
   ClassificationModel? _selectedClassification; // Initialize as null
   List<ClassificationModel> classificationOptions = [];
+  List<AbonnementModel> abonnementOptions = [];
+  List<AssessmentModel> assessmentOptions = [];
 
   @override
   void initState() {
     super.initState();
     _isPlaying = widget.user.profile.isPlaying;
-    _selectedLevel = widget.user.profile.level;
-    _selectedAbonnement = widget.user.profile.abonnement;
-    //_selectedClassification = widget.user.profile.classification;
 
     // Fetch and populate classification options
     fetchClassifications().then((classifications) {
@@ -47,6 +48,38 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
         } else {
           // If the classification is empty, set it to null
           _selectedClassification = null;
+        }
+      });
+    });
+
+    fetchAbonnements().then((abonnements) {
+      setState(() {
+        abonnementOptions = abonnements;
+        if (widget.user.profile.abonnement != null) {
+          // If the abonnement is not empty, set it based on the user's profile
+          _selectedAbonnement = abonnementOptions.firstWhere(
+            (abonnement) => abonnement.pk == widget.user.profile.abonnement!.pk,
+            // Set to null when no match is found
+          );
+        } else {
+          // If the abonnement is empty, set it to null
+          _selectedAbonnement = null;
+        }
+      });
+    });
+
+    fetchAssessments().then((assessments) {
+      setState(() {
+        assessmentOptions = assessments;
+        if (widget.user.profile.assessment != null) {
+          // If the assessment is not empty, set it based on the user's profile
+          _selectedAssessment = assessmentOptions.firstWhere(
+            (assessment) => assessment.pk == widget.user.profile.assessment!.pk,
+            // Set to null when no match is found
+          );
+        } else {
+          // If the assessment is empty, set it to null
+          _selectedAssessment = null;
         }
       });
     });
@@ -69,22 +102,42 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
     }
   }
 
+  Future<List<AbonnementModel>> fetchAbonnements() async {
+    final response = await http.get(
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/abonnements/filter?club=${globals.clubId}'),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((item) => AbonnementModel.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load abonnements');
+    }
+  }
+
+  Future<List<AssessmentModel>> fetchAssessments() async {
+    final response = await http.get(
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/assessments/filter?club=${globals.clubId}'),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((item) => AssessmentModel.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load assessments');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<DropdownMenuItem<int>>? itemsLevel = [];
-    for (var i = 0; i < 6; i++) {
-      itemsLevel.add(DropdownMenuItem(
-        value: i,
-        child: Text(returnLevelText(i)),
-      ));
-    }
-    List<DropdownMenuItem<int>>? itemsAbonnement = [];
-    for (var i = 0; i < 5; i++) {
-      itemsAbonnement.add(DropdownMenuItem(
-        value: i,
-        child: Text(returnAbonnementText(i)),
-      ));
-    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
@@ -108,14 +161,26 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
             ),
             const SizedBox(height: 16),
             const Text('Select Level'),
-            DropdownButton<int>(
-              value: _selectedLevel,
+            DropdownButton<AssessmentModel>(
+              value: _selectedAssessment,
               onChanged: (value) {
                 setState(() {
-                  _selectedLevel = value!;
+                  _selectedAssessment = value!;
                 });
               },
-              items: itemsLevel,
+              items: [
+                // Add a default "Select Classification" item as the first item
+                DropdownMenuItem<AssessmentModel>(
+                  value: null,
+                  child: const Text('Select Level'),
+                ),
+                ...assessmentOptions.map((assessment) {
+                  return DropdownMenuItem<AssessmentModel>(
+                    value: assessment,
+                    child: Text(assessment.name),
+                  );
+                }).toList(),
+              ],
             ),
             const SizedBox(height: 16),
             const Text('Classification'),
@@ -142,14 +207,25 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
             ),
             const SizedBox(height: 16),
             const Text('Select Abo'),
-            DropdownButton<int>(
+            DropdownButton<AbonnementModel>(
               value: _selectedAbonnement,
               onChanged: (value) {
                 setState(() {
                   _selectedAbonnement = value!;
                 });
               },
-              items: itemsAbonnement,
+              items: [
+                DropdownMenuItem<AbonnementModel>(
+                  value: null,
+                  child: const Text('Select Abonnement'),
+                ),
+                ...abonnementOptions.map((abonnement) {
+                  return DropdownMenuItem<AbonnementModel>(
+                    value: abonnement,
+                    child: Text(abonnement.name),
+                  );
+                }).toList(),
+              ],
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -157,8 +233,8 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
               onPressed: () async {
                 final Map<String, dynamic> body = {
                   'is_playing': _isPlaying,
-                  'level': _selectedLevel,
-                  'abonnement': _selectedAbonnement,
+                  'assessment': _selectedAssessment?.pk,
+                  'abo': _selectedAbonnement?.pk,
                   'classification': _selectedClassification?.pk,
                 };
 

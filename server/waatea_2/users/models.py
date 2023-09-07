@@ -40,7 +40,7 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.name} - {self.email}"
 
-class Level(models.Model):
+class Assessment(models.Model):
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     icon = models.CharField(max_length=200)
@@ -60,15 +60,17 @@ class Classification(models.Model):
     def __str__(self):
         return self.name + " / " + self.club.name
 
+class Abonnement(models.Model):
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name + " / " + self.club.name
+
 class UserProfile(models.Model):
-    LEVEL_CHOICES = [
-        (0, 'High performance, performance motivation'),
-        (1, 'Basic performance, performance motivation'),
-        (2, 'High performance, time deficit'),
-        (3, 'High performance, social motivation'),
-        (4, 'Basic performance, social motivation'),
-        (5, 'Newcomer'),
-    ]
+
 
     PERMISSION_CHOICES = [
         (0, 'Player'),
@@ -76,22 +78,15 @@ class UserProfile(models.Model):
         (2, 'Admin'),
     ]
 
-    ABONNEMENT_CHOICES = [
-        (0, 'Not Set'),
-        (1, 'None'),
-        (2, 'Half fare'),
-        (3, 'GA'),
-        (4, 'ZVV'),
-    ]
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    level = models.IntegerField(choices=LEVEL_CHOICES, default=5)
     permission = models.IntegerField(choices=PERMISSION_CHOICES, default=0)
-    abonnement = models.IntegerField(choices=ABONNEMENT_CHOICES, default=0)
     comment = models.TextField(default="[]")
     is_playing = models.BooleanField(default=True)
     sportlomo_id = models.CharField(max_length=200, blank=True)
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, blank=True, null=True)
+    abo = models.ForeignKey(Abonnement, on_delete=models.SET_NULL, blank=True, null=True)
+    assessment = models.ForeignKey(Assessment, on_delete=models.SET_NULL, blank=True, null=True)
+
     mobile_phone = CharField(_("Mobile phone number (format: 41798257004)"), blank=True, max_length=255)
 
     def __str__(self):

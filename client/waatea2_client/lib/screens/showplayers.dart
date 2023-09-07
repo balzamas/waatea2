@@ -114,7 +114,16 @@ class _ShowPlayersState extends State<ShowPlayers> {
                             int.parse('0x${user.profile.classification!.icon}'),
                             fontFamily: 'MaterialIcons'),
                       )),
-                returnLevelIcon(user.profile.level), // Add the level icon here
+                if (user.profile.assessment != null &&
+                    user.profile.assessment?.icon != null)
+                  Padding(
+                      padding: EdgeInsets.only(
+                          right: 8.0), // Adjust spacing as needed
+                      child: Icon(
+                        IconData(
+                            int.parse('0x${user.profile.assessment!.icon}'),
+                            fontFamily: 'MaterialIcons'),
+                      )),
               ],
             ),
             onTap: () {

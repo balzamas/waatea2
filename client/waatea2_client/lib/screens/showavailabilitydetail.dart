@@ -16,7 +16,7 @@ import '../widgets/showavailabilitydetail_row.dart';
 import 'dart:io';
 import 'package:universal_html/html.dart' as uh;
 
-enum SortOption { state, level, updated, name }
+enum SortOption { state, updated, name }
 
 enum FileGenerationStatus { idle, generating, complete, error }
 
@@ -87,7 +87,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     List<List<dynamic>> csvData = [
       [
         'Name',
-        'Level',
+        'Assessment',
         'Classification',
         'Availability',
         'Abonnement',
@@ -139,10 +139,10 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
       csvData.add([
         player.name,
-        returnLevelText(player.level),
+        player.playerProfile.assessment?.name ?? 'Not Set',
         player.playerProfile.classification?.name ?? 'Not Set',
         availabilityText,
-        returnAbonnementText(player.abonnement),
+        player.playerProfile.abonnement?.name ?? 'Not Set',
         attended
       ]);
     }
@@ -308,10 +308,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                 child: Text('Sort by State'),
               ),
               const PopupMenuItem(
-                value: SortOption.level,
-                child: Text('Sort by Level'),
-              ),
-              const PopupMenuItem(
                 value: SortOption.updated,
                 child: Text('Sort by Updated'),
               ),
@@ -418,8 +414,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                   switch (currentSortOption) {
                     case SortOption.state:
                       return b.state.compareTo(a.state);
-                    case SortOption.level:
-                      return a.level.compareTo(b.level);
                     case SortOption.updated:
                       return b.updated.compareTo(a.updated);
                     case SortOption.name: // Added name sorting
@@ -438,7 +432,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                         name: data.name,
                         phonenumber: data.mobilephone,
                         state: data.state,
-                        level: data.level,
+                        assessment: data.playerProfile.assessment,
                         updated: data.updated,
                         player: data.playerProfile,
                         game:

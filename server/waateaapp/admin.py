@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame, Links
-from waatea_2.users.models import UserProfile, Level, Classification
+from waatea_2.users.models import UserProfile, Assessment, Abonnement, Classification
 
 admin.site.register(Club)
 admin.site.register(Team)
@@ -9,7 +9,9 @@ admin.site.register(Attendance)
 admin.site.register(CurrentSeason)
 admin.site.register(Links)
 admin.site.register(Classification)
-admin.site.register(Level)
+admin.site.register(Assessment)
+admin.site.register(Abonnement)
+
 
 @admin.register(Availability)
 class AvailabilityAdmin(admin.ModelAdmin):
@@ -29,7 +31,7 @@ class GameAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ["user", "level", "permission", "is_playing"]
+    list_display = ["user", "assessment", "permission", "is_playing"]
     ordering = ['user']
 
 @admin.register(HistoricalGame)

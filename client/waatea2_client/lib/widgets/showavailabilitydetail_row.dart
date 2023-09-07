@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/helper.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:waatea2_client/models/assessment_model.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/models/userprofile_model.dart';
 
 class ShowAvailabilityDetailRow extends StatefulWidget {
   final String name;
   final String phonenumber;
-  final int level;
+  final AssessmentModel? assessment;
   final int state;
   final String updated;
   final String game;
@@ -17,7 +18,7 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
       {Key? key,
       required this.name,
       required this.phonenumber,
-      required this.level,
+      required this.assessment,
       required this.state,
       required this.updated,
       required this.game,
@@ -40,8 +41,6 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
   @override
   Widget build(BuildContext context) {
     Icon stateIcon = returnStateIcon(widget.state);
-
-    Icon levelIcon = returnLevelIcon(widget.level);
 
     return Padding(
       padding: const EdgeInsets.all(7.0),
@@ -88,7 +87,18 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   flex: 1,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [levelIcon])),
+                      children: [
+                        if (widget.assessment != null &&
+                            widget.assessment?.icon != null)
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  right: 8.0), // Adjust spacing as needed
+                              child: Icon(
+                                IconData(
+                                    int.parse('0x${widget.assessment!.icon}'),
+                                    fontFamily: 'MaterialIcons'),
+                              ))
+                      ])),
               Expanded(
                   flex: 1,
                   child: Column(

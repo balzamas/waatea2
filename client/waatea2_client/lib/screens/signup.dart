@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/helper.dart';
+import 'package:waatea2_client/models/abonnement_model.dart';
 import '../globals.dart' as globals;
 import '../models/club.dart';
 import 'login.dart';
@@ -25,7 +26,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   List<ClubModel> _clubs = [];
   ClubModel? _selectedClub;
-  int _selectedAbonnement = 0;
 
   bool _formSubmitted = false;
 
@@ -107,7 +107,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         String token = json.decode(responseLogin.body)['token'];
 
         final Map<String, dynamic> body = {
-          'abonnement': _selectedAbonnement,
           'mobile_phone': _mobilephoneController.text.trim(),
         };
 
@@ -209,27 +208,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            DropdownButtonFormField<int>(
-              value: _selectedAbonnement,
-              onChanged: (int? newValue) {
-                setState(() {
-                  _selectedAbonnement = newValue!;
-                });
-              },
-              items: List<DropdownMenuItem<int>>.generate(5, (index) {
-                return DropdownMenuItem<int>(
-                  value: index,
-                  child: Text(returnAbonnementText(index)),
-                );
-              }),
-              decoration: InputDecoration(
-                labelText: "Abonnement",
-                border: OutlineInputBorder(),
-                errorText: _formSubmitted && _selectedAbonnement == null
-                    ? "Field is required"
-                    : null,
-              ),
-            ),
             SizedBox(height: 24),
             DropdownButtonFormField<ClubModel>(
               value: _selectedClub,

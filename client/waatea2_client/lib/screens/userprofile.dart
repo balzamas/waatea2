@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/helper.dart';
+import 'package:waatea2_client/models/abonnement_model.dart';
 import 'package:waatea2_client/models/historicalgame_model.dart';
 import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/screens/home.dart';
@@ -22,7 +23,8 @@ class UserProfile extends StatefulWidget {
 class HomeState extends State<UserProfile> {
   final employeeListKey = GlobalKey<HomeState>();
   String? _version;
-  int _selectedAbonnement = 0;
+  AbonnementModel? _selectedAbonnement;
+  List<AbonnementModel> abonnementOptions = [];
 
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController abonnementController = TextEditingController();
@@ -31,6 +33,40 @@ class HomeState extends State<UserProfile> {
     super.initState();
     //userinfo = getUserInfo();
     _getAppVersion();
+
+    fetchAbonnements().then((abonnements) {
+      setState(() {
+        abonnementOptions = abonnements;
+        if (globals.player.profile.abonnement != null) {
+          // If the abonnement is not empty, set it based on the user's profile
+          _selectedAbonnement = abonnementOptions.firstWhere(
+            (abonnement) =>
+                abonnement.pk == globals.player.profile.abonnement!.pk,
+            // Set to null when no match is found
+          );
+        } else {
+          // If the abonnement is empty, set it to null
+          _selectedAbonnement = null;
+        }
+      });
+    });
+  }
+
+  Future<List<AbonnementModel>> fetchAbonnements() async {
+    final response = await http.get(
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/abonnements/filter?club=${globals.clubId}'),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((item) => AbonnementModel.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load abonnements');
+    }
   }
 
   void _getAppVersion() async {
@@ -150,20 +186,12 @@ class HomeState extends State<UserProfile> {
     TextEditingController abonnementController = TextEditingController();
 
     // Initialize _selectedAbonnement with the value from the user's profile
-    _selectedAbonnement = globals.player.profile.abonnement;
     phoneNumberController.text = globals.player.profile.mobilePhone;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, setState) {
-            List<DropdownMenuItem<int>> itemsAbonnement = [];
-            for (var i = 0; i < 5; i++) {
-              itemsAbonnement.add(DropdownMenuItem(
-                value: i,
-                child: Text(returnAbonnementText(i)),
-              ));
-            }
             return AlertDialog(
               title: const Text('Edit Profile'),
               content: Column(
@@ -176,15 +204,26 @@ class HomeState extends State<UserProfile> {
                   ),
                   const SizedBox(height: 32),
                   const Text('Select Abo'),
-                  DropdownButton<int>(
+                  DropdownButton<AbonnementModel>(
                     value: _selectedAbonnement,
                     onChanged: (value) {
                       setState(() {
-                        _selectedAbonnement =
-                            value!; // Update the selected value
+                        _selectedAbonnement = value!;
                       });
                     },
-                    items: itemsAbonnement,
+                    items: [
+                      // Add a default "Select Classification" item as the first item
+                      DropdownMenuItem<AbonnementModel>(
+                        value: null,
+                        child: const Text('Select Abonnement'),
+                      ),
+                      ...abonnementOptions.map((abonnement) {
+                        return DropdownMenuItem<AbonnementModel>(
+                          value: abonnement,
+                          child: Text(abonnement.name),
+                        );
+                      }).toList(),
+                    ],
                   ),
                 ],
               ),
@@ -203,7 +242,7 @@ class HomeState extends State<UserProfile> {
 
                     final Map<String, dynamic> body = {
                       'mobile_phone': newPhoneNumber,
-                      'abonnement': _selectedAbonnement,
+                      'abo': _selectedAbonnement?.pk,
                     };
 
                     final http.Response response = await http.patch(
@@ -371,8 +410,20 @@ class HomeState extends State<UserProfile> {
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      returnLevelIcon(globals.player.profile.level),
-                      Text(returnLevelText(globals.player.profile.level)),
+                      if (globals.player.profile.assessment != null &&
+                          globals.player.profile.assessment?.icon != null)
+                        Padding(
+                            padding: EdgeInsets.only(
+                                right: 8.0), // Adjust spacing as needed
+                            child: Icon(
+                              IconData(
+                                  int.parse(
+                                      '0x${globals.player.profile.assessment!.icon}'),
+                                  fontFamily: 'MaterialIcons'),
+                            )),
+                      if (globals.player.profile.assessment != null &&
+                          globals.player.profile.assessment?.name != null)
+                        Text(globals.player.profile.assessment!.name),
                     ],
                   )),
             ),
@@ -382,8 +433,9 @@ class HomeState extends State<UserProfile> {
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(returnAbonnementText(
-                          globals.player.profile.abonnement)),
+                      if (globals.player.profile.abonnement != null &&
+                          globals.player.profile.abonnement?.name != null)
+                        Text(globals.player.profile.abonnement!.name),
                     ],
                   )),
             ),
