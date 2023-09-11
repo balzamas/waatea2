@@ -35,7 +35,7 @@ class HistoricalGameFilterAPIView(generics.ListAPIView):
 
         return queryset
 class GameCurrentFilterAPIView(generics.ListAPIView):
-    queryset = Game.objects.filter(date__gte=make_aware(datetime.today())).order_by('date')
+    queryset = Game.objects.filter(date__gte=datetime.now()).order_by('date')
     serializer_class = GameSerializer
     ordering = ['date']
 

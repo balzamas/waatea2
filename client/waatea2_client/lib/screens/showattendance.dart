@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/models/trainingattendance_model.dart';
+import 'package:waatea2_client/screens/home.dart';
 import '../globals.dart' as globals;
 
 class ShowAttendance extends StatefulWidget {
@@ -47,7 +48,8 @@ class _ShowAttendanceState extends State<ShowAttendance> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        DateTime selectedDateTime = DateTime.now();
+        DateTime selectedDateTime = DateTime(DateTime.now().year,
+            DateTime.now().month, DateTime.now().day, 20, 30);
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
@@ -67,7 +69,8 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                       if (pickedDateTime != null &&
                           pickedDateTime != selectedDateTime) {
                         setState(() {
-                          selectedDateTime = pickedDateTime;
+                          selectedDateTime = DateTime(pickedDateTime.year,
+                              pickedDateTime.month, pickedDateTime.day, 20, 30);
                         });
                       }
                     },
@@ -150,6 +153,12 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                     }
 
                     Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MyHomePage(initialIndex: 5),
+                      ),
+                    );
                   },
                 ),
               ],

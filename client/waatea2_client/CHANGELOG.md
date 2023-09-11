@@ -1,5 +1,9 @@
 # Waatea Changelog
 
+## V0.0.9
+- **Bug Fix:** Hide past game
+- **Bug Fix:** Show training list when new training is added
+
 ## V0.0.8
 - **Enhancement:** Make Abo and Assessment (ex-Level) Models and customizable
 
