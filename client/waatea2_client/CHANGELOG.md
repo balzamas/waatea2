@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.11
+- **Bug Fix:** Shrink information on Userprofile so Change password button is visible also on old devices
+
 ## V0.0.10
 - **Bug Fix:** Keep classification/assessment when abo/phone number is changed
 - **Bug Fix:** Umlaut problem in Sportlomo import

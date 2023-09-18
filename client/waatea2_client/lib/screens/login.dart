@@ -62,11 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
         // Login successful, extract the token from the response
         String token = json.decode(response.body)['token'];
 
-        // Store the token securely (you can use shared preferences or secure storage)
-        // For simplicity, I'm storing it in memory for this example
-        // TODO: Store the token securely
-        print('Token: $token');
-
         //Load User
         final http.Response response2 = await http.get(
             Uri.parse('${globals.URL_PREFIX}/api/users/filter?email=$username'),

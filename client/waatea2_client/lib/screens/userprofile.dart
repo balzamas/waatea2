@@ -371,88 +371,112 @@ class HomeState extends State<UserProfile> {
           children: [
             const SizedBox(height: 24),
             RandomAvatar(globals.player.name, height: 80, width: 80),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.person),
-                title: Text(
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                const SizedBox(width: 34),
+                Icon(Icons.person),
+                const SizedBox(width: 24),
+                Text(
                   globals.player.name,
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ),
+                  style: const TextStyle(fontSize: 17),
+                )
+              ],
             ),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.check_box),
-                title: Text(
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
+                Icon(Icons.check_box),
+                const SizedBox(width: 24),
+                Text(
                   "Active: ${globals.player.profile.isPlaying.toString()}",
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ),
+                  style: const TextStyle(fontSize: 17),
+                )
+              ],
             ),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.email),
-                title: Text(
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
+                Icon(Icons.email),
+                const SizedBox(width: 24),
+                Text(
                   globals.player.email,
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ),
+                  style: const TextStyle(fontSize: 17),
+                )
+              ],
             ),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.phone),
-                title: Text(
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
+                Icon(Icons.phone),
+                const SizedBox(width: 24),
+                Text(
                   globals.player.profile.mobilePhone,
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ),
+                  style: const TextStyle(fontSize: 17),
+                )
+              ],
             ),
-            Card(
-              child: ListTile(
-                  leading: const Icon(Icons.category),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (globals.player.profile.assessment != null &&
-                          globals.player.profile.assessment?.icon != null)
-                        Padding(
-                            padding: EdgeInsets.only(
-                                right: 8.0), // Adjust spacing as needed
-                            child: Icon(
-                              IconData(
-                                  int.parse(
-                                      '0x${globals.player.profile.assessment!.icon}'),
-                                  fontFamily: 'MaterialIcons'),
-                            )),
-                      if (globals.player.profile.assessment != null &&
-                          globals.player.profile.assessment?.name != null)
-                        Text(globals.player.profile.assessment!.name),
-                    ],
-                  )),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
+                Icon(Icons.category),
+                const SizedBox(width: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (globals.player.profile.assessment != null &&
+                        globals.player.profile.assessment?.icon != null)
+                      Padding(
+                          padding: EdgeInsets.only(
+                              right: 8.0), // Adjust spacing as needed
+                          child: Icon(
+                            IconData(
+                                int.parse(
+                                    '0x${globals.player.profile.assessment!.icon}'),
+                                fontFamily: 'MaterialIcons'),
+                          )),
+                    if (globals.player.profile.assessment != null &&
+                        globals.player.profile.assessment?.name != null)
+                      Text(globals.player.profile.assessment!.name),
+                  ],
+                )
+              ],
             ),
-            Card(
-              child: ListTile(
-                  leading: const Icon(Icons.train),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (globals.player.profile.abonnement != null &&
-                          globals.player.profile.abonnement?.name != null)
-                        Text(globals.player.profile.abonnement!.name),
-                    ],
-                  )),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
+                Icon(Icons.train),
+                const SizedBox(width: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (globals.player.profile.abonnement != null &&
+                        globals.player.profile.abonnement?.name != null)
+                      Text(globals.player.profile.abonnement!.name),
+                  ],
+                )
+              ],
             ),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.fitness_center),
-                title: Container(
-                  width: 500, // Replace with your desired width
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
+                Icon(Icons.fitness_center),
+                const SizedBox(width: 24),
+                Container(
+                  width: 400, // Replace with your desired width
                   height: 30, // Replace with your desired height
                   child: ShowPlayerAttendance(
                       globals.playerId, 15, MainAxisAlignment.start),
-                ),
-              ),
+                )
+              ],
             ),
+            const SizedBox(height: 12),
             Text('Waatea version: ${_version.toString()}'),
             const SizedBox(height: 24),
             ElevatedButton(
