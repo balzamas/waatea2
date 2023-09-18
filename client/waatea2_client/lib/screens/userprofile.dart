@@ -243,6 +243,9 @@ class HomeState extends State<UserProfile> {
                     final Map<String, dynamic> body = {
                       'mobile_phone': newPhoneNumber,
                       'abo': _selectedAbonnement?.pk,
+                      'assessment': globals.player.profile.assessment?.pk,
+                      'classification':
+                          globals.player.profile.classification?.pk,
                     };
 
                     final http.Response response = await http.patch(

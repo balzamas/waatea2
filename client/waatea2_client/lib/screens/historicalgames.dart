@@ -74,7 +74,7 @@ class HistoricalGamesScreen extends StatelessWidget {
                                 .bodyMedium
                                 ?.copyWith(
                                   color: Colors.black54,
-                                  fontSize: 15,
+                                  fontSize: 12,
                                 ),
                           ),
                         ],
@@ -92,7 +92,7 @@ class HistoricalGamesScreen extends StatelessWidget {
                                 .bodyMedium
                                 ?.copyWith(
                                   color: Colors.black54,
-                                  fontSize: 15,
+                                  fontSize: 12,
                                 ),
                           ),
                         ],
@@ -111,7 +111,7 @@ class HistoricalGamesScreen extends StatelessWidget {
                                 ?.copyWith(
                                   color: Colors.black54,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 15,
+                                  fontSize: 12,
                                 ),
                           ),
                         ],

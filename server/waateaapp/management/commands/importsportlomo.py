@@ -43,12 +43,12 @@ class Command(BaseCommand):
                             competition = row[2]
 
                             HistoricalGame.objects.create(
-                                played_for=played_for,
-                                played_against=played_against,
+                                played_for=played_for.encode('latin-1').decode('utf-8'),
+                                played_against=played_against.encode('latin-1').decode('utf-8'),
                                 player=player,
                                 date=date,
                                 position=position,
-                                competition=competition,
+                                competition=competition.encode('latin-1').decode('utf-8'),
                             )
 
                             self.stdout.write(self.style.SUCCESS(f'Successfully imported game for {sportlomo_id}'))

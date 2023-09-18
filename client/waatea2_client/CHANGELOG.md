@@ -1,5 +1,9 @@
 # Waatea Changelog
 
+## V0.0.10
+- **Bug Fix:** Keep classification/assessment when abo/phone number is changed
+- **Bug Fix:** Umlaut problem in Sportlomo import
+
 ## V0.0.9
 - **Bug Fix:** Hide past game
 - **Bug Fix:** Show training list when new training is added

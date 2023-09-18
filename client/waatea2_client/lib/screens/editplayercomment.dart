@@ -61,7 +61,7 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MyHomePage(initialIndex: 5),
+        builder: (_) => MyHomePage(initialIndex: 6),
       ),
     );
   }
