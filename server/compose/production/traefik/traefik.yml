@@ -28,7 +28,7 @@ certificatesResolvers:
 http:
   routers:
     web-secure-router:
-      rule: 'Host(`new.waatea.vip`)'
+      rule: 'Host(`www.waatea.vip`)'
       entryPoints:
         - web-secure
       middlewares:
@@ -39,7 +39,7 @@ http:
         certResolver: letsencrypt
 
     web-media-router:
-      rule: '(Host(`new.waatea.vip`)) && PathPrefix(`/media/`)'
+      rule: '(Host(`www.waatea.vip`)) && PathPrefix(`/media/`)'
       entryPoints:
         - web-secure
       middlewares:
