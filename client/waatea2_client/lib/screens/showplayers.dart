@@ -124,6 +124,13 @@ class _ShowPlayersState extends State<ShowPlayers> {
                             int.parse('0x${user.profile.assessment!.icon}'),
                             fontFamily: 'MaterialIcons'),
                       )),
+                const SizedBox(width: 10),
+                Text(
+                  user.attendance_percentage.toString() + "%",
+                  style: DefaultTextStyle.of(context)
+                      .style
+                      .apply(fontSizeFactor: 1.5, color: playerColor),
+                ),
               ],
             ),
             onTap: () {

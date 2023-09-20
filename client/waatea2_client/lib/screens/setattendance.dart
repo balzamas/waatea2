@@ -231,6 +231,24 @@ class SetAttendanceState extends State<SetAttendance> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 50),
+                    Text(
+                      "Your attendance rate:",
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${globals.player.attendance_percentage}%",
+                      style: const TextStyle(
+                          fontSize: 23, fontWeight: FontWeight.bold),
+                    ),
+                    if (globals.player.attendance_percentage > 79) ...[
+                      Text(
+                        "❤️LOVELY!❤️",
+                        style: const TextStyle(
+                            fontSize: 23, fontWeight: FontWeight.bold),
+                      )
+                    ]
                   ]
                 ],
               );

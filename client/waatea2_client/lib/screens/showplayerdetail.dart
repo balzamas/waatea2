@@ -127,6 +127,13 @@ class ShowPlayerDetail extends StatelessWidget {
                       fontSize: 15,
                     )),
             const SizedBox(height: 10),
+            Text('${user.attendance_percentage}%',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    )),
+            const SizedBox(height: 10),
+
             Container(
               width: 500, // Replace with your desired width
               height: 30, // Replace with your desired height

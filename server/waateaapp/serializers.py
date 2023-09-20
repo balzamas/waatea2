@@ -203,6 +203,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    attendance_percentage = serializers.SerializerMethodField()
+
     club = ClubSerializer()
     profile = UserProfileSerializer(source='userprofile')
     class Meta:
@@ -212,8 +214,25 @@ class UserSerializer(serializers.ModelSerializer):
         'name',
         'email',
         'club',
-        'profile'
+        'profile',
+            'attendance_percentage'
         ]
+
+    def get_attendance_percentage(self, obj):
+
+        #ToDo: only current season, check if there are less then 10 trainings yet and calculate accordingly
+        # Step 1: Retrieve the last 10 training records.
+        last_10_trainings = Training.objects.filter(date__lte=datetime.now()).order_by('-date')[:10]
+
+        # Step 2: Filter the attendances for the specified player and last 10 trainings.
+        count = Attendance.objects.filter(player=obj.pk, training__in=last_10_trainings).count()
+
+        percentage = 0
+
+        if count > 0:
+                percentage = int(100 * count / 10)
+
+        return percentage
 
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:

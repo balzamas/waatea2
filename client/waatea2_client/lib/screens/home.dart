@@ -67,10 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.face),
                     label: Text('Show Players'),
                   ),
-                const NavigationRailDestination(
-                  icon: Icon(Icons.face),
-                  label: Text('Show Players'),
-                ),
               ],
               selectedIndex: _currentIndex,
               onDestinationSelected: (value) {
@@ -107,9 +103,6 @@ class _MyHomePageState extends State<MyHomePage> {
         return ShowAttendance();
       case 6:
         return ShowPlayers();
-      case 7:
-        return ReorderableListScreen();
-
       default:
         return Container();
     }

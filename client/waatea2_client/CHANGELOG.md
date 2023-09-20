@@ -2,6 +2,9 @@
 
 ## V0.0.12
 - **Enhancement:** Filters in admin interface
+- **New Feature:** Add drills
+- **Enhancement:** Enhance training model by textfields and drills
+- **Enhancement:** Show training rate
 
 ## V0.0.11
 - **Bug Fix:** Shrink information on Userprofile so Change password button is visible also on old devices

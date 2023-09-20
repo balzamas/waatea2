@@ -9,6 +9,7 @@ class ShowAvailabilityDetailModel {
   final String email;
   final UserProfileModel playerProfile;
   final String mobilephone;
+  final int attendance_percentage;
   int state;
   String updated;
 
@@ -18,6 +19,7 @@ class ShowAvailabilityDetailModel {
       required this.email,
       required this.playerProfile,
       required this.mobilephone,
+      required this.attendance_percentage,
       required this.state,
       required this.updated});
 
@@ -26,6 +28,7 @@ class ShowAvailabilityDetailModel {
         pk: json['pk'],
         name: json['name'],
         email: json['email'],
+        attendance_percentage: json['attendance_percentage'],
         playerProfile: UserProfileModel.fromJson(json['profile']),
         mobilephone: json['profile']['mobile_phone'],
         state: 0,

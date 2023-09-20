@@ -13,6 +13,7 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
   final String updated;
   final String game;
   final UserProfileModel player;
+  final int attendance_percentage;
 
   const ShowAvailabilityDetailRow(
       {Key? key,
@@ -22,7 +23,8 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
       required this.state,
       required this.updated,
       required this.game,
-      required this.player})
+      required this.player,
+      required this.attendance_percentage})
       : super(key: key);
 
   @override
@@ -66,7 +68,22 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                 ),
               ),
               stateIcon,
-              const SizedBox(width: 40),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.attendance_percentage.toString() + "%",
+                      style: DefaultTextStyle.of(context)
+                          .style
+                          .apply(fontSizeFactor: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
               Expanded(
                   flex: 1,
                   child: Column(
@@ -82,7 +99,7 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                               : Icons.highlight_off,
                         )
                       ])),
-              const SizedBox(width: 40),
+              const SizedBox(width: 10),
               Expanded(
                   flex: 1,
                   child: Column(

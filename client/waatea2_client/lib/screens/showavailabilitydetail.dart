@@ -435,6 +435,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                         assessment: data.playerProfile.assessment,
                         updated: data.updated,
                         player: data.playerProfile,
+                        attendance_percentage: data.attendance_percentage,
                         game:
                             "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}");
                   },
