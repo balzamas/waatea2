@@ -88,7 +88,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
               user.name,
               style: DefaultTextStyle.of(context)
                   .style
-                  .apply(fontSizeFactor: 1.5, color: playerColor),
+                  .apply(fontSizeFactor: 1, color: playerColor),
             ),
             // subtitle: Column(
             //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +129,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                   user.attendance_percentage.toString() + "%",
                   style: DefaultTextStyle.of(context)
                       .style
-                      .apply(fontSizeFactor: 1.5, color: playerColor),
+                      .apply(fontSizeFactor: 1, color: playerColor),
                 ),
               ],
             ),

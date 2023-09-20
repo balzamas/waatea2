@@ -62,7 +62,7 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                       widget.name,
                       style: DefaultTextStyle.of(context)
                           .style
-                          .apply(fontSizeFactor: 1.5),
+                          .apply(fontSizeFactor: 1),
                     ),
                   ],
                 ),
@@ -78,7 +78,7 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                       widget.attendance_percentage.toString() + "%",
                       style: DefaultTextStyle.of(context)
                           .style
-                          .apply(fontSizeFactor: 1.5),
+                          .apply(fontSizeFactor: 1),
                     ),
                   ],
                 ),
@@ -99,23 +99,23 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                               : Icons.highlight_off,
                         )
                       ])),
-              const SizedBox(width: 10),
-              Expanded(
-                  flex: 1,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        if (widget.assessment != null &&
-                            widget.assessment?.icon != null)
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  right: 8.0), // Adjust spacing as needed
-                              child: Icon(
-                                IconData(
-                                    int.parse('0x${widget.assessment!.icon}'),
-                                    fontFamily: 'MaterialIcons'),
-                              ))
-                      ])),
+              // const SizedBox(width: 10),
+              // Expanded(
+              //     flex: 1,
+              //     child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.center,
+              //         children: [
+              //           if (widget.assessment != null &&
+              //               widget.assessment?.icon != null)
+              //             Padding(
+              //                 padding: EdgeInsets.only(
+              //                     right: 8.0), // Adjust spacing as needed
+              //                 child: Icon(
+              //                   IconData(
+              //                       int.parse('0x${widget.assessment!.icon}'),
+              //                       fontFamily: 'MaterialIcons'),
+              //                 ))
+              //         ])),
               Expanded(
                   flex: 1,
                   child: Column(
