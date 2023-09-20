@@ -415,6 +415,22 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
+                const Icon(Icons.history_edu),
+                const SizedBox(width: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      globals.player.caps.toString(),
+                    )
+                  ],
+                )
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
                 const Icon(Icons.fitness_center),
                 const SizedBox(width: 24),
                 Container(
@@ -425,8 +441,6 @@ class HomeState extends State<UserProfile> {
                 )
               ],
             ),
-            const SizedBox(height: 12),
-            Text('Waatea version: ${_version.toString()}'),
             const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
@@ -434,6 +448,8 @@ class HomeState extends State<UserProfile> {
               child: const Text('Change Password',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
+            const SizedBox(height: 12),
+            Text('Waatea version: ${_version.toString()}'),
           ],
         )));
   }

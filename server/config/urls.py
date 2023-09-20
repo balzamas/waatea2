@@ -79,6 +79,8 @@ urlpatterns = [
 
     path('api/training/<uuid:training_id>/', viewsets.training_with_drills, name='training_with_drills'),
 
+    path('rest-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
     path('api/change-password/', change_password, name='change_password'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

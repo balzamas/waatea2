@@ -3,7 +3,7 @@
 ## V0.0.13
 - **Enhancement:** Export attendance last 4 trainings and all trainings in season
 - **Bug Fix:** Only use attended=true for attendandcy rate
-
+- **Enhancement:** Show caps in user profile
 
 ## V0.0.12
 - **Enhancement:** Filters in admin interface

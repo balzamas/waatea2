@@ -204,6 +204,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     attendance_percentage = serializers.SerializerMethodField()
+    caps = serializers.SerializerMethodField()
 
     club = ClubSerializer()
     profile = UserProfileSerializer(source='userprofile')
@@ -215,8 +216,12 @@ class UserSerializer(serializers.ModelSerializer):
         'email',
         'club',
         'profile',
-            'attendance_percentage'
+            'attendance_percentage',
+            'caps'
         ]
+
+    def get_caps(self, obj):
+        return HistoricalGame.objects.filter(player=obj.pk).count()
 
     def get_attendance_percentage(self, obj):
 
