@@ -1,13 +1,13 @@
 class HistoricalGameModel {
-  final String played_for;
-  final String played_against;
+  final String playedFor;
+  final String playedAgainst;
   final String date;
   final String competition;
   final String position;
 
   HistoricalGameModel({
-    required this.played_for,
-    required this.played_against,
+    required this.playedFor,
+    required this.playedAgainst,
     required this.date,
     required this.competition,
     required this.position,
@@ -15,8 +15,8 @@ class HistoricalGameModel {
 
   factory HistoricalGameModel.fromJson(Map<String, dynamic> json) {
     return HistoricalGameModel(
-      played_for: json['played_for'],
-      played_against: json['played_against'],
+      playedFor: json['played_for'],
+      playedAgainst: json['played_against'],
       date: json['date'],
       competition: json['competition'],
       position: json['position'],

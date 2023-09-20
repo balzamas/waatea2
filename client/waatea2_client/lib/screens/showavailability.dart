@@ -5,7 +5,6 @@ import 'dart:convert';
 import '../globals.dart' as globals;
 
 import '../models/showavailability_model.dart';
-import '../models/availability_model.dart';
 import '../models/user_model.dart';
 
 import '../widgets/showavailability_row.dart';

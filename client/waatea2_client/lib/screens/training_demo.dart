@@ -34,7 +34,7 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Items'),
+          title: const Text('Add Items'),
           content: SingleChildScrollView(
             child: Column(
               children: availableItems.map((item) {
@@ -77,7 +77,7 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Training 19.9.23'),
+        title: const Text('Training 19.9.23'),
       ),
       body: Column(
         crossAxisAlignment:
@@ -87,9 +87,9 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
             crossAxisAlignment:
                 CrossAxisAlignment.start, // Align children to the left
             children: [
-              Text("Remarks:"),
+              const Text("Remarks:"),
               Text(doc),
-              Text("Review:"),
+              const Text("Review:"),
               Text(doc),
             ],
           ),
@@ -111,7 +111,7 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
                   },
                   key: Key(element),
                   title: Text(element),
-                  leading: Icon(Icons.bolt),
+                  leading: const Icon(Icons.bolt),
                 );
               }).toList(),
             ),
@@ -122,7 +122,7 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
         onPressed: () {
           _showAddItemsDialog();
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

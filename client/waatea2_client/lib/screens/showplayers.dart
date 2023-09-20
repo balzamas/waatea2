@@ -126,7 +126,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                       )),
                 const SizedBox(width: 10),
                 Text(
-                  user.attendance_percentage.toString() + "%",
+                  user.attendancePercentage.toString() + "%",
                   style: DefaultTextStyle.of(context)
                       .style
                       .apply(fontSizeFactor: 1, color: playerColor),

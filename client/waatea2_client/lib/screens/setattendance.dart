@@ -238,11 +238,11 @@ class SetAttendanceState extends State<SetAttendance> {
                           fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${globals.player.attendance_percentage}%",
+                      "${globals.player.attendancePercentage}%",
                       style: const TextStyle(
                           fontSize: 23, fontWeight: FontWeight.bold),
                     ),
-                    if (globals.player.attendance_percentage > 79) ...[
+                    if (globals.player.attendancePercentage > 79) ...[
                       Text(
                         "❤️LOVELY!❤️",
                         style: const TextStyle(

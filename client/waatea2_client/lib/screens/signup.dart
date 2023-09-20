@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:waatea2_client/helper.dart';
-import 'package:waatea2_client/models/abonnement_model.dart';
 import '../globals.dart' as globals;
 import '../models/club.dart';
 import 'login.dart';

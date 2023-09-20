@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_avatar/random_avatar.dart';
-import 'package:waatea2_client/helper.dart';
 import 'package:waatea2_client/models/abonnement_model.dart';
-import 'package:waatea2_client/models/historicalgame_model.dart';
 import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/screens/home.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
@@ -213,9 +211,9 @@ class HomeState extends State<UserProfile> {
                     },
                     items: [
                       // Add a default "Select Classification" item as the first item
-                      DropdownMenuItem<AbonnementModel>(
+                      const DropdownMenuItem<AbonnementModel>(
                         value: null,
-                        child: const Text('Select Abonnement'),
+                        child: Text('Select Abonnement'),
                       ),
                       ...abonnementOptions.map((abonnement) {
                         return DropdownMenuItem<AbonnementModel>(
@@ -293,55 +291,6 @@ class HomeState extends State<UserProfile> {
     );
   }
 
-  Future<void> _showHistoricalGamesDialog() async {
-    List<HistoricalGameModel> historicalGames = [];
-
-    final response = await http.get(
-      Uri.parse(
-          '${globals.URL_PREFIX}/api/historical_games/filter?player=${globals.playerId}'),
-      headers: {
-        'Authorization': 'Token ${globals.token}',
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    if (response.statusCode == 200) {
-      String responseBody = utf8.decode(response.bodyBytes);
-      List<dynamic> data = jsonDecode(responseBody);
-      setState(() {
-        historicalGames =
-            data.map((item) => HistoricalGameModel.fromJson(item)).toList();
-      });
-    }
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Historical Games'),
-          content: ListView.builder(
-            itemCount: historicalGames.length,
-            itemBuilder: (BuildContext context, int index) {
-              var game = historicalGames[index];
-              return ListTile(
-                title: Text('Played For: ${game.played_for}'),
-                subtitle: Text('Played Against: ${game.played_against}'),
-                // You can display more information about the game here
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -375,7 +324,7 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
-                Icon(Icons.person),
+                const Icon(Icons.person),
                 const SizedBox(width: 24),
                 Text(
                   globals.player.name,
@@ -387,7 +336,7 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
-                Icon(Icons.check_box),
+                const Icon(Icons.check_box),
                 const SizedBox(width: 24),
                 Text(
                   "Active: ${globals.player.profile.isPlaying.toString()}",
@@ -399,7 +348,7 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
-                Icon(Icons.email),
+                const Icon(Icons.email),
                 const SizedBox(width: 24),
                 Text(
                   globals.player.email,
@@ -411,7 +360,7 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
-                Icon(Icons.phone),
+                const Icon(Icons.phone),
                 const SizedBox(width: 24),
                 Text(
                   globals.player.profile.mobilePhone,
@@ -423,7 +372,7 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
-                Icon(Icons.category),
+                const Icon(Icons.category),
                 const SizedBox(width: 24),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,7 +380,7 @@ class HomeState extends State<UserProfile> {
                     if (globals.player.profile.assessment != null &&
                         globals.player.profile.assessment?.icon != null)
                       Padding(
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               right: 8.0), // Adjust spacing as needed
                           child: Icon(
                             IconData(
@@ -450,7 +399,7 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
-                Icon(Icons.train),
+                const Icon(Icons.train),
                 const SizedBox(width: 24),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -466,7 +415,7 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
-                Icon(Icons.fitness_center),
+                const Icon(Icons.fitness_center),
                 const SizedBox(width: 24),
                 Container(
                   width: 400, // Replace with your desired width

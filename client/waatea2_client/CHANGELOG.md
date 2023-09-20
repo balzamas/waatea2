@@ -1,5 +1,10 @@
 # Waatea Changelog
 
+## V0.0.13
+- **Enhancement:** Export attendance last 4 trainings and all trainings in season
+- **Bug Fix:** Only use attended=true for attendandcy rate
+
+
 ## V0.0.12
 - **Enhancement:** Filters in admin interface
 - **New Feature:** Add drills

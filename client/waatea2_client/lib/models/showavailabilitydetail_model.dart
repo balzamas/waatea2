@@ -1,6 +1,3 @@
-import 'package:waatea2_client/models/abonnement_model.dart';
-import 'package:waatea2_client/models/assessment_model.dart';
-import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/models/userprofile_model.dart';
 
 class ShowAvailabilityDetailModel {

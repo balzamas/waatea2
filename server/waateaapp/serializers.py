@@ -225,7 +225,7 @@ class UserSerializer(serializers.ModelSerializer):
         last_10_trainings = Training.objects.filter(date__lte=datetime.now()).order_by('-date')[:10]
 
         # Step 2: Filter the attendances for the specified player and last 10 trainings.
-        count = Attendance.objects.filter(player=obj.pk, training__in=last_10_trainings).count()
+        count = Attendance.objects.filter(player=obj.pk, attended=True, training__in=last_10_trainings).count()
 
         percentage = 0
 

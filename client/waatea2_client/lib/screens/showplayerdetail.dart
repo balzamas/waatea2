@@ -8,9 +8,6 @@ import 'package:waatea2_client/screens/editplayerdetail.dart';
 import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/screens/setavailability.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
-import 'package:flutter_quill/extensions.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
-import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 
 import '../helper.dart';
 
@@ -73,7 +70,7 @@ class ShowPlayerDetail extends StatelessWidget {
                 if (user.profile.classification != null &&
                     user.profile.classification?.icon != null)
                   Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           right: 8.0), // Adjust spacing as needed
                       child: Icon(
                         IconData(
@@ -83,7 +80,7 @@ class ShowPlayerDetail extends StatelessWidget {
                 if (user.profile.assessment != null &&
                     user.profile.assessment?.icon != null)
                   Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           right: 8.0), // Adjust spacing as needed
                       child: Icon(
                         IconData(
@@ -127,7 +124,7 @@ class ShowPlayerDetail extends StatelessWidget {
                       fontSize: 15,
                     )),
             const SizedBox(height: 10),
-            Text('${user.attendance_percentage}%',
+            Text('${user.attendancePercentage}%',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,

@@ -170,9 +170,9 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
               },
               items: [
                 // Add a default "Select Classification" item as the first item
-                DropdownMenuItem<AssessmentModel>(
+                const DropdownMenuItem<AssessmentModel>(
                   value: null,
-                  child: const Text('Select Level'),
+                  child: Text('Select Level'),
                 ),
                 ...assessmentOptions.map((assessment) {
                   return DropdownMenuItem<AssessmentModel>(
@@ -193,9 +193,9 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
               },
               items: [
                 // Add a default "Select Classification" item as the first item
-                DropdownMenuItem<ClassificationModel>(
+                const DropdownMenuItem<ClassificationModel>(
                   value: null,
-                  child: const Text('Select Classification'),
+                  child: Text('Select Classification'),
                 ),
                 ...classificationOptions.map((classification) {
                   return DropdownMenuItem<ClassificationModel>(
@@ -215,9 +215,9 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                 });
               },
               items: [
-                DropdownMenuItem<AbonnementModel>(
+                const DropdownMenuItem<AbonnementModel>(
                   value: null,
-                  child: const Text('Select Abonnement'),
+                  child: Text('Select Abonnement'),
                 ),
                 ...abonnementOptions.map((abonnement) {
                   return DropdownMenuItem<AbonnementModel>(

@@ -9,20 +9,20 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail Screen'),
+        title: const Text('Detail Screen'),
       ),
       body: Center(
         child: Column(children: [
           const SizedBox(height: 16),
           Text(detailText),
           const SizedBox(height: 16),
-          Text("Link to detailed description"),
+          const Text("Link to detailed description"),
           const SizedBox(height: 16),
-          Text("Keywords: Forwards, Line-Outs"),
-          Text("Min. players: 8"),
+          const Text("Keywords: Forwards, Line-Outs"),
+          const Text("Min. players: 8"),
           const SizedBox(height: 16),
-          Text("Description"),
-          Text("Leute herum hetzen\nDauereinwurf bumm bumm bumm"),
+          const Text("Description"),
+          const Text("Leute herum hetzen\nDauereinwurf bumm bumm bumm"),
         ]),
       ),
     );

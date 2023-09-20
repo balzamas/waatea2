@@ -14,7 +14,7 @@ class HistoricalGamesScreen extends StatelessWidget {
 
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/historical_games/filter?player=${playerId}'),
+          '${globals.URL_PREFIX}/api/historical_games/filter?player=$playerId'),
       headers: {
         'Authorization': 'Token ${globals.token}',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -37,14 +37,14 @@ class HistoricalGamesScreen extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<List<HistoricalGameModel>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error fetching historical games'));
+          return const Center(child: Text('Error fetching historical games'));
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('Historical Games'),
+            title: const Text('Historical Games'),
           ),
           body: ListView.builder(
             itemCount: snapshot.data?.length,
@@ -52,7 +52,7 @@ class HistoricalGamesScreen extends StatelessWidget {
               var game = snapshot.data?[index];
               return ListTile(
                 title: Text(
-                  '${game?.played_against}',
+                  '${game?.playedAgainst}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -68,7 +68,7 @@ class HistoricalGamesScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${game?.played_for}\n${game?.competition}",
+                            "${game?.playedFor}\n${game?.competition}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -86,7 +86,9 @@ class HistoricalGamesScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${game?.date != null ? "${DateTime.parse(game!.date!).day}.${DateTime.parse(game.date!).month}.${DateTime.parse(game.date!).year}" : "N/A"}",
+                            game?.date != null
+                                ? "${DateTime.parse(game!.date).day}.${DateTime.parse(game.date).month}.${DateTime.parse(game.date).year}"
+                                : "N/A",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium

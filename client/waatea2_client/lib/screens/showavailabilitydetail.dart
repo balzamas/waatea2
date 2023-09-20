@@ -4,16 +4,13 @@ import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:waatea2_client/helper.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 import 'package:csv/csv.dart'; // Import the csv package
 import '../models/availability_model.dart';
 import '../models/showavailabilitydetail_model.dart';
 // ignore: depend_on_referenced_packages
-import 'package:path_provider/path_provider.dart';
 import '../widgets/showavailabilitydetail_row.dart';
-import 'dart:io';
 import 'package:universal_html/html.dart' as uh;
 
 enum SortOption { state, updated, name }
@@ -91,7 +88,9 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         'Classification',
         'Availability',
         'Abonnement',
-        'Training l10'
+        'Training l10',
+        'Training l4',
+        'Training Tot'
       ]
     ];
 
@@ -112,27 +111,35 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
           break;
       }
 
-      int trainings = 0;
-      int attended = 0;
+      int attended10 = 0;
+      int attended4 = 0;
+      int attended_tot = 0;
+      int training_count = 0;
 
-      List<AttendedViewModel> trainingsX = [];
+      List<AttendedViewModel> trainings10 = [];
       final response = await http.get(
           Uri.parse(
-              '${globals.URL_PREFIX}/api/training-attendance?season=${globals.seasonID}&club=${globals.clubId}&user_id=${player.pk}&last_n=10'),
+              '${globals.URL_PREFIX}/api/training-attendance?season=${globals.seasonID}&club=${globals.clubId}&user_id=${player.pk}'),
           headers: {'Authorization': 'Token ${globals.token}'});
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
 
-        trainingsX = data
+        trainings10 = data
             .map((item) => AttendedViewModel(
                   date: item['date'],
                   attended: item['attended'],
                 ))
             .toList();
-        for (AttendedViewModel training in trainingsX) {
-          trainings = trainings + 1;
+        for (AttendedViewModel training in trainings10) {
+          training_count = training_count + 1;
           if (training.attended) {
-            attended = attended + 1;
+            attended_tot = attended_tot + 1;
+            if (training_count < 11) {
+              attended10 = attended10 + 1;
+              if (training_count < 5) {
+                attended4 = attended4 + 1;
+              }
+            }
           }
         }
       }
@@ -143,7 +150,9 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         player.playerProfile.classification?.name ?? 'Not Set',
         availabilityText,
         player.playerProfile.abonnement?.name ?? 'Not Set',
-        attended
+        attended10,
+        attended4,
+        attended_tot
       ]);
     }
 
@@ -225,16 +234,16 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         return StatefulBuilder(
           builder: (BuildContext context, setState) {
             return AlertDialog(
-              title: Text('File Generation Status'),
+              title: const Text('File Generation Status'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (generationStatus == FileGenerationStatus.generating)
-                    Text('Generating...'),
+                    const Text('Generating...'),
                   if (generationStatus == FileGenerationStatus.complete)
-                    Text('File generated successfully.'),
+                    const Text('File generated successfully.'),
                   if (generationStatus == FileGenerationStatus.error)
-                    Text('Error generating file.'),
+                    const Text('Error generating file.'),
                 ],
               ),
               actions: <Widget>[
@@ -242,7 +251,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
                   },
-                  child: Text('Close'),
+                  child: const Text('Close'),
                 ),
               ],
             );
@@ -266,7 +275,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return AlertDialog(
+                  return const AlertDialog(
                     title: Text('Generating File...'),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -435,7 +444,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                         assessment: data.playerProfile.assessment,
                         updated: data.updated,
                         player: data.playerProfile,
-                        attendance_percentage: data.attendance_percentage,
+                        attendancePercentage: data.attendance_percentage,
                         game:
                             "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}");
                   },

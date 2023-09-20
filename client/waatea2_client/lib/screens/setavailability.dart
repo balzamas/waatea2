@@ -53,7 +53,7 @@ class SetAvailabilityState extends State<SetAvailability> {
       } else {
         DateTime gameDate = DateTime.parse(games[i].date);
         SetAvailabilityModel record = SetAvailabilityModel(
-            avail_id: "",
+            availId: "",
             games:
                 "${formatterTime.format(gameDate.toLocal())} - ${games[i].home} - ${games[i].away}",
             dayofyear: games[i].dayofyear,
@@ -75,7 +75,7 @@ class SetAvailabilityState extends State<SetAvailability> {
 
           if (availabilities.isNotEmpty) {
             record.state = availabilities[0].state;
-            record.avail_id = availabilities[0].pk;
+            record.availId = availabilities[0].pk;
           }
 
           setAvailabilities.add(record);
@@ -117,7 +117,7 @@ class SetAvailabilityState extends State<SetAvailability> {
                     date: data.date,
                     initialState: data.state,
                     playerId: widget.playerId,
-                    initialAvailabilityId: data.avail_id,
+                    initialAvailabilityId: data.availId,
                     dayofyear: data.dayofyear,
                     season: data.season);
               },

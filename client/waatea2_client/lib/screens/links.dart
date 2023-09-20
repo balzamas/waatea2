@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:random_avatar/random_avatar.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:waatea2_client/helper.dart';
 import 'package:waatea2_client/models/link_model.dart';
-import 'package:waatea2_client/models/user_model.dart';
-import 'package:waatea2_client/screens/showplayerdetail.dart';
-import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 

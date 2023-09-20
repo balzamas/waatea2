@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:waatea2_client/helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waatea2_client/models/assessment_model.dart';
-import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/models/userprofile_model.dart';
 
 class ShowAvailabilityDetailRow extends StatefulWidget {
@@ -13,7 +12,7 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
   final String updated;
   final String game;
   final UserProfileModel player;
-  final int attendance_percentage;
+  final int attendancePercentage;
 
   const ShowAvailabilityDetailRow(
       {Key? key,
@@ -24,7 +23,7 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
       required this.updated,
       required this.game,
       required this.player,
-      required this.attendance_percentage})
+      required this.attendancePercentage})
       : super(key: key);
 
   @override
@@ -75,7 +74,7 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      widget.attendance_percentage.toString() + "%",
+                      "${widget.attendancePercentage}%",
                       style: DefaultTextStyle.of(context)
                           .style
                           .apply(fontSizeFactor: 1),
