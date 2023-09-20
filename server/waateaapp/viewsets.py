@@ -4,16 +4,19 @@ from rest_framework import viewsets, generics
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
-from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links
+from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, Drill, TrainingDrillOrder
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
-    UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, AbonnementSerializer, ClassificationSerializer
+    UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, AbonnementSerializer, ClassificationSerializer, DrillSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
 from rest_framework import status
 from django.middleware import csrf
 from django.http import JsonResponse
+from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
+from django.core import serializers
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
@@ -66,6 +69,20 @@ class GameCurrentAvailCountFilterAPIView(generics.ListAPIView):
             queryset = queryset.filter(club=club)
         if club and season:
             queryset = queryset.filter(club=club, season=season)
+
+        return queryset
+
+class DrillFilterAPIView(generics.ListAPIView):
+    queryset = Drill.objects.order_by('name')
+    serializer_class = DrillSerializer
+    ordering = ['name']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
 
         return queryset
 
@@ -315,6 +332,49 @@ class TrainingAttendanceViewSet(viewsets.ReadOnlyModelViewSet):
         context['user_id'] = self.request.query_params.get('user_id')
         return context
 
+def training_with_drills(request, training_id):
+    # Retrieve the Training record by ID
+    training = get_object_or_404(Training, pk=training_id)
+
+    # Retrieve the related TrainingDrillOrder objects for the given training
+    training_drill_orders = TrainingDrillOrder.objects.filter(training=training)
+
+    # Serialize the Training object
+    training_data = serializers.serialize('json', [training])
+
+    # Deserialize the serialized data to include the order information
+    deserialized_data = serializers.deserialize('json', training_data)
+    training_dict = list(deserialized_data)[0].object
+
+    # Create a dictionary to store the final response
+    response_data = {
+        'fields': {
+            'date': training_dict.date,
+            'remarks': training_dict.remarks,
+            'review': training_dict.review,
+            'drills': {},
+        }
+    }
+
+    # Include the drills in the response with order information
+    for training_drill_order in training_drill_orders:
+        drill = training_drill_order.drill
+        order = training_drill_order.order
+        drill_data = {
+            'id': str(drill.id),
+            'club': drill.club.name,
+            'name': drill.name,
+            'created': drill.created.strftime('%Y-%m-%d %H:%M:%S'),
+            'updated': drill.updated.strftime('%Y-%m-%d %H:%M:%S'),
+            'link': drill.link,
+            'minplayers': drill.minplayers,
+            'category': drill.category.name,
+            'description': drill.description,
+            'order': order,  # Include the order information here
+        }
+        response_data['fields']['drills'][str(drill.id)] = drill_data
+
+    return JsonResponse(response_data)
 @api_view(['POST'])
 def change_password(request):
     user = request.user

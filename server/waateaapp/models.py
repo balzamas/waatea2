@@ -3,6 +3,8 @@ import uuid
 from waatea_2.users.models import User
 from waateaapp.model_club import Club
 
+def upload_to(instance, filename):
+    return 'images/{filename}'.format(filename=filename)
 
 class Season(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -15,6 +17,59 @@ class Season(models.Model):
     def __str__(self):
         return self.name
 
+class DrillCategory(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name + " / " + self.club.name
+class Drill(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    link = models.CharField(max_length=200)
+    minplayers = models.IntegerField(default=0)
+    category = models.ForeignKey(DrillCategory, on_delete=models.CASCADE)
+
+    description = models.TextField(default="[]")
+
+    def __str__(self):
+        return self.name
+
+class Training(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date = models.DateTimeField()
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
+    dayofyear = models.IntegerField(default=-1)
+    remarks = models.TextField(default="[]")
+    review = models.TextField(default="[]")
+    drills = models.ManyToManyField(
+        Drill,
+        through='TrainingDrillOrder',
+        related_name='trainings',
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.date.__str__()
+    def save(self, *args, **kwargs):
+        self.dayofyear = self.date.timetuple().tm_yday
+        super(Training, self).save(*args, **kwargs)
+
+class TrainingDrillOrder(models.Model):
+    training = models.ForeignKey(Training, on_delete=models.CASCADE)
+    drill = models.ForeignKey(Drill, on_delete=models.CASCADE)
+    order = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ('training', 'drill')
+
 class Team(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=200)
@@ -26,18 +81,7 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
-class Training(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date = models.DateTimeField()
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
-    season = models.ForeignKey(Season, on_delete=models.CASCADE)
-    dayofyear = models.IntegerField(default=-1)
 
-    def __str__(self):
-        return self.date.__str__()
-    def save(self, *args, **kwargs):
-        self.dayofyear = self.date.timetuple().tm_yday
-        super(Training, self).save(*args, **kwargs)
 class Attendance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -98,7 +142,7 @@ class Links(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.club.name
+        return self.name
 
 class HistoricalGame(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

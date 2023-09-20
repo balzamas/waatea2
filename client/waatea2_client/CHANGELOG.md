@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.12
+- **Enhancement:** Filters in admin interface
+
 ## V0.0.11
 - **Bug Fix:** Shrink information on Userprofile so Change password button is visible also on old devices
 

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 
-from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links
+from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, Drill, TrainingDrillOrder
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
 
 class HistoricalGameSerializer(serializers.ModelSerializer):
@@ -30,6 +30,11 @@ class AssessmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assessment
         fields = ['pk', 'name', 'icon']
+
+class DrillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Drill
+        fields = ['pk', 'name', 'category', 'description', 'minplayers', 'link']
 
 class AbonnementSerializer(serializers.ModelSerializer):
     class Meta:
@@ -84,10 +89,10 @@ class GameAvailCountSerializer(serializers.ModelSerializer):
         'date',
         'dayofyear',
         'season',
-            'avail',
-            'noavail',
-            'maybe',
-            'notset',
+        'avail',
+        'noavail',
+        'maybe',
+        'notset',
         ]
 
     def get_avail(self, obj):
@@ -219,8 +224,8 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         'state',
         'club',
         'dayofyear',
-            'season',
-            'updated'
+        'season',
+        'updated'
         ]
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -231,20 +236,49 @@ class AttendanceSerializer(serializers.ModelSerializer):
         'player',
         'attended',
         'dayofyear',
-            'season',
-            'training'
+        'season',
+        'training'
         ]
 
+class DrillOrderSerializer(serializers.ModelSerializer):
+    order = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Drill
+        fields = [
+            'pk',
+            'minplayers',
+            'name',
+            'link',
+            'club',
+            'description',
+            'category',
+            'order',  # Include the 'order' field
+        ]
+
+    def get_order(self, obj):
+        # Get the order for the current drill in the context of the training
+        request = self.context.get('request')
+        if request:
+            training_drill_order = request.data.get('training_drill_order', {})
+            return training_drill_order.get(str(obj.pk), None)
+        return None
 class TrainingSerializer(serializers.ModelSerializer):
+
+    drills = DrillOrderSerializer(many=True, read_only=True)
     class Meta:
         model = Training
         fields = [
         'pk',
         'club',
         'date',
-            'dayofyear',
-            'season',
+        'dayofyear',
+        'season',
+        'remarks',
+        'review',
+        'drills',
         ]
+
 
 class TrainingAttendanceCountSerializer(serializers.ModelSerializer):
     attendance_count = serializers.SerializerMethodField()

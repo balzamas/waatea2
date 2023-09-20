@@ -5,7 +5,7 @@ from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from waateaapp import views
+from waateaapp import views, viewsets
 from rest_framework import routers
 from rest_framework.authtoken import views as restviews
 from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, \
@@ -76,6 +76,8 @@ urlpatterns = [
     path('api/currentseason/filter/', CurrentSeasonFilterAPIView.as_view(), name='currentseason-filter'),
 
     path('api/trainings/', TrainingAttendanceCountAPIView.as_view(), name='training-list'),
+
+    path('api/training/<uuid:training_id>/', viewsets.training_with_drills, name='training_with_drills'),
 
     path('api/change-password/', change_password, name='change_password'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

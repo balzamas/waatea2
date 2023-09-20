@@ -62,6 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
         // Login successful, extract the token from the response
         String token = json.decode(response.body)['token'];
 
+        print(token);
+
         //Load User
         final http.Response response2 = await http.get(
             Uri.parse('${globals.URL_PREFIX}/api/users/filter?email=$username'),

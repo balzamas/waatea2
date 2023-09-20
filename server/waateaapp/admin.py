@@ -1,31 +1,43 @@
 from django.contrib import admin
-from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame, Links
+from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame, Links, Drill, DrillCategory, TrainingDrillOrder
 from waatea_2.users.models import UserProfile, Assessment, Abonnement, Classification
 
 admin.site.register(Club)
 admin.site.register(Team)
 admin.site.register(Season)
-admin.site.register(Attendance)
 admin.site.register(CurrentSeason)
 admin.site.register(Links)
 admin.site.register(Classification)
 admin.site.register(Assessment)
 admin.site.register(Abonnement)
-
+admin.site.register(Drill)
+admin.site.register(DrillCategory)
+admin.site.register(TrainingDrillOrder)
+@admin.register(Attendance)
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ["player", "training", "attended", "season"]
+    list_filter = ["training__date", "player__name", "season__name"]
+    ordering = ["training__date"]
 
 @admin.register(Availability)
 class AvailabilityAdmin(admin.ModelAdmin):
     list_display = ["player", "season", "state", "dayofyear"]
-    list_filter = ["season"]
+    list_filter = ["season__name"]
     ordering = ["season"]
+
+class TrainingDrillOrderInline(admin.TabularInline):
+    model = TrainingDrillOrder
+    extra = 1
 @admin.register(Training)
 class TrainingAdmin(admin.ModelAdmin):
     list_display = ["date", "season", "club"]
-    list_filter = ["season"]
+    list_filter = ["season__name", "date"]
     ordering = ["-date"]
+    inlines = (TrainingDrillOrderInline,)
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
     list_display = ["home", "away", "date", "season", "club"]
+    list_filter = ["season__name", "date"]
     ordering = ['date']
 
 
@@ -38,4 +50,3 @@ class UserProfileAdmin(admin.ModelAdmin):
 class HistoricalGameAdmin(admin.ModelAdmin):
     list_display = ["played_for", "played_against", "player", "date", "position", "competition"]
     ordering = ['player__name']
-
