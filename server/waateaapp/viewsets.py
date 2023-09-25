@@ -324,6 +324,8 @@ class TrainingAttendanceViewSet(viewsets.ReadOnlyModelViewSet):
 
         if last_n > 0:
             queryset = queryset.order_by('-date')[:last_n]
+        else:
+            queryset = queryset.order_by('-date')
 
         return queryset
 

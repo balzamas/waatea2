@@ -90,7 +90,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         'Abonnement',
         'Training l10',
         'Training l4',
-        'Training Tot'
+        'Training Tot',
+        'Caps'
       ]
     ];
 
@@ -101,13 +102,13 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
           availabilityText = 'Not Set';
           break;
         case 1:
-          availabilityText = 'Available';
+          availabilityText = 'Not Available';
           break;
         case 2:
           availabilityText = 'Maybe';
           break;
         case 3:
-          availabilityText = 'Not Available';
+          availabilityText = 'Available';
           break;
       }
 
@@ -152,7 +153,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         player.playerProfile.abonnement?.name ?? 'Not Set',
         attended10,
         attended4,
-        attended_tot
+        attended_tot,
+        player.caps
       ]);
     }
 

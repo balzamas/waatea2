@@ -18,11 +18,22 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  late String _token = '';
 
   @override
   void initState() {
     super.initState();
-    _loadCredentials(); // Load saved email and password
+    _loadCredentialsAndLogin();
+  }
+
+  void _loadCredentialsAndLogin() {
+    _loadCredentials().then((_) {
+      if (_token.isNotEmpty) {
+        Future.delayed(Duration.zero, () {
+          _login_process(_token, _usernameController.text);
+        });
+      }
+    });
   }
 
   Future<void> _loadCredentials() async {
@@ -30,7 +41,53 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _usernameController.text = sharedPreferences.getString('email') ?? '';
       _passwordController.text = sharedPreferences.getString('password') ?? '';
+      _token = sharedPreferences.getString('token') ?? '';
     });
+  }
+
+  Future<void> _login_process(String token, String username) async {
+    final http.Response response2 = await http.get(
+        Uri.parse('${globals.URL_PREFIX}/api/users/filter?email=$username'),
+        headers: {'Authorization': 'Token $token'});
+
+    if (response2.statusCode == 200) {
+      String clubid = json.decode(response2.body)[0]['club']['pk'];
+      int userid = json.decode(response2.body)[0]['pk'];
+
+      String responseBody = utf8.decode(response2.bodyBytes);
+
+      final itemsUser = json.decode(responseBody).cast<Map<String, dynamic>>();
+      List<UserModel> users = itemsUser.map<UserModel>((json) {
+        return UserModel.fromJson(json);
+      }).toList();
+
+      final responseCurrentseason = await http.get(
+          Uri.parse(
+              "${globals.URL_PREFIX}/api/currentseason/filter?club=$clubid"),
+          headers: {'Authorization': 'Token $token'});
+
+      final itemsCurrentseason =
+          json.decode(responseCurrentseason.body).cast<Map<String, dynamic>>();
+      List<CurrentSeasonModel> currentseason =
+          itemsCurrentseason.map<CurrentSeasonModel>((json) {
+        return CurrentSeasonModel.fromJson(json);
+      }).toList();
+
+      String season = currentseason[0].season;
+
+      // Navigate to the next screen (you can go to the home screen here)
+      globals.playerId = userid;
+      globals.clubId = clubid;
+      globals.seasonID = season;
+      globals.token = token;
+      globals.player = users[0];
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(initialIndex: 1),
+        ),
+      );
+    }
   }
 
   Future<void> _login() async {
@@ -63,52 +120,10 @@ class _LoginScreenState extends State<LoginScreen> {
         String token = json.decode(response.body)['token'];
 
         print(token);
+        sharedPreferences.setString('token', token);
 
-        //Load User
-        final http.Response response2 = await http.get(
-            Uri.parse('${globals.URL_PREFIX}/api/users/filter?email=$username'),
-            headers: {'Authorization': 'Token $token'});
-
-        if (response2.statusCode == 200) {
-          String clubid = json.decode(response2.body)[0]['club']['pk'];
-          int userid = json.decode(response2.body)[0]['pk'];
-
-          String responseBody = utf8.decode(response2.bodyBytes);
-
-          final itemsUser =
-              json.decode(responseBody).cast<Map<String, dynamic>>();
-          List<UserModel> users = itemsUser.map<UserModel>((json) {
-            return UserModel.fromJson(json);
-          }).toList();
-
-          final responseCurrentseason = await http.get(
-              Uri.parse(
-                  "${globals.URL_PREFIX}/api/currentseason/filter?club=$clubid"),
-              headers: {'Authorization': 'Token $token'});
-
-          final itemsCurrentseason = json
-              .decode(responseCurrentseason.body)
-              .cast<Map<String, dynamic>>();
-          List<CurrentSeasonModel> currentseason =
-              itemsCurrentseason.map<CurrentSeasonModel>((json) {
-            return CurrentSeasonModel.fromJson(json);
-          }).toList();
-
-          String season = currentseason[0].season;
-
-          // Navigate to the next screen (you can go to the home screen here)
-          globals.playerId = userid;
-          globals.clubId = clubid;
-          globals.seasonID = season;
-          globals.token = token;
-          globals.player = users[0];
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MyHomePage(initialIndex: 1),
-            ),
-          );
-        }
+        //Final login
+        _login_process(token, username);
       } else {
         showDialog(
           context: context,

@@ -221,7 +221,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     def get_caps(self, obj):
-        return HistoricalGame.objects.filter(player=obj.pk).count()
+        return HistoricalGame.objects.filter(player=obj.pk).order_by('-date').count()
 
     def get_attendance_percentage(self, obj):
 

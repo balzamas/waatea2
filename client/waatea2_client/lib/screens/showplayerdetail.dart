@@ -118,13 +118,13 @@ class ShowPlayerDetail extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 22),
-            Text('Training attendance',
+            Text('Caps: ${user.caps}',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     )),
-            const SizedBox(height: 10),
-            Text('${user.attendancePercentage}%',
+            const SizedBox(height: 22),
+            Text('Training attendance: ${user.attendancePercentage}%',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,

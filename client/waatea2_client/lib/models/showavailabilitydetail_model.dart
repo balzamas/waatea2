@@ -9,6 +9,7 @@ class ShowAvailabilityDetailModel {
   final int attendance_percentage;
   int state;
   String updated;
+  final int caps;
 
   ShowAvailabilityDetailModel(
       {required this.pk,
@@ -18,7 +19,8 @@ class ShowAvailabilityDetailModel {
       required this.mobilephone,
       required this.attendance_percentage,
       required this.state,
-      required this.updated});
+      required this.updated,
+      required this.caps});
 
   factory ShowAvailabilityDetailModel.fromJson(Map<String, dynamic> json) {
     return ShowAvailabilityDetailModel(
@@ -29,7 +31,8 @@ class ShowAvailabilityDetailModel {
         playerProfile: UserProfileModel.fromJson(json['profile']),
         mobilephone: json['profile']['mobile_phone'],
         state: 0,
-        updated: "");
+        updated: "",
+        caps: json['caps']);
   }
 
   Map<String, dynamic> toJson() => {
