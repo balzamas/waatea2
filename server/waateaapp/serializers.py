@@ -96,17 +96,17 @@ class GameAvailCountSerializer(serializers.ModelSerializer):
         ]
 
     def get_avail(self, obj):
-        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=3).count()
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=3, player__userprofile__is_playing=True).count()
 
     def get_maybe(self, obj):
-        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=2).count()
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=2, player__userprofile__is_playing=True).count()
 
     def get_noavail(self, obj):
-        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=1).count()
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=1, player__userprofile__is_playing=True).count()
 
     def get_notset(selfself, obj):
         usercount = User.objects.filter(club=obj.club, userprofile__is_playing=True).count()
-        return usercount - Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season).count()
+        return usercount - Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, player__userprofile__is_playing=True).count()
 
 
 class ClassificationField(serializers.PrimaryKeyRelatedField):

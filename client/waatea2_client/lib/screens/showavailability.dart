@@ -26,20 +26,6 @@ class ShowAvailabilityState extends State<ShowAvailability> {
   }
 
   Future<List<ShowAvailabilityModel>> getGameList() async {
-    //Get number of players
-    final responseUser = await http.get(
-        Uri.parse(
-            "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}&is_playing=True"),
-        headers: {'Authorization': 'Token ${globals.token}'});
-
-    final itemsUser =
-        json.decode(responseUser.body).cast<Map<String, dynamic>>();
-    List<UserModel> users = itemsUser.map<UserModel>((json) {
-      return UserModel.fromJson(json);
-    }).toList();
-
-    int totalUsers = users.length;
-
     //Get games
     final response = await http.get(
         Uri.parse(

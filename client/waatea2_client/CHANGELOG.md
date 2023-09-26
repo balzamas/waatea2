@@ -1,6 +1,10 @@
 # Waatea Changelog
 
 ## V0.0.14
+- **Bug Fix:** Fix totals for game avails
+
+
+## V0.0.14
 - **Enhancement:** Show caps in User details, CSV Export
 - **Bug Fix:** Wrong L10/L4 in CSV export
 - **Bug Fix:** Switch Available/Not Available in CSV export
