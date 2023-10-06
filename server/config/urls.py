@@ -12,7 +12,9 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     AvailabilityUpdateAPIView, AvailabilityCreateAPIView, AttendanceCreateAPIView, AttendanceFilterAPIView, \
     AttendanceUpdateAPIView, TrainingFilterAPIView, TrainingCurrentFilterAPIView, CurrentSeasonFilterAPIView, \
     TrainingAttendanceCountAPIView, TrainingAttendanceViewSet, TrainingCreateAPIView, UserProfileDetail, \
-    UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token
+    UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
+    LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
+    TrainingPartCreateAPIView, TrainingPartUpdateAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -22,6 +24,8 @@ router.register('gamedetails', views.Game)
 router.register('userdetails', views.User)
 router.register('availabilitydetails', views.Availability)
 router.register('training-attendance', TrainingAttendanceViewSet, basename='training-attendance')
+
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FLUTTER_WEB_APP = os.path.join(BASE_DIR, 'client')
@@ -77,9 +81,12 @@ urlpatterns = [
 
     path('api/trainings/', TrainingAttendanceCountAPIView.as_view(), name='training-list'),
 
-    path('api/training/<uuid:training_id>/', viewsets.training_with_drills, name='training_with_drills'),
+    path('api/trainingparts/', viewsets.TrainingPartViewSet.as_view({'get': 'list'}), name='trainingpart-list'),
+    path('api/trainingpart/', TrainingPartCreateAPIView.as_view(), name='trainingpart-create'),
+                  path('api/trainingpart/<uuid:pk>/', TrainingPartUpdateAPIView.as_view(), name='trainingpart-update'),
+path('api/trainingparts/<uuid:pk>/', viewsets.delete_training_part),
 
-    path('rest-auth/', include('rest_framework.urls', namespace='rest_framework')),
+                  path('rest-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     path('api/change-password/', change_password, name='change_password'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

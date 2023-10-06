@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 
-from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, Drill, TrainingDrillOrder
+from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
 
 class HistoricalGameSerializer(serializers.ModelSerializer):
@@ -31,10 +31,6 @@ class AssessmentSerializer(serializers.ModelSerializer):
         model = Assessment
         fields = ['pk', 'name', 'icon']
 
-class DrillSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Drill
-        fields = ['pk', 'name', 'category', 'description', 'minplayers', 'link']
 
 class AbonnementSerializer(serializers.ModelSerializer):
     class Meta:
@@ -264,44 +260,11 @@ class AttendanceSerializer(serializers.ModelSerializer):
         'training'
         ]
 
-class DrillOrderSerializer(serializers.ModelSerializer):
-    order = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Drill
-        fields = [
-            'pk',
-            'minplayers',
-            'name',
-            'link',
-            'club',
-            'description',
-            'category',
-            'order',  # Include the 'order' field
-        ]
-
-    def get_order(self, obj):
-        # Get the order for the current drill in the context of the training
-        request = self.context.get('request')
-        if request:
-            training_drill_order = request.data.get('training_drill_order', {})
-            return training_drill_order.get(str(obj.pk), None)
-        return None
 class TrainingSerializer(serializers.ModelSerializer):
 
-    drills = DrillOrderSerializer(many=True, read_only=True)
     class Meta:
         model = Training
-        fields = [
-        'pk',
-        'club',
-        'date',
-        'dayofyear',
-        'season',
-        'remarks',
-        'review',
-        'drills',
-        ]
+        fields = '__all__'
 
 
 class TrainingAttendanceCountSerializer(serializers.ModelSerializer):
@@ -347,5 +310,7 @@ class CurrentSeasonSerializer(serializers.ModelSerializer):
         'season',
         ]
 
-
-
+class TrainingPartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingPart
+        fields = '__all__'

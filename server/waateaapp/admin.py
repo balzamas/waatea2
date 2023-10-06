@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame, Links, Drill, DrillCategory, TrainingDrillOrder
+from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame, Links, \
+    TrainingPart
 from waatea_2.users.models import UserProfile, Assessment, Abonnement, Classification
 
 admin.site.register(Club)
@@ -10,9 +11,7 @@ admin.site.register(Links)
 admin.site.register(Classification)
 admin.site.register(Assessment)
 admin.site.register(Abonnement)
-admin.site.register(Drill)
-admin.site.register(DrillCategory)
-admin.site.register(TrainingDrillOrder)
+admin.site.register(TrainingPart)
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ["player", "training", "attended", "season"]
@@ -25,15 +24,12 @@ class AvailabilityAdmin(admin.ModelAdmin):
     list_filter = ["season__name"]
     ordering = ["season"]
 
-class TrainingDrillOrderInline(admin.TabularInline):
-    model = TrainingDrillOrder
-    extra = 1
+
 @admin.register(Training)
 class TrainingAdmin(admin.ModelAdmin):
     list_display = ["date", "season", "club"]
     list_filter = ["season__name", "date"]
     ordering = ["-date"]
-    inlines = (TrainingDrillOrderInline,)
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
     list_display = ["home", "away", "date", "season", "club"]

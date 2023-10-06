@@ -3,7 +3,7 @@ class DrillModel {
   final int minplayers;
   final String name;
   final String link;
-  final String club;
+  // final String club;
   final String description;
   final String category;
 
@@ -12,7 +12,7 @@ class DrillModel {
       required this.minplayers,
       required this.name,
       required this.link,
-      required this.club,
+      // required this.club,
       required this.description,
       required this.category});
 
@@ -22,7 +22,7 @@ class DrillModel {
         minplayers: json['minplayers'],
         name: json['name'],
         link: json['link'],
-        club: json['club'],
+        //club: json['club'],
         description: json['description'],
         category: json['category']);
   }

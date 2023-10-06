@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/models/trainingattendance_model.dart';
 import 'package:waatea2_client/screens/home.dart';
+import 'package:waatea2_client/screens/trainingdetail.dart';
 import '../globals.dart' as globals;
 
 class ShowAttendance extends StatefulWidget {
@@ -38,7 +39,9 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                 season: item['season'],
                 dayofyear: item['dayofyear'],
                 attendanceCount: item['attendance_count'],
-                current: item['current']))
+                current: item['current'],
+                remarks: item['remarks'],
+                review: item['review']))
             .toList();
       });
     }
@@ -201,8 +204,23 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                     : MaterialStateColor.resolveWith(
                         (states) => Colors.transparent),
                 cells: [
-                  DataCell(Text(
-                      "${DateTime.parse(training.date).day}.${DateTime.parse(training.date).month}.${DateTime.parse(training.date).year}")),
+                  DataCell(
+                    GestureDetector(
+                      onTap: () {
+                        // Navigate to the TrainingDetailScreen with the selected training
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                TrainingDetailScreen(training: training),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "${DateTime.parse(training.date).day}.${DateTime.parse(training.date).month}.${DateTime.parse(training.date).year}",
+                      ),
+                    ),
+                  ),
                   DataCell(Text(training.attendanceCount.toString())),
                 ]);
           }).toList(),

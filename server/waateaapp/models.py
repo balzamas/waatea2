@@ -17,30 +17,6 @@ class Season(models.Model):
     def __str__(self):
         return self.name
 
-class DrillCategory(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name + " / " + self.club.name
-class Drill(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    link = models.CharField(max_length=200)
-    minplayers = models.IntegerField(default=0)
-    category = models.ForeignKey(DrillCategory, on_delete=models.CASCADE)
-
-    description = models.TextField(default="[]")
-
-    def __str__(self):
-        return self.name
-
 class Training(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date = models.DateTimeField()
@@ -49,12 +25,6 @@ class Training(models.Model):
     dayofyear = models.IntegerField(default=-1)
     remarks = models.TextField(default="[]")
     review = models.TextField(default="[]")
-    drills = models.ManyToManyField(
-        Drill,
-        through='TrainingDrillOrder',
-        related_name='trainings',
-        blank=True,
-    )
 
     def __str__(self):
         return self.date.__str__()
@@ -62,13 +32,11 @@ class Training(models.Model):
         self.dayofyear = self.date.timetuple().tm_yday
         super(Training, self).save(*args, **kwargs)
 
-class TrainingDrillOrder(models.Model):
+class TrainingPart(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     training = models.ForeignKey(Training, on_delete=models.CASCADE)
-    drill = models.ForeignKey(Drill, on_delete=models.CASCADE)
+    description = models.TextField(default="")
     order = models.PositiveIntegerField()
-
-    class Meta:
-        unique_together = ('training', 'drill')
 
 class Team(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

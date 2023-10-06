@@ -3,6 +3,7 @@ import 'package:waatea2_client/screens/links.dart';
 import 'package:waatea2_client/screens/showattendance.dart';
 import 'package:waatea2_client/screens/showplayers.dart';
 import 'package:waatea2_client/screens/training_demo.dart';
+import 'package:waatea2_client/screens/trainingdetail.dart';
 import 'setattendance.dart';
 import 'setavailability.dart';
 import 'showavailability.dart';

@@ -2,6 +2,7 @@
 
 ## V0.0.14
 - **Bug Fix:** Fix totals for game avails
+- **Enhancement:** Add drills to training
 
 
 ## V0.0.14

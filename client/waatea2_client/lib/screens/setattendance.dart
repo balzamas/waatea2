@@ -86,12 +86,12 @@ class SetAttendanceState extends State<SetAttendance> {
     SetAttendanceModel setAttendance = SetAttendanceModel(text: "", state: 0);
 
     if (trainings.isNotEmpty) {
-      trainingId = trainings[0].pk;
+      trainingId = trainings[0].id;
       dayofhteyear = trainings[0].dayofyear;
       //Load attendance
       final responseAttend = await http.get(
           Uri.parse(
-              "${globals.URL_PREFIX}/api/attendances/filter?training=${trainings[0].pk}&player=${globals.playerId}&season=${globals.seasonID}"),
+              "${globals.URL_PREFIX}/api/attendances/filter?training=${trainings[0].id}&player=${globals.playerId}&season=${globals.seasonID}"),
           headers: {'Authorization': 'Token ${globals.token}'});
 
       if (responseAttend.statusCode == 200) {
