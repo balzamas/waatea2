@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pdf/pdf.dart';
 import 'package:waatea2_client/models/training_model.dart';
 import 'package:waatea2_client/models/trainingpart_model.dart';
 import 'package:waatea2_client/screens/home.dart';
@@ -7,11 +10,17 @@ import 'dart:convert';
 import '../globals.dart' as globals;
 
 import 'package:waatea2_client/models/trainingattendance_model.dart';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
+
+import 'package:pdf/widgets.dart' as pw;
+
+import 'dart:io';
+import 'package:universal_html/html.dart' as uh;
+
+enum FileGenerationStatus { idle, generating, complete, error }
 
 class TrainingDetailScreen extends StatefulWidget {
   final TrainingAttendanceModel training;
@@ -27,6 +36,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   QuillController _controllerReview = QuillController.basic();
   List<TrainingPart> trainingParts = []; // Replace with TrainingPart list
   TextEditingController _trainingPartController = TextEditingController();
+  FileGenerationStatus generationStatus = FileGenerationStatus.idle;
 
   @override
   void initState() {
@@ -235,6 +245,13 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             },
           ),
           IconButton(
+            icon: Icon(Icons.picture_as_pdf),
+            onPressed: () {
+              // Call the save method when the save icon is pressed.
+              _generatePDF();
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.open_in_browser),
             onPressed: () {
               // Call the save method when the save icon is pressed.
@@ -277,63 +294,67 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
               ),
             ),
 // Draggable list of training parts.
-            SizedBox(
-              height: 300, // Set the desired height.
-              child: ReorderableListView(
-                onReorder: (int oldIndex, int newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    final TrainingPart movedItem =
-                        trainingParts.removeAt(oldIndex);
-                    trainingParts.insert(newIndex, movedItem);
-                  });
-                },
-                children: trainingParts.asMap().entries.map((entry) {
-                  final int index = entry.key;
-                  final TrainingPart trainingPart = entry.value;
-                  final uniqueKey = Key(
-                      '${trainingPart.id}_${index.toString()}'); // Unique key for each training part.
-                  return ReorderableDragStartListener(
-                      index: index,
-                      key: uniqueKey,
-                      child: GestureDetector(
-                        // Wrap the ListTile with GestureDetector
-                        onDoubleTap: () {
-                          // Perform the action you want when double-clicked
-                          // For example, you can show a dialog or navigate to a new screen.
-                          // You can use the `trainingPart` object to access data related to the selected item.
-                          _handleDoubleTap(trainingPart);
-                        },
-                        child: Container(
-                          color:
-                              index % 2 == 0 ? Colors.white : Colors.grey[200],
-                          child: ListTile(
-                            key: ValueKey(uniqueKey),
-                            title: Text(trainingPart.description),
-                            // Add more training part details here.
+            Container(
+              width: MediaQuery.of(context).size.width - 60,
+              child: SizedBox(
+                height: 900, // Set the desired height.
+                child: ReorderableListView(
+                  onReorder: (int oldIndex, int newIndex) {
+                    setState(() {
+                      if (oldIndex < newIndex) {
+                        newIndex -= 1;
+                      }
+                      final TrainingPart movedItem =
+                          trainingParts.removeAt(oldIndex);
+                      trainingParts.insert(newIndex, movedItem);
+                    });
+                  },
+                  children: trainingParts.asMap().entries.map((entry) {
+                    final int index = entry.key;
+                    final TrainingPart trainingPart = entry.value;
+                    final uniqueKey = Key(
+                        '${trainingPart.id}_${index.toString()}'); // Unique key for each training part.
+                    return ReorderableDragStartListener(
+                        index: index,
+                        key: uniqueKey,
+                        child: GestureDetector(
+                          // Wrap the ListTile with GestureDetector
+                          onDoubleTap: () {
+                            // Perform the action you want when double-clicked
+                            // For example, you can show a dialog or navigate to a new screen.
+                            // You can use the `trainingPart` object to access data related to the selected item.
+                            _handleDoubleTap(trainingPart);
+                          },
+                          child: Container(
+                            color: index % 2 == 0
+                                ? Colors.white
+                                : Colors.grey[200],
+                            child: ListTile(
+                              key: ValueKey(uniqueKey),
+                              title: Text(trainingPart.description),
+                              // Add more training part details here.
+                            ),
                           ),
-                        ),
-                      ));
-                }).toList(),
+                        ));
+                  }).toList(),
+                ),
               ),
             ),
 
             SizedBox(height: 20), // Adjust spacing as needed
 
-            // Display Reviews
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Reviews:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            QuillEditor.basic(
-              controller: _controllerReview,
-              readOnly: true,
-            ),
+            // // Display Reviews
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Text(
+            //     'Reviews:',
+            //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            //   ),
+            // ),
+            // QuillEditor.basic(
+            //   controller: _controllerReview,
+            //   readOnly: true,
+            // ),
           ],
         ),
       ),
@@ -417,6 +438,76 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
     } catch (error) {
       // Handle error if necessary.
       print('Error: $error');
+    }
+  }
+
+  Future<void> _generatePDF() async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              // Training date
+              pw.Text('Training: ${widget.training.date}'),
+              pw.Divider(),
+              // Remarks
+              pw.Text('Remarks:'),
+              pw.Paragraph(text: _controllerRemarks.document.toPlainText()),
+              pw.Divider(),
+              // Drills
+              pw.Row(children: [pw.Text('Drills:')]),
+              pw.Divider(),
+              pw.SizedBox(height: 20),
+
+              for (var index = 0; index < trainingParts.length; index++)
+                pw.Column(
+                  children: [
+                    pw.Container(
+                      color:
+                          index % 2 == 0 ? PdfColors.grey200 : PdfColors.white,
+                      child: pw.Row(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            trainingParts[index].description,
+                            textAlign: pw.TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                    pw.SizedBox(height: 10),
+                  ],
+                ),
+            ],
+          );
+        },
+      ),
+    );
+
+    final pdfBytes = await pdf.save();
+
+    // final file = File('/home/ctrl/training_report.pdf');
+    // await file.writeAsBytes(await pdf.save());
+
+    // Open the PDF directly without saving to disk
+    saveAndDownloadFile("training.pdf", pdfBytes);
+  }
+
+  Future<void> saveAndDownloadFile(String fileName, Uint8List content) async {
+    try {
+      // Handle file download for web platforms
+      final blob = uh.Blob([Uint8List.fromList(content)]);
+      final url = uh.Url.createObjectUrlFromBlob(blob);
+      final anchor = uh.AnchorElement(href: url)
+        ..setAttribute('download', '$fileName')
+        ..click();
+      uh.Url.revokeObjectUrl(url);
+    } catch (e) {
+      print('Error generating file: $e');
+      Navigator.of(context).pop(); // Close the generation status dialog
     }
   }
 

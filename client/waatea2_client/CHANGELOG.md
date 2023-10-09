@@ -1,5 +1,10 @@
 # Waatea Changelog
 
+## V0.0.15
+- **Enhancement:** Make drill list more useable
+- **Enhancement:** Export training as PDF
+
+
 ## V0.0.14
 - **Bug Fix:** Fix totals for game avails
 - **Enhancement:** Add drills to training
