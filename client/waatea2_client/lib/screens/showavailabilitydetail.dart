@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:waatea2_client/screens/availbility_screen.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
@@ -311,6 +312,19 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               showGenerationStatusDialog(context);
             },
           ),
+          // IconButton(
+          //     icon: const Icon(Icons.home_mini),
+          //     onPressed: () async {
+          //       List<ShowAvailabilityDetailModel> players =
+          //           await getPlayerList();
+          //       Navigator.of(context).push(
+          //         MaterialPageRoute(
+          //           builder: (context) => AvailabilityScreen(
+          //             availablePlayers: players, // Replace with your list
+          //           ),
+          //         ),
+          //       );
+          //     }),
           PopupMenuButton<SortOption>(
             onSelected: onSortOptionChanged,
             itemBuilder: (BuildContext context) => [

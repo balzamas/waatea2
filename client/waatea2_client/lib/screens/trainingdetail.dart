@@ -121,9 +121,11 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             content: SingleChildScrollView(
               child: Column(
                 children: availableTrainings.map((training) {
+                  DateTime trainingDate = DateTime.parse(training.date);
+
                   return ListTile(
-                    title:
-                        Text(training.date), // Customize the display as needed.
+                    title: Text(
+                        '${trainingDate.day}.${trainingDate.month}.${trainingDate.year}'), // Customize the display as needed.
                     onTap: () async {
                       // Fetch the training parts of the selected training.
                       final partsResponse = await http.get(
@@ -150,7 +152,8 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                                 id: null,
                                 trainingId: widget.training.pk,
                                 order: trainingPart.order,
-                                description: trainingPart.description));
+                                description: trainingPart.description,
+                                minutes: trainingPart.minutes));
                           });
                         });
 
@@ -187,6 +190,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
           body: {
             'description': trainingPart.description,
             'order': index.toString(),
+            'minutes': trainingPart.minutes.toString(),
             // Add other fields as needed for updating.
           },
         );
@@ -206,7 +210,8 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
           body: {
             'description': trainingPart.description,
             'order': index.toString(),
-            'training': widget.training.pk
+            'training': widget.training.pk,
+            'minutes': trainingPart.minutes.toString()
           },
         );
 
@@ -232,9 +237,11 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime trainingDate = DateTime.parse(widget.training.date);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Training Detail'),
+        title: Text(
+            "Training ${trainingDate.day}.${trainingDate.month}.${trainingDate.year}"),
         actions: [
           // Add a save icon to the AppBar.
           IconButton(
@@ -332,6 +339,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                             child: ListTile(
                               key: ValueKey(uniqueKey),
                               title: Text(trainingPart.description),
+                              leading: Text(trainingPart.minutes.toString()),
                               // Add more training part details here.
                             ),
                           ),
@@ -368,20 +376,27 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
 
   void _showEditTrainingPartDialog(
       BuildContext context, TrainingPart trainingPart) {
-    TextEditingController _editController =
+    TextEditingController _editDescriptionController =
         TextEditingController(text: trainingPart.description);
+    TextEditingController _editMinutesController =
+        TextEditingController(text: trainingPart.minutes.toString());
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit drill'),
+          title: Text('Edit Drill'),
           content: Column(
             children: [
               TextField(
-                controller: _editController,
+                controller: _editDescriptionController,
                 maxLines: null,
-                decoration: InputDecoration(labelText: 'Drill description'),
+                decoration: InputDecoration(labelText: 'Drill Description'),
+              ),
+              TextField(
+                controller: _editMinutesController,
+                decoration: InputDecoration(labelText: 'Minutes'),
+                keyboardType: TextInputType.number, // Ensure numeric input.
               ),
               SizedBox(height: 20),
               Row(
@@ -398,9 +413,12 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                   ElevatedButton(
                     child: Text('Save'),
                     onPressed: () {
-                      // Update the training part's content with the edited text.
+                      // Update the training part's content with the edited text and minutes.
                       setState(() {
-                        trainingPart.description = _editController.text;
+                        trainingPart.description =
+                            _editDescriptionController.text;
+                        trainingPart.minutes =
+                            int.parse(_editMinutesController.text);
                       });
                       // Close the edit dialog.
                       Navigator.of(context).pop();
@@ -459,8 +477,17 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
               pw.Divider(),
               // Drills
               pw.Row(children: [pw.Text('Drills:')]),
-              pw.Divider(),
               pw.SizedBox(height: 20),
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                    "mins",
+                    textAlign: pw.TextAlign.left,
+                  ),
+                ],
+              ),
+              pw.Divider(),
 
               for (var index = 0; index < trainingParts.length; index++)
                 pw.Column(
@@ -471,6 +498,14 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                       child: pw.Row(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
+                          pw.Text(
+                            trainingParts[index]
+                                .minutes
+                                .toString()
+                                .padLeft(2, '0'),
+                            textAlign: pw.TextAlign.left,
+                          ),
+                          pw.SizedBox(width: 30),
                           pw.Text(
                             trainingParts[index].description,
                             textAlign: pw.TextAlign.left,
@@ -512,6 +547,9 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   }
 
   void _showAddTrainingPartDialog(BuildContext context) async {
+    TextEditingController _addDescriptionController = TextEditingController();
+    TextEditingController _addMinutesController = TextEditingController();
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -521,9 +559,14 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             child: Column(
               children: [
                 TextField(
-                  controller: _trainingPartController,
+                  controller: _addDescriptionController,
                   decoration: InputDecoration(labelText: 'Drill Description'),
                   maxLines: null,
+                ),
+                TextField(
+                  controller: _addMinutesController,
+                  decoration: InputDecoration(labelText: 'Minutes'),
+                  keyboardType: TextInputType.number, // Ensure numeric input.
                 ),
               ],
             ),
@@ -538,15 +581,19 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             TextButton(
               child: Text('Add'),
               onPressed: () {
-                final newTrainingPartDescription = _trainingPartController.text;
+                final newTrainingPartDescription =
+                    _addDescriptionController.text;
+                final newTrainingPartMinutes =
+                    int.parse(_addMinutesController.text);
+
                 if (newTrainingPartDescription.isNotEmpty) {
                   // Create a new TrainingPart and add it to the list
                   final newTrainingPart = TrainingPart(
                     id: null,
-                    trainingId: widget.training
-                        .pk, // Set the training to the current training
+                    trainingId: widget.training.pk,
                     description: newTrainingPartDescription,
-                    order: 0, // You may set the order appropriately
+                    order: 0,
+                    minutes: newTrainingPartMinutes,
                   );
 
                   setState(() {

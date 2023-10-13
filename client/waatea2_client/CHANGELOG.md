@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.16
+- **Enhancement:** Minutes field for drills
+
 ## V0.0.15
 - **Enhancement:** Make drill list more useable
 - **Enhancement:** Export training as PDF

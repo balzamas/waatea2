@@ -37,6 +37,8 @@ class TrainingPart(models.Model):
     training = models.ForeignKey(Training, on_delete=models.CASCADE)
     description = models.TextField(default="")
     order = models.PositiveIntegerField()
+    minutes = models.PositiveIntegerField(default=1)
+
 
 class Team(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
