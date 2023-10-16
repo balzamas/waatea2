@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/models/showavailabilitydetail_model.dart';
-import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/widgets/playertile.dart';
-import 'package:waatea2_client/widgets/rowtile.dart';
+import 'package:waatea2_client/widgets/playertile23.dart';
+import 'package:waatea2_client/models/selectedplayer_model.dart';
 
 class AvailabilityScreen extends StatefulWidget {
   final List<ShowAvailabilityDetailModel> availablePlayers;
@@ -13,9 +13,28 @@ class AvailabilityScreen extends StatefulWidget {
   _AvailabilityScreenState createState() => _AvailabilityScreenState();
 }
 
+class PlaceholderWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey, width: 1),
+      ),
+      child: Center(
+        child: Text(
+          'Empty',
+          style: TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+}
+
 class _AvailabilityScreenState extends State<AvailabilityScreen> {
-  List<ShowAvailabilityDetailModel> column1Players = [];
-  List<ShowAvailabilityDetailModel> column2Players = [];
+  List<SelectedPlayer> column1Players =
+      List.filled(23, SelectedPlayer(playerId: -1, position: -1, gameId: -1));
+  List<SelectedPlayer> column2Players =
+      List.filled(23, SelectedPlayer(playerId: -1, position: -1, gameId: -1));
 
   @override
   Widget build(BuildContext context) {
@@ -30,129 +49,102 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
             children: widget.availablePlayers
                 .where((player) => player.state == 2 || player.state == 3)
                 .map((player) {
-              return Draggable<ShowAvailabilityDetailModel>(
-                data: player,
-                child: PlayerTile(player: player),
-                feedback: PlayerTile(player: player, isDragging: true),
+              Color backgroundColor = Colors.white;
+              if (column1Players.any((p) => p.playerId == player.pk)) {
+                backgroundColor = Colors.green;
+              }
+              return Draggable<SelectedPlayer>(
+                data:
+                    SelectedPlayer(playerId: player.pk, position: 0, gameId: 0),
+                child: PlayerTile(
+                  player: player,
+                  backgroundColor: backgroundColor,
+                ),
+                feedback: PlayerTile(
+                  player: player,
+                  isDragging: true,
+                  backgroundColor: backgroundColor,
+                ),
                 childWhenDragging: SizedBox.shrink(),
               );
             }).toList(),
           ),
-          // Second Column (Drag Target)
+
+          // Second Column (ReorderableListView)
+// Second Column (ReorderableListView)
           Expanded(
-            child: DragTarget<ShowAvailabilityDetailModel>(
-              builder: (context, candidateData, rejectedData) {
-                return ListView.builder(
-                  itemCount: 23, // Limit to 23 rows
-                  itemBuilder: (context, index) {
-                    ShowAvailabilityDetailModel? player;
-                    if (index < column1Players.length) {
-                      // Render player if available
-                      player = column1Players[index];
-                    }
-                    return Draggable<ShowAvailabilityDetailModel>(
-                      data: player,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1),
-                        ),
-                        child: RowTile(player: player!, index: index),
-                      ),
-                      feedback: RowTile(
-                          player: player, index: index, isDragging: true),
-                      childWhenDragging: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1),
-                        ),
-                        height: 50, // Adjust the height as needed
-                      ),
-                      onDragCompleted: () {
-                        // Remove the player from the source row if it was dragged to another row
-                        if (player != null && player != candidateData) {
-                          setState(() {
-                            column1Players.remove(player);
-                          });
-                        }
-                      },
-                      onDraggableCanceled: (Velocity velocity, Offset offset) {
-                        // Reorder players within the same column
-                        if (player != null && player == candidateData) {
-                          setState(() {
-                            column1Players.remove(player);
-                            column1Players.insert(index, player!);
-                          });
-                        }
-                      },
-                    );
-                  },
-                );
-              },
-              onWillAccept: (player) {
-                return column1Players.length < 23; // Limit to 23 players
-              },
-              onAccept: (player) {
+            child: ReorderableListView.builder(
+              onReorder: (int oldIndex, int newIndex) {
                 setState(() {
-                  column1Players.add(player);
+                  final player = column1Players[oldIndex];
+                  column1Players[oldIndex] = column1Players[newIndex];
+                  column1Players[newIndex] = player;
                 });
+              },
+              itemCount: column1Players.length,
+              itemBuilder: (context, index) {
+                final player = column1Players[index];
+                final isPlayerEmpty =
+                    player.playerId == -1; // Check if the player is empty
+                final uniqueKey = isPlayerEmpty
+                    ? Key('empty_$index') // Use a unique key for empty lines
+                    : Key(
+                        '${player.playerId}_$index'); // Combine player ID and index
+                return ReorderableDelayedDragStartListener(
+                  index: index,
+                  child: Container(
+                    key: uniqueKey, // Key for reordering
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green, width: 1),
+                    ),
+                    child: isPlayerEmpty
+                        ? PlaceholderWidget() // Display a placeholder for empty lines
+                        : PlayerTile23(
+                            player: player,
+                            backgroundColor: Colors
+                                .green, // Use the appropriate background color
+                          ),
+                  ),
+                );
               },
             ),
           ),
-          // Third Column (Drag Target)
+
+// Third Column (ReorderableListView)
           Expanded(
-            child: DragTarget<ShowAvailabilityDetailModel>(
-              builder: (context, candidateData, rejectedData) {
-                return ListView.builder(
-                  itemCount: 23, // Limit to 23 rows
-                  itemBuilder: (context, index) {
-                    ShowAvailabilityDetailModel? player;
-                    if (index < column2Players.length) {
-                      // Render player if available
-                      player = column2Players[index];
-                    }
-                    return Draggable<ShowAvailabilityDetailModel>(
-                      data: player,
-                      feedback: RowTile(
-                          player: player!, index: index, isDragging: true),
-                      childWhenDragging: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1),
-                        ),
-                        height: 50, // Adjust the height as needed
-                      ),
-                      onDragCompleted: () {
-                        // Remove the player from the source row if it was dragged to another row
-                        if (player != null && player != candidateData) {
-                          setState(() {
-                            column2Players.remove(player);
-                          });
-                        }
-                      },
-                      onDraggableCanceled: (Velocity velocity, Offset offset) {
-                        // Reorder players within the same column
-                        if (player != null && player == candidateData) {
-                          setState(() {
-                            column2Players.remove(player);
-                            column2Players.insert(index, player!);
-                          });
-                        }
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1),
-                        ),
-                        child: RowTile(player: player, index: index),
-                      ),
-                    );
-                  },
-                );
-              },
-              onWillAccept: (player) {
-                return column2Players.length < 23; // Limit to 23 players
-              },
-              onAccept: (player) {
+            child: ReorderableListView.builder(
+              onReorder: (int oldIndex, int newIndex) {
                 setState(() {
-                  column2Players.add(player);
+                  final player = column2Players[oldIndex];
+                  column2Players[oldIndex] = column2Players[newIndex];
+                  column2Players[newIndex] = player;
                 });
+              },
+              itemCount: column2Players.length,
+              itemBuilder: (context, index) {
+                final player = column2Players[index];
+                final isPlayerEmpty =
+                    player.playerId == -1; // Check if the player is empty
+                final uniqueKey = isPlayerEmpty
+                    ? Key('empty_$index') // Use a unique key for empty lines
+                    : Key(
+                        '${player.playerId}_$index'); // Combine player ID and index
+                return ReorderableDelayedDragStartListener(
+                  index: index,
+                  child: Container(
+                    key: uniqueKey, // Key for reordering
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue, width: 1),
+                    ),
+                    child: isPlayerEmpty
+                        ? PlaceholderWidget() // Display a placeholder for empty lines
+                        : PlayerTile23(
+                            player: player,
+                            backgroundColor: Colors
+                                .blue, // Use the appropriate background color
+                          ),
+                  ),
+                );
               },
             ),
           ),

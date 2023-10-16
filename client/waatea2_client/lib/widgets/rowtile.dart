@@ -18,7 +18,7 @@ class RowTile extends StatelessWidget {
         color: isDragging ? Colors.grey : Colors.white,
         border: Border.all(color: Colors.black),
       ),
-      child: Text('Row $index: ${player.name}'),
+      child: Text('${index + 1}: ${player.name}'),
     );
   }
 }

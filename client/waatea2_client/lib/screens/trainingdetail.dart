@@ -241,7 +241,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            "Training ${trainingDate.day}.${trainingDate.month}.${trainingDate.year}"),
+            "${trainingDate.day}.${trainingDate.month}.${trainingDate.year}"),
         actions: [
           // Add a save icon to the AppBar.
           IconButton(

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:waatea2_client/models/availability_model.dart';
-import 'package:waatea2_client/models/showavailabilitydetail_model.dart';
+import 'package:waatea2_client/models/selectedplayer_model.dart';
 
-class PlayerTile extends StatelessWidget {
-  final ShowAvailabilityDetailModel player;
+class PlayerTile23 extends StatelessWidget {
+  final SelectedPlayer player;
   final bool isDragging;
   final Color backgroundColor;
 
-  PlayerTile({
+  PlayerTile23({
     required this.player,
     this.isDragging = false,
     this.backgroundColor = Colors.white, // Default background color
@@ -20,7 +19,8 @@ class PlayerTile extends StatelessWidget {
         color: isDragging ? Colors.grey : backgroundColor,
         border: Border.all(color: Colors.black),
       ),
-      child: Text("${player.name} ${player.attendance_percentage}%"),
+      child: Text(
+          "Player ID: ${player.playerId}, Position: ${player.position}, Game ID: ${player.gameId}"),
     );
   }
 }
