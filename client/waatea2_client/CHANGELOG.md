@@ -1,7 +1,10 @@
 # Waatea Changelog
 
+## V0.0.18
+- **Enhancement:** LineUp Editor UI update
+
 ## V0.0.17
-- **Enhancement:** Line up editor preview/prototype
+- **New Feature:** Line up editor preview/prototype
 
 ## V0.0.16
 - **Enhancement:** Minutes field for drills
