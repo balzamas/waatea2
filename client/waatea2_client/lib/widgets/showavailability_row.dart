@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:waatea2_client/helper.dart';
+import 'package:waatea2_client/models/game_model.dart';
+import 'package:waatea2_client/models/lineuppos_model.dart';
+import 'package:waatea2_client/screens/lineupshow.dart';
 import '../globals.dart' as globals;
 import '../screens/showavailabilitydetail.dart';
 
@@ -45,7 +49,7 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
       padding: const EdgeInsets.all(18.0),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
+        onTap: () async {
           if (globals.player.profile.permission > 0) {
             // Navigate to the ShowAvailabilityDetail screen
             Navigator.push(
@@ -65,6 +69,52 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                 // Pass any other necessary parameters to ShowAvailabilityDetail constructor
               ),
             );
+          } else {
+            Future<List<GameModel>> games =
+                getGameList(widget.season, widget.dayofyear);
+            String team1Title = "";
+            String team2Title = "";
+            String team1id = "";
+            String team2id = "";
+            bool isPublished = false;
+            //This is ugly bullshit
+            games.then((gameList) async {
+              if (gameList.isNotEmpty) {
+                setState(() {
+                  team1Title =
+                      "${gameList[0].home} - ${gameList[0].away}"; // Set the title
+                  team1id = gameList[0].pk;
+                  isPublished = gameList[0].lineup_published;
+                });
+              }
+              if (gameList.length > 1) {
+                setState(() {
+                  team2Title =
+                      "${gameList[1].home} - ${gameList[1].away}"; // Set the title
+
+                  team2id = gameList[1].pk;
+                });
+              }
+
+              if (isPublished) {
+                final team1Lineup =
+                    await getLineUp(team1id); // Load the lineup for team 1
+                final team2Lineup =
+                    await getLineUp(team2id); // Load the lineup for team 2
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LineupScreen(
+                      team1Title: team1Title,
+                      team1Lineup: team1Lineup,
+                      team2Title: team2Title,
+                      team2Lineup: team2Lineup,
+                    ),
+                  ),
+                );
+              }
+            });
           }
         },
         child: Container(

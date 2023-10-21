@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
-
-from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart
+from rest_framework.exceptions import ValidationError
+from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
 
 class HistoricalGameSerializer(serializers.ModelSerializer):
@@ -64,7 +64,8 @@ class GameSerializer(serializers.ModelSerializer):
         'club',
         'date',
         'dayofyear',
-        'season'
+        'season',
+            'lineup_published'
         ]
 
 class GameAvailCountSerializer(serializers.ModelSerializer):
@@ -294,9 +295,7 @@ class TrainingAttendanceSerializer(serializers.ModelSerializer):
 
     def get_attended(self, obj):
         user_id = self.context.get('user_id')
-        print("-------")
-        print(self.context)
-        print(user_id)
+
         if user_id is not None:
             return obj.attendances.filter(player_id=user_id, attended=True).exists()
         return False
@@ -314,3 +313,59 @@ class TrainingPartSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainingPart
         fields = '__all__'
+
+class LineUpPosSerializer(serializers.ModelSerializer):
+    player_id = serializers.IntegerField(write_only=True, required=False)
+    game_id = serializers.UUIDField(write_only=True, required=False)
+    player = UserSerializer(read_only=True)
+    game = GameSerializer(read_only=True)
+
+    class Meta:
+        model = LineUpPos
+        fields = '__all__'
+
+    def create(self, validated_data):
+        player_id = validated_data.pop('player_id', None)
+        game_id = validated_data.pop('game_id', None)
+
+        if player_id is not None:
+            try:
+                player = User.objects.get(id=player_id)
+            except User.DoesNotExist:
+                raise ValidationError("Player with provided ID does not exist.")
+        else:
+            player = None
+
+        if game_id is not None:
+            try:
+                game = Game.objects.get(id=game_id)
+            except Game.DoesNotExist:
+                raise ValidationError("Game with provided ID does not exist.")
+        else:
+            game = None
+
+        lineup_pos = LineUpPos.objects.create(player=player, game=game, **validated_data)
+        return lineup_pos
+
+    def update(self, instance, validated_data):
+        player_id = validated_data.pop('player_id', None)
+        game_id = validated_data.pop('game_id', None)
+
+        print("xxxxxx")
+        print(player_id)
+
+        if player_id is not None:
+            player = User.objects.get(id=player_id)
+            instance.player = player
+        else:
+            instance.player = None
+
+        if game_id is not None:
+            game = Game.objects.get(id=game_id)
+            instance.game = game
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance

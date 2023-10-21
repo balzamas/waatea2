@@ -5,11 +5,11 @@ from rest_framework import viewsets, generics, filters
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
-from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart
+from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
     UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, \
-    AbonnementSerializer, ClassificationSerializer, TrainingPartSerializer
+    AbonnementSerializer, ClassificationSerializer, TrainingPartSerializer, LineUpPosSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -29,13 +29,27 @@ class TrainingPartViewSet(viewsets.ModelViewSet):
             return TrainingPart.objects.filter(training=training_id).order_by('order')
         return TrainingPart.objects.all().order_by('order')
 
+class LineUpPosViewSet(viewsets.ModelViewSet):
+    serializer_class = LineUpPosSerializer
+
+    def get_queryset(self):
+        game_id = self.request.query_params.get('game')
+        if game_id:
+            return LineUpPos.objects.filter(game=game_id).order_by('position')
+        return LineUpPos.objects.all().order_by('position')
+
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     ordering_fields = ['date']
     ordering = ['date']
 
+class GameUpdateAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
 
+    def perform_update(self, serializer):
+        serializer.save()  # Use partial=True to allow partial updates
 class HistoricalGameFilterAPIView(generics.ListAPIView):
     queryset = HistoricalGame.objects.order_by('-date')
     serializer_class = HistoricalGameSerializer
@@ -58,12 +72,14 @@ class GameCurrentFilterAPIView(generics.ListAPIView):
         queryset = super().get_queryset()
         club = self.request.query_params.get('club')
         season = self.request.query_params.get('season')
+        dayofyear =  self.request.query_params.get('dayofyear')
 
         if club:
             queryset = queryset.filter(club=club)
         if club and season:
             queryset = queryset.filter(club=club, season=season)
-
+        if club and season and dayofyear:
+            queryset = queryset.filter(club=club, season=season, dayofyear=dayofyear)
 
         return queryset
 
@@ -81,6 +97,26 @@ class GameCurrentAvailCountFilterAPIView(generics.ListAPIView):
             queryset = queryset.filter(club=club)
         if club and season:
             queryset = queryset.filter(club=club, season=season)
+
+        return queryset
+
+class LineUpPosFilterAPIView(generics.ListAPIView):
+    queryset = LineUpPos.objects.order_by('game', 'position')
+    serializer_class = LineUpPosSerializer
+    ordering = ['position']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        game = self.request.query_params.get('game')
+        dayofyear = self.request.query_params.get('dayofyear')
+        season = self.request.query_params.get('season')
+        club = self.request.query_params.get('club')
+
+        if game:
+            queryset = queryset.filter(game=game)
+        elif dayofyear and season and club:
+            queryset = queryset.filter(game__dayofyear=dayofyear, season=season, club=club)
+
 
         return queryset
 
@@ -283,6 +319,17 @@ class TrainingPartUpdateAPIView(UpdateAPIView):
     queryset = TrainingPart.objects.all()
     serializer_class = TrainingPartSerializer
 
+class LineUpPosCreateAPIView(generics.ListCreateAPIView):
+    queryset = LineUpPos.objects.all()
+    serializer_class = LineUpPosSerializer
+
+
+class LineUpPosUpdateAPIView(generics.RetrieveUpdateAPIView):
+    queryset = LineUpPos.objects.all()
+    serializer_class = LineUpPosSerializer
+
+    def perform_update(self, serializer):
+        serializer.save()  # Use partial=True to allow partial updates
 @api_view(['DELETE'])
 def delete_training_part(request, pk):
     try:

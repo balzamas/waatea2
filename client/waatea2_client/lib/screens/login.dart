@@ -28,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _loadCredentialsAndLogin() {
     _loadCredentials().then((_) {
+      print(_token);
       if (_token.isNotEmpty) {
         Future.delayed(Duration.zero, () {
           _login_process(_token, _usernameController.text);

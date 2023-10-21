@@ -5,6 +5,7 @@ class GameModel {
   final String date;
   final int dayofyear;
   final String season;
+  final bool lineup_published;
 
   GameModel(
       {required this.pk,
@@ -12,7 +13,8 @@ class GameModel {
       required this.away,
       required this.date,
       required this.dayofyear,
-      required this.season});
+      required this.season,
+      required this.lineup_published});
 
   factory GameModel.fromJson(Map<String, dynamic> json) {
     return GameModel(
@@ -21,7 +23,8 @@ class GameModel {
         away: json['away']['name'],
         date: json['date'],
         season: json['season'],
-        dayofyear: json['dayofyear']);
+        dayofyear: json['dayofyear'],
+        lineup_published: json['lineup_published']);
   }
 
   Map<String, dynamic> toJson() => {
@@ -30,6 +33,7 @@ class GameModel {
         'away': away,
         'date': date,
         'season': season,
-        'dayofyear': dayofyear
+        'dayofyear': dayofyear,
+        'lineup_published': lineup_published
       };
 }

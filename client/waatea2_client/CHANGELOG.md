@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.19
+- **Enhancement:** LineUp Editor:save functions, publish
+
 ## V0.0.18
 - **Enhancement:** LineUp Editor UI update
 

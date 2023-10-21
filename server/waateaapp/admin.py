@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame, Links, \
-    TrainingPart
+    TrainingPart, LineUpPos
 from waatea_2.users.models import UserProfile, Assessment, Abonnement, Classification
 
 admin.site.register(Club)
@@ -12,6 +12,11 @@ admin.site.register(Classification)
 admin.site.register(Assessment)
 admin.site.register(Abonnement)
 admin.site.register(TrainingPart)
+
+@admin.register(LineUpPos)
+class LineUpPosAdmin(admin.ModelAdmin):
+    list_display = ["player", "position", "game"]
+    ordering = ["game__date"]
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ["player", "training", "attended", "season"]

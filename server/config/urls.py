@@ -14,7 +14,8 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     TrainingAttendanceCountAPIView, TrainingAttendanceViewSet, TrainingCreateAPIView, UserProfileDetail, \
     UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
     LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
-    TrainingPartCreateAPIView, TrainingPartUpdateAPIView
+    TrainingPartCreateAPIView, TrainingPartUpdateAPIView, LineUpPosCreateAPIView, LineUpPosUpdateAPIView, \
+    GameUpdateAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -59,8 +60,9 @@ urlpatterns = [
     path('api/abonnements/filter/', AbonnementFilterAPIView.as_view(),
        name='abonnement-filter'),
 
+                  path('api/game/<uuid:pk>/', GameUpdateAPIView.as_view(), name='game-update'),
 
-    path('api/historical_games/filter/', HistoricalGameFilterAPIView.as_view(), name='historical-game-filter'),
+                  path('api/historical_games/filter/', HistoricalGameFilterAPIView.as_view(), name='historical-game-filter'),
 
     path('api/users/filter/', UserFilterAPIView.as_view(), name='user-filter'),
     path('api/availabilities/filter/', AvailiabilityFilterAPIView.as_view(), name='availability-filter'),
@@ -85,6 +87,11 @@ urlpatterns = [
     path('api/trainingpart/', TrainingPartCreateAPIView.as_view(), name='trainingpart-create'),
                   path('api/trainingpart/<uuid:pk>/', TrainingPartUpdateAPIView.as_view(), name='trainingpart-update'),
 path('api/trainingparts/<uuid:pk>/', viewsets.delete_training_part),
+
+                  path('api/lineupposes/', viewsets.LineUpPosViewSet.as_view({'get': 'list'}),
+                       name='lineuppos-list'),
+                  path('api/lineuppos/', LineUpPosCreateAPIView.as_view(), name='lineuppos-create'),
+                  path('api/lineuppos/<uuid:pk>/', LineUpPosUpdateAPIView.as_view(), name='lineuppos-update'),
 
                   path('rest-auth/', include('rest_framework.urls', namespace='rest_framework')),
 

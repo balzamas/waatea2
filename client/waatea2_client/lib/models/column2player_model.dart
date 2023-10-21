@@ -4,7 +4,7 @@ class Column2PlayerModel {
   int playerid;
   int posid;
   String name;
-  final Uuid fieldid;
+  String? fieldid;
 
   Column2PlayerModel(
       {required this.playerid,

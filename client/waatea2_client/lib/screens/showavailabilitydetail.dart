@@ -314,14 +314,15 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
             },
           ),
           IconButton(
-              icon: const Icon(Icons.home_mini),
+              icon: const Icon(Icons.groups_2),
               onPressed: () async {
                 List<ShowAvailabilityDetailModel> players =
                     await getPlayerList();
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => YourScreen(
-                      availablePlayers: players, // Replace with your list
+                      availablePlayers: players, season: widget.season,
+                      dayoftheyear: widget.dayofyear, // Replace with your list
                     ),
                   ),
                 );

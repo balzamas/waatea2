@@ -72,6 +72,8 @@ class Game(models.Model):
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
     date = models.DateTimeField()
     dayofyear = models.IntegerField(default=-1)
+    lineup_published = models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.home.name + " - " + self.away.name
@@ -126,4 +128,12 @@ class HistoricalGame(models.Model):
     class Meta:
        unique_together = ("played_for", "played_against", "date", "player")
 
+class LineUpPos(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    player = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    position = models.IntegerField() #1 = Not available 2= Maybe 3=Available
+    remarks = models.TextField(default="")
 
+    class Meta:
+       unique_together = ("game", "position")
