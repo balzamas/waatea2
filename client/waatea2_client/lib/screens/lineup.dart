@@ -409,8 +409,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
                             ),
                             color: yourOriginalPlayerList.any((player) =>
                                         player.pk ==
-                                        team2Players[index].playerid) ||
-                                    team2Players[index].playerid == 0
+                                        team1Players[index].playerid) ||
+                                    team1Players[index].playerid == 0
                                 ? Colors.white.withOpacity(
                                     0.3) // Player is in availablePlayersFiltered
                                 : Colors.red.withOpacity(0.3),
