@@ -64,6 +64,9 @@ class _LineUpEditorState extends State<LineUpEditor> {
   String team1id = ""; // Initialize with an empty string
   String team2Title = ""; // Initialize with an empty string
   String team2id = ""; // Initialize with an empty string
+  String selectedPosition = "All";
+  late List<ShowAvailabilityDetailModel> availablePlayersFiltered;
+  late List<ShowAvailabilityDetailModel> yourOriginalPlayerList;
 
   @override
   void initState() {
@@ -114,15 +117,14 @@ class _LineUpEditorState extends State<LineUpEditor> {
       }
     });
     //Load lineups
+    availablePlayersFiltered = widget.availablePlayers
+        .where((player) => player.state == 2 || player.state == 3)
+        .toList();
+    yourOriginalPlayerList = availablePlayersFiltered;
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<ShowAvailabilityDetailModel> availablePlayersFiltered = widget
-        .availablePlayers
-        .where((player) => player.state == 2 || player.state == 3)
-        .toList();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Player Selection Screen"),
@@ -199,6 +201,20 @@ class _LineUpEditorState extends State<LineUpEditor> {
               child: Column(
                 children: <Widget>[
                   const Text("Avail."),
+                  Container(
+                    width: 200, // Set the desired width here
+                    child: DropdownButton<String>(
+                        value: selectedPosition,
+                        items:
+                            _buildPositionDropdownItems(), // Create this function
+                        onChanged: (value) {
+                          setState(() {
+                            selectedPosition = value!;
+                            // Call a function to filter the players based on the selected position
+                            filterPlayersByPosition();
+                          });
+                        }),
+                  ),
                   ListView.builder(
                     shrinkWrap: true,
                     itemCount: availablePlayersFiltered.length,
@@ -391,7 +407,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                   : Colors
                                       .transparent, // No border if not selected
                             ),
-                            color: availablePlayersFiltered.any((player) =>
+                            color: yourOriginalPlayerList.any((player) =>
                                         player.pk ==
                                         team2Players[index].playerid) ||
                                     team2Players[index].playerid == 0
@@ -511,7 +527,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                     : Colors
                                         .transparent, // No border if not selected
                               ),
-                              color: availablePlayersFiltered.any((player) =>
+                              color: yourOriginalPlayerList.any((player) =>
                                           player.pk ==
                                           team2Players[index].playerid) ||
                                       team2Players[index].playerid == 0
@@ -789,5 +805,50 @@ class _LineUpEditorState extends State<LineUpEditor> {
         );
       },
     );
+  }
+
+  List<DropdownMenuItem<String>> _buildPositionDropdownItems() {
+    List<String> yourPositionList = [
+      "C",
+      "B3",
+      "FH",
+      "SH",
+      "3R",
+      "2L",
+      "FR",
+    ];
+
+    List<DropdownMenuItem<String>> items = [
+      DropdownMenuItem<String>(
+        value: "All",
+        child: Text("All"),
+      )
+    ];
+    // Add "All" as the first item
+    items.addAll(yourPositionList.map((position) {
+      return DropdownMenuItem<String>(
+        value: position,
+        child: Text(position),
+      );
+    }));
+    return items;
+  }
+
+  void filterPlayersByPosition() {
+    if (selectedPosition == "All") {
+      // Show all players
+      setState(() {
+        availablePlayersFiltered = yourOriginalPlayerList;
+      });
+    } else {
+      // Filter players based on the selected position
+      setState(() {
+        availablePlayersFiltered = yourOriginalPlayerList.where((player) {
+          // Replace 'positionField' with the actual field in your UserProfileModel
+          return player.playerProfile.positions!
+              .any((position) => position.position == selectedPosition);
+        }).toList();
+      });
+    }
   }
 }

@@ -3,8 +3,8 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"main.dart.js": "4bf24af59409ce6366f4e4846e1214d7",
-"version.json": "2557781cf644332ee583286a9abae194",
+const RESOURCES = {"main.dart.js": "a94585091915464908cbd9ad24253023",
+"version.json": "859a2888aa554312d6adf24af2142136",
 "flutter.js": "6fef97aeca90b426343ba6c5c9dc5d4a",
 "assets/shaders/ink_sparkle.frag": "f8b80e740d33eb157090be4e995febdf",
 "assets/packages/math_keyboard/fonts/CustomKeyIcons.ttf": "b0bace3f25c2bd05862680e5ad4c6b54",
@@ -44,8 +44,8 @@ const RESOURCES = {"main.dart.js": "4bf24af59409ce6366f4e4846e1214d7",
 "canvaskit/skwasm.wasm": "d1fde2560be92c0b07ad9cf9acb10d05",
 "canvaskit/skwasm.worker.js": "51253d3321b11ddb8d73fa8aa87d3b15",
 "canvaskit/canvaskit.js": "5caccb235fad20e9b72ea6da5a0094e6",
-"index.html": "dd990e55efa157f3ba210d3e3d35d6ae",
-"/": "dd990e55efa157f3ba210d3e3d35d6ae",
+"index.html": "cf646baec5c6a1b959e32ba05ea3d347",
+"/": "cf646baec5c6a1b959e32ba05ea3d347",
 "icons/Icon-512.png": "957d7e01c0f91f4e763c6cd17fd77c05",
 "icons/Icon-maskable-192.png": "e09ca5313bfbb4f8ce6a4b3cec98d9dc",
 "icons/Icon-maskable-512.png": "501318620a2b184257df2c57bea9162a",

@@ -1,6 +1,7 @@
 import 'package:waatea2_client/models/abonnement_model.dart';
 import 'package:waatea2_client/models/assessment_model.dart';
 import 'package:waatea2_client/models/classification_model.dart';
+import 'package:waatea2_client/models/position_model.dart';
 
 class UserProfileModel {
   final bool isPlaying;
@@ -11,6 +12,7 @@ class UserProfileModel {
   final AbonnementModel? abonnement;
   final AssessmentModel? assessment;
   final ClassificationModel? classification;
+  final List<PositionModel>? positions; // Add positions field
 
   UserProfileModel(
       {required this.assessment,
@@ -19,9 +21,15 @@ class UserProfileModel {
       required this.abonnement,
       required this.comment,
       required this.mobilePhone,
-      required this.classification});
+      required this.classification,
+      required this.positions});
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> positionsJson = json['positions'] ?? [];
+    final List<PositionModel> positions = positionsJson
+        .map((positionJson) => PositionModel.fromJson(positionJson))
+        .toList();
+
     return UserProfileModel(
       isPlaying: json['is_playing'],
       permission: json['permission'],
@@ -36,6 +44,7 @@ class UserProfileModel {
       assessment: json['assessment'] != null
           ? AssessmentModel.fromJson(json['assessment'])
           : null,
+      positions: positions,
     );
   }
 }

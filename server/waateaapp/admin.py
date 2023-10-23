@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Club, Game, Team, Season, Availability, Training, Attendance, CurrentSeason, HistoricalGame, Links, \
     TrainingPart, LineUpPos
-from waatea_2.users.models import UserProfile, Assessment, Abonnement, Classification
+from waatea_2.users.models import UserProfile, Assessment, Abonnement, Classification, Position
 
 admin.site.register(Club)
 admin.site.register(Team)
@@ -12,6 +12,7 @@ admin.site.register(Classification)
 admin.site.register(Assessment)
 admin.site.register(Abonnement)
 admin.site.register(TrainingPart)
+admin.site.register(Position)
 
 @admin.register(LineUpPos)
 class LineUpPosAdmin(admin.ModelAdmin):

@@ -265,7 +265,17 @@ class UserProfileDetail(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-          return UserProfile.objects.get(user__email=self.kwargs['email'])
+        user_profile = UserProfile.objects.get(user__email=self.kwargs['email'])
+        user_profile.positions.all()  # Retrieve positions for the user
+        return user_profile
+
+    def perform_update(self, serializer):
+        # Include positions data in the update
+        positions_data = self.request.data.get('positions')
+        if positions_data is not None:
+            serializer.save(positions=positions_data)
+        else:
+            serializer.save()
 
 class AvailabilityViewSet(viewsets.ModelViewSet):
     queryset = Availability.objects.all()

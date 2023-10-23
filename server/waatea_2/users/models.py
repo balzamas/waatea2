@@ -10,7 +10,6 @@ from waatea_2.users.managers import UserManager
 from waateaapp.model_club import Club
 
 
-
 class User(AbstractUser):
     """
     Default custom user model for Waatea 2.
@@ -39,6 +38,12 @@ class User(AbstractUser):
         return reverse("users:detail", kwargs={"pk": self.id})
     def __str__(self):
         return f"{self.name} - {self.email}"
+
+class Position(models.Model):
+    position = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.position
 
 class Assessment(models.Model):
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
@@ -86,7 +91,7 @@ class UserProfile(models.Model):
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, blank=True, null=True)
     abo = models.ForeignKey(Abonnement, on_delete=models.SET_NULL, blank=True, null=True)
     assessment = models.ForeignKey(Assessment, on_delete=models.SET_NULL, blank=True, null=True)
-
+    positions = models.ManyToManyField(Position, blank=True)
     mobile_phone = CharField(_("Mobile phone number (format: 41798257004)"), blank=True, max_length=255)
 
     def __str__(self):

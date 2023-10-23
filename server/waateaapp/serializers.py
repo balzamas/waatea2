@@ -2,8 +2,9 @@ from rest_framework import serializers
 from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 from rest_framework.exceptions import ValidationError
-from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos
-from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
+from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, \
+    TrainingPart, LineUpPos
+from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment, Position
 
 class HistoricalGameSerializer(serializers.ModelSerializer):
     class Meta:
@@ -126,13 +127,21 @@ class ClassificationField(serializers.PrimaryKeyRelatedField):
         kwargs['allow_null'] = True  # Allow the classification field to be null
         super().__init__(**kwargs)
 
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = [
+        'pk',
+        'position',
+        ]
 
 class UserProfileSerializer(serializers.ModelSerializer):
     classification = ClassificationField()
+    positions = PositionSerializer(many=True)  # Add positions field
 
     class Meta:
         model = UserProfile
-        fields = ('assessment', 'is_playing', 'permission', 'abo', 'comment', 'classification', 'mobile_phone')
+        fields = ('assessment', 'is_playing', 'permission', 'abo', 'comment', 'classification', 'mobile_phone', 'positions')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -194,6 +203,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 instance.abo = Abonnement.objects.get(id=abo)
             except Abonnement.DoesNotExist:
                 raise serializers.ValidationError("Invalid Abonnement ID")
+
+        positions_data = validated_data.get('positions')
+
+        if positions_data is not None:
+            instance.positions.clear()  # Clear existing positions
+            for position_data in positions_data:
+                position, created = Position.objects.get_or_create(position=position_data['position'])
+                instance.positions.add(position)
 
         instance.save()
         return instance
