@@ -83,6 +83,26 @@ class GameCurrentFilterAPIView(generics.ListAPIView):
 
         return queryset
 
+class GamePastFilterAPIView(generics.ListAPIView):
+    queryset = Game.objects.filter(date__lte=datetime.now()).order_by('-date')
+    serializer_class = GameSerializer
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+        season = self.request.query_params.get('season')
+        dayofyear = self.request.query_params.get('dayofyear')
+
+        if club:
+            queryset = queryset.filter(club=club)
+        if club and season:
+            queryset = queryset.filter(club=club, season=season)
+        if club and season and dayofyear:
+            queryset = queryset.filter(club=club, season=season, dayofyear=dayofyear)
+
+        return queryset
+
 class GameCurrentAvailCountFilterAPIView(generics.ListAPIView):
     queryset = Game.objects.filter(date__gte=make_aware(datetime.today())).order_by('date')
     serializer_class = GameAvailCountSerializer

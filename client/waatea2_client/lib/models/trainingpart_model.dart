@@ -1,5 +1,3 @@
-import 'package:uuid/uuid.dart';
-
 class TrainingPart {
   late final String? id;
   late final String trainingId;

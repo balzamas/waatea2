@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.20
+- **Enhancement:** Phase 2 of issue #78 (load old line ups)
+
 ## V0.0.19
 - **Enhancement:** LineUp Editor:save functions, publish
 

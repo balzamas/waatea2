@@ -1,5 +1,3 @@
-import 'package:waatea2_client/models/drill_model.dart';
-
 class TrainingModel {
   final String id;
   final int dayofyear;

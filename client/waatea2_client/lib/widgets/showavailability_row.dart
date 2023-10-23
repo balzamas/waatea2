@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:waatea2_client/helper.dart';
 import 'package:waatea2_client/models/game_model.dart';
 import 'package:waatea2_client/models/lineuppos_model.dart';
-import 'package:waatea2_client/screens/lineupshow.dart';
+import 'package:waatea2_client/screens/showlineup.dart';
 import '../globals.dart' as globals;
 import '../screens/showavailabilitydetail.dart';
 
@@ -80,20 +80,16 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
             //This is ugly bullshit
             games.then((gameList) async {
               if (gameList.isNotEmpty) {
-                setState(() {
-                  team1Title =
-                      "${gameList[0].home} - ${gameList[0].away}"; // Set the title
-                  team1id = gameList[0].pk;
-                  isPublished = gameList[0].lineup_published;
-                });
+                team1Title =
+                    "${gameList[0].home} - ${gameList[0].away}"; // Set the title
+                team1id = gameList[0].pk;
+                isPublished = gameList[0].lineup_published;
               }
               if (gameList.length > 1) {
-                setState(() {
-                  team2Title =
-                      "${gameList[1].home} - ${gameList[1].away}"; // Set the title
+                team2Title =
+                    "${gameList[1].home} - ${gameList[1].away}"; // Set the title
 
-                  team2id = gameList[1].pk;
-                });
+                team2id = gameList[1].pk;
               }
 
               if (isPublished) {
@@ -105,7 +101,7 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LineupScreen(
+                    builder: (context) => ShowLineUp(
                       team1Title: team1Title,
                       team1Lineup: team1Lineup,
                       team2Title: team2Title,

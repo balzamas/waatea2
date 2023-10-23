@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/models/lineuppos_model.dart';
+import '../globals.dart' as globals;
 
-class LineupScreen extends StatelessWidget {
+class ShowLineUp extends StatelessWidget {
   final String team1Title;
   final List<LineUpPosModel> team1Lineup;
   final String team2Title;
   final List<LineUpPosModel> team2Lineup;
 
-  LineupScreen({
+  ShowLineUp({
     required this.team1Title,
     required this.team1Lineup,
     required this.team2Title,
@@ -25,7 +26,8 @@ class LineupScreen extends StatelessWidget {
         children: [
           if (team1Lineup.any((player) => player.player != null))
             _buildTeamLineup(team1Title, team1Lineup),
-          if (team2Lineup.any((player) => player.player != null))
+          if (team2Title != "" &&
+              team2Lineup.any((player) => player.player != null))
             _buildTeamLineup(team2Title, team2Lineup),
         ],
       ),
@@ -51,7 +53,8 @@ class LineupScreen extends StatelessWidget {
                 children: filteredLineup
                     .map((player) => LineupCard(
                         position: player.position,
-                        playerName: player.player!.name))
+                        playerName: player.player!.name,
+                        playerId: player.player!.pk))
                     .toList(),
               ),
             ],
@@ -62,18 +65,29 @@ class LineupScreen extends StatelessWidget {
 class LineupCard extends StatelessWidget {
   final int position;
   final String playerName;
+  final int playerId;
 
-  LineupCard({required this.position, required this.playerName});
+  LineupCard(
+      {required this.position,
+      required this.playerName,
+      required this.playerId});
 
   @override
   Widget build(BuildContext context) {
+    Color bgcolor = Colors.white;
+    if (playerId == globals.playerId) {
+      bgcolor = Colors.orange.shade50;
+    }
     return Card(
+      surfaceTintColor: bgcolor,
+      margin: EdgeInsets.zero,
       child: ListTile(
+        tileColor: bgcolor,
         leading: Text("${position + 1}"), // Position as leading
         title: Row(
           children: [
             RandomAvatar(playerName,
-                height: 40, width: 40), // Avatar afterwards
+                height: 20, width: 20), // Avatar afterwards
             SizedBox(
                 width: 8), // Add some spacing between the position and avatar
             Text(playerName), // Player name

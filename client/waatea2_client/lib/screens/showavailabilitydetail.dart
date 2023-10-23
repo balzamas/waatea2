@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:waatea2_client/screens/availbility_screen.dart';
 import 'package:waatea2_client/screens/lineup.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:flutter/material.dart';
@@ -320,7 +319,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                     await getPlayerList();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => YourScreen(
+                    builder: (context) => LineUpEditor(
                       availablePlayers: players, season: widget.season,
                       dayoftheyear: widget.dayofyear, // Replace with your list
                     ),

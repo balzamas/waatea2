@@ -1,12 +1,10 @@
-import 'package:uuid/uuid.dart';
-
-class Column2PlayerModel {
+class LineUpEditorModel {
   int playerid;
   int posid;
   String name;
   String? fieldid;
 
-  Column2PlayerModel(
+  LineUpEditorModel(
       {required this.playerid,
       required this.posid,
       required this.name,

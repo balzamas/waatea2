@@ -15,7 +15,7 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
     LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
     TrainingPartCreateAPIView, TrainingPartUpdateAPIView, LineUpPosCreateAPIView, LineUpPosUpdateAPIView, \
-    GameUpdateAPIView
+    GameUpdateAPIView, GamePastFilterAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -52,7 +52,9 @@ urlpatterns = [
     path('api-token-auth/', restviews.obtain_auth_token, name='api-token-auth'),
     # Your stuff: custom urls includes go here
     path('api/games_current/filter/', GameCurrentFilterAPIView.as_view(), name='game-filter'),
-    path('api/games_current_avail/filter/', GameCurrentAvailCountFilterAPIView.as_view(), name='game-avail-filter'),
+                  path('api/games_past/filter/', GamePastFilterAPIView.as_view(), name='game-filter'),
+
+                  path('api/games_current_avail/filter/', GameCurrentAvailCountFilterAPIView.as_view(), name='game-avail-filter'),
 
     path('api/classifications/filter/', ClassificationFilterAPIView.as_view(), name='classification-filter'),
     path('api/assessments/filter/', AssessmentFilterAPIView.as_view(),
