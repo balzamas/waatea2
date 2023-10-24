@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:waatea2_client/helper.dart';
@@ -68,7 +67,6 @@ class _LineUpEditorState extends State<LineUpEditor> {
   String selectedPosition = "All";
   late List<ShowAvailabilityDetailModel> availablePlayersFiltered;
   late List<ShowAvailabilityDetailModel> yourOriginalPlayerList;
-  final ScrollController controller = ScrollController();
 
   @override
   void initState() {
@@ -217,8 +215,10 @@ class _LineUpEditorState extends State<LineUpEditor> {
                           });
                         }),
                   ),
-                  ScrollConfiguration(
-                    behavior: MyCustomScrollBehavior(),
+                  NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification notification) {
+                      return true; // Return true to allow the scroll to continue.
+                    },
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: availablePlayersFiltered.length,
@@ -233,6 +233,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                       availablePlayersFiltered[i].state == 3))
                                 Flexible(
                                   child: GestureDetector(
+                                    //behavior: HitTestBehavior.translucent, // Allow touch events to pass through
                                     onTap: () {
                                       setState(() {
                                         if (selectedPlayerPK ==
@@ -858,15 +859,4 @@ class _LineUpEditorState extends State<LineUpEditor> {
       });
     }
   }
-}
-
-class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  // Override behavior methods and getters like dragDevices
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.trackpad
-        // etc.
-      };
 }
