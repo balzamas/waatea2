@@ -200,7 +200,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  const Text("Avail."),
+                  const Text("Avail1."),
                   Container(
                     width: 200, // Set the desired width here
                     child: DropdownButton<String>(
@@ -233,7 +233,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                       availablePlayersFiltered[i].state == 3))
                                 Flexible(
                                   child: GestureDetector(
-                                    //behavior: HitTestBehavior.translucent, // Allow touch events to pass through
+                                    behavior: HitTestBehavior
+                                        .translucent, // Allow touch events to pass through
                                     onTap: () {
                                       setState(() {
                                         if (selectedPlayerPK ==
