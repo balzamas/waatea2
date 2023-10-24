@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:waatea2_client/helper.dart';
@@ -67,6 +68,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
   String selectedPosition = "All";
   late List<ShowAvailabilityDetailModel> availablePlayersFiltered;
   late List<ShowAvailabilityDetailModel> yourOriginalPlayerList;
+  final ScrollController controller = ScrollController();
 
   @override
   void initState() {
@@ -215,108 +217,113 @@ class _LineUpEditorState extends State<LineUpEditor> {
                           });
                         }),
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: availablePlayersFiltered.length,
-                    itemBuilder: (context, index) {
-                      final startIndex = index * 2;
-                      final endIndex = startIndex + 2;
-                      return Row(
-                        children: [
-                          for (int i = startIndex; i < endIndex; i++)
-                            if (i < availablePlayersFiltered.length &&
-                                (availablePlayersFiltered[i].state == 2 ||
-                                    availablePlayersFiltered[i].state == 3))
-                              Flexible(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (selectedPlayerPK ==
-                                          availablePlayersFiltered[i].pk) {
-                                        selectedPlayerPK =
-                                            -1; // Unselect if already selected
-                                      } else {
-                                        selectedPlayerPK =
-                                            availablePlayersFiltered[i].pk;
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        width: 4,
-                                        color: selectedPlayerPK ==
-                                                availablePlayersFiltered[i].pk
-                                            ? Colors
-                                                .red // Add a red border if selected
-                                            : Colors
-                                                .transparent, // No border if not selected
+                  ScrollConfiguration(
+                    behavior: MyCustomScrollBehavior(),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: availablePlayersFiltered.length,
+                      itemBuilder: (context, index) {
+                        final startIndex = index * 2;
+                        final endIndex = startIndex + 2;
+                        return Row(
+                          children: [
+                            for (int i = startIndex; i < endIndex; i++)
+                              if (i < availablePlayersFiltered.length &&
+                                  (availablePlayersFiltered[i].state == 2 ||
+                                      availablePlayersFiltered[i].state == 3))
+                                Flexible(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (selectedPlayerPK ==
+                                            availablePlayersFiltered[i].pk) {
+                                          selectedPlayerPK =
+                                              -1; // Unselect if already selected
+                                        } else {
+                                          selectedPlayerPK =
+                                              availablePlayersFiltered[i].pk;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 4,
+                                          color: selectedPlayerPK ==
+                                                  availablePlayersFiltered[i].pk
+                                              ? Colors
+                                                  .red // Add a red border if selected
+                                              : Colors
+                                                  .transparent, // No border if not selected
+                                        ),
                                       ),
-                                    ),
-                                    child: Card(
-                                      elevation: 2,
-                                      color: addedPlayersTeam1.contains(
-                                                  availablePlayersFiltered[i]
-                                                      .pk) &&
-                                              addedPlayersTeam2.contains(
-                                                  availablePlayersFiltered[i]
-                                                      .pk)
-                                          ? Colors
-                                              .grey // Player is in both columns
-                                          : addedPlayersTeam1.contains(
-                                                  availablePlayersFiltered[i]
-                                                      .pk)
-                                              ? Colors.green.withOpacity(
-                                                  0.3) // Player is only in team 1
-                                              : addedPlayersTeam2.contains(
-                                                      availablePlayersFiltered[i]
-                                                          .pk)
-                                                  ? Colors.blue.withOpacity(
-                                                      0.3) // Player is only in team 2
-                                                  : null,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(availablePlayersFiltered[i]
-                                                    .name),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                returnStateIcon(
+                                      child: Card(
+                                        elevation: 2,
+                                        color: addedPlayersTeam1.contains(
                                                     availablePlayersFiltered[i]
-                                                        .state),
-                                                Icon(
-                                                  availablePlayersFiltered[i]
-                                                              .playerProfile
-                                                              .classification
-                                                              ?.icon !=
-                                                          null
-                                                      ? IconData(
-                                                          int.parse(
-                                                              '0x${availablePlayersFiltered[i].playerProfile.classification!.icon}'),
-                                                          fontFamily:
-                                                              'MaterialIcons',
-                                                        )
-                                                      : Icons.highlight_off,
-                                                ),
-                                                Text(
-                                                    "${availablePlayersFiltered[i].attendance_percentage}%"),
-                                              ],
-                                            ),
-                                          ],
+                                                        .pk) &&
+                                                addedPlayersTeam2.contains(
+                                                    availablePlayersFiltered[i]
+                                                        .pk)
+                                            ? Colors
+                                                .grey // Player is in both columns
+                                            : addedPlayersTeam1.contains(
+                                                    availablePlayersFiltered[i]
+                                                        .pk)
+                                                ? Colors.green.withOpacity(
+                                                    0.3) // Player is only in team 1
+                                                : addedPlayersTeam2.contains(
+                                                        availablePlayersFiltered[i]
+                                                            .pk)
+                                                    ? Colors.blue.withOpacity(
+                                                        0.3) // Player is only in team 2
+                                                    : null,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(availablePlayersFiltered[
+                                                          i]
+                                                      .name),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  returnStateIcon(
+                                                      availablePlayersFiltered[
+                                                              i]
+                                                          .state),
+                                                  Icon(
+                                                    availablePlayersFiltered[i]
+                                                                .playerProfile
+                                                                .classification
+                                                                ?.icon !=
+                                                            null
+                                                        ? IconData(
+                                                            int.parse(
+                                                                '0x${availablePlayersFiltered[i].playerProfile.classification!.icon}'),
+                                                            fontFamily:
+                                                                'MaterialIcons',
+                                                          )
+                                                        : Icons.highlight_off,
+                                                  ),
+                                                  Text(
+                                                      "${availablePlayersFiltered[i].attendance_percentage}%"),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                        ],
-                      );
-                    },
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -851,4 +858,15 @@ class _LineUpEditorState extends State<LineUpEditor> {
       });
     }
   }
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad
+        // etc.
+      };
 }
