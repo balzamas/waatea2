@@ -349,6 +349,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                     itemCount: team1Players.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         onDoubleTap: () {
                           // Double-clicked, remove the player
                           setState(() {
