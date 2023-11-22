@@ -8,7 +8,7 @@ class ShowAvailabilityDetailModel {
   final String mobilephone;
   final int attendance_percentage;
   int state;
-  String updated;
+  DateTime? updated;
   final int caps;
 
   ShowAvailabilityDetailModel(
@@ -31,7 +31,7 @@ class ShowAvailabilityDetailModel {
         playerProfile: UserProfileModel.fromJson(json['profile']),
         mobilephone: json['profile']['mobile_phone'],
         state: 0,
-        updated: "",
+        updated: null,
         caps: json['caps']);
   }
 

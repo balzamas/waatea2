@@ -200,8 +200,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
           if (myListFiltered.first.updated != "") {
             DateTime updated =
                 DateTime.parse(myListFiltered.first.updated).toLocal();
-            players[i].updated =
-                '${updated.day}.${updated.month}.${updated.year} ${updated.hour}:${updated.minute}';
+            players[i].updated = updated;
           }
         } else if (myListFiltered.length > 1) {
           print("Error! Too many availabilities");
@@ -441,7 +440,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                     case SortOption.state:
                       return b.state.compareTo(a.state);
                     case SortOption.updated:
-                      return b.updated.compareTo(a.updated);
+                      return (b.updated ?? DateTime(0))
+                          .compareTo(a.updated ?? DateTime(0));
                     case SortOption.name: // Added name sorting
                       return sortByNameAscending
                           ? a.name.compareTo(b.name)

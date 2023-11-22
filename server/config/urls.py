@@ -15,7 +15,7 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
     LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
     TrainingPartCreateAPIView, TrainingPartUpdateAPIView, LineUpPosCreateAPIView, LineUpPosUpdateAPIView, \
-    GameUpdateAPIView, GamePastFilterAPIView
+    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -74,6 +74,7 @@ urlpatterns = [
     path('api/trainings/filter/', TrainingFilterAPIView.as_view(), name='training-filter'),
     path('api/training_current/filter/', TrainingCurrentFilterAPIView.as_view(), name='training-current-filter'),
     path('api/training/', TrainingCreateAPIView.as_view(), name='training-create'),
+    path('api/trainings/<uuid:pk>/', TrainingDeleteAPIView.as_view(), name='training-delete'),
 
     path('api/links/filter/', LinksFilterAPIView.as_view(), name='links-filter'),
 

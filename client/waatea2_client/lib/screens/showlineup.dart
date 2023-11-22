@@ -28,7 +28,8 @@ class ShowLineUp extends StatelessWidget {
             _buildTeamLineup(team1Title, team1Lineup),
           if (team2Title != "" &&
               team2Lineup.any((player) => player.player != null))
-            _buildTeamLineup(team2Title, team2Lineup),
+            SizedBox(height: 20),
+          _buildTeamLineup(team2Title, team2Lineup),
         ],
       ),
     );

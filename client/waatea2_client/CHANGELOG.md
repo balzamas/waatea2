@@ -1,5 +1,10 @@
 # Waatea Changelog
 
+## V0.0.21
+- **Enhancement:** Trainings can be deleted in UI
+- **Enhancement:** Share button for trainings (would be a surprise if this works tbh)
+- **Bug Fix:** Sort by date in Availability (by real date, not crappy strings)
+
 ## V0.0.20
 - **Enhancement:** Phase 2 of issue #78 (load old line ups)
 

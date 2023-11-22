@@ -14,17 +14,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
-
+import 'package:screenshot/screenshot.dart';
 import 'package:pdf/widgets.dart' as pw;
-
+import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:universal_html/html.dart' as uh;
 
 enum FileGenerationStatus { idle, generating, complete, error }
 
+final screenshotController = ScreenshotController();
+
 class TrainingDetailScreen extends StatefulWidget {
   final TrainingAttendanceModel training;
-
   TrainingDetailScreen({required this.training});
 
   @override
@@ -67,6 +68,58 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
     } else {
       // Create an empty document
       _controllerReview = QuillController.basic();
+    }
+  }
+
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Training'),
+          content: Text('Are you sure you want to delete this training?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the confirmation dialog
+                _deleteTraining();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteTraining() async {
+    try {
+      final response = await http.delete(
+        Uri.parse('${globals.URL_PREFIX}/api/trainings/${widget.training.pk}/'),
+        headers: {'Authorization': 'Token ${globals.token}'},
+      );
+
+      if (response.statusCode == 204) {
+        // Training deleted successfully
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MyHomePage(initialIndex: 5),
+          ),
+        );
+      } else {
+        // Handle error if necessary.
+        print('API Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle error if necessary.
+      print('Error: $error');
     }
   }
 
@@ -243,6 +296,15 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
         title: Text(
             "${trainingDate.day}.${trainingDate.month}.${trainingDate.year}"),
         actions: [
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () async {
+              final imageBytes = await screenshotController.capture();
+              Share.shareXFiles([XFile.fromData(imageBytes!)],
+                  text:
+                      "Training ${trainingDate.day}.${trainingDate.month}.${trainingDate.year}");
+            },
+          ),
           // Add a save icon to the AppBar.
           IconButton(
             icon: Icon(Icons.save),
@@ -270,6 +332,12 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             onPressed: () {
               // Call the save method when the save icon is pressed.
               _showAddTrainingPartDialog(context);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              _showDeleteConfirmationDialog();
             },
           ),
         ],
@@ -300,51 +368,54 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
+            Screenshot(
+              controller: screenshotController, // create a ScreenshotController
 // Draggable list of training parts.
-            Container(
-              width: MediaQuery.of(context).size.width - 60,
-              child: SizedBox(
-                height: 900, // Set the desired height.
-                child: ReorderableListView(
-                  onReorder: (int oldIndex, int newIndex) {
-                    setState(() {
-                      if (oldIndex < newIndex) {
-                        newIndex -= 1;
-                      }
-                      final TrainingPart movedItem =
-                          trainingParts.removeAt(oldIndex);
-                      trainingParts.insert(newIndex, movedItem);
-                    });
-                  },
-                  children: trainingParts.asMap().entries.map((entry) {
-                    final int index = entry.key;
-                    final TrainingPart trainingPart = entry.value;
-                    final uniqueKey = Key(
-                        '${trainingPart.id}_${index.toString()}'); // Unique key for each training part.
-                    return ReorderableDragStartListener(
-                        index: index,
-                        key: uniqueKey,
-                        child: GestureDetector(
-                          // Wrap the ListTile with GestureDetector
-                          onDoubleTap: () {
-                            // Perform the action you want when double-clicked
-                            // For example, you can show a dialog or navigate to a new screen.
-                            // You can use the `trainingPart` object to access data related to the selected item.
-                            _handleDoubleTap(trainingPart);
-                          },
-                          child: Container(
-                            color: index % 2 == 0
-                                ? Colors.white
-                                : Colors.grey[200],
-                            child: ListTile(
-                              key: ValueKey(uniqueKey),
-                              title: Text(trainingPart.description),
-                              leading: Text(trainingPart.minutes.toString()),
-                              // Add more training part details here.
+              child: Container(
+                width: MediaQuery.of(context).size.width - 60,
+                child: SizedBox(
+                  height: 900, // Set the desired height.
+                  child: ReorderableListView(
+                    onReorder: (int oldIndex, int newIndex) {
+                      setState(() {
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
+                        final TrainingPart movedItem =
+                            trainingParts.removeAt(oldIndex);
+                        trainingParts.insert(newIndex, movedItem);
+                      });
+                    },
+                    children: trainingParts.asMap().entries.map((entry) {
+                      final int index = entry.key;
+                      final TrainingPart trainingPart = entry.value;
+                      final uniqueKey = Key(
+                          '${trainingPart.id}_${index.toString()}'); // Unique key for each training part.
+                      return ReorderableDragStartListener(
+                          index: index,
+                          key: uniqueKey,
+                          child: GestureDetector(
+                            // Wrap the ListTile with GestureDetector
+                            onDoubleTap: () {
+                              // Perform the action you want when double-clicked
+                              // For example, you can show a dialog or navigate to a new screen.
+                              // You can use the `trainingPart` object to access data related to the selected item.
+                              _handleDoubleTap(trainingPart);
+                            },
+                            child: Container(
+                              color: index % 2 == 0
+                                  ? Colors.white
+                                  : Colors.grey[200],
+                              child: ListTile(
+                                key: ValueKey(uniqueKey),
+                                title: Text(trainingPart.description),
+                                leading: Text(trainingPart.minutes.toString()),
+                                // Add more training part details here.
+                              ),
                             ),
-                          ),
-                        ));
-                  }).toList(),
+                          ));
+                    }).toList(),
+                  ),
                 ),
               ),
             ),

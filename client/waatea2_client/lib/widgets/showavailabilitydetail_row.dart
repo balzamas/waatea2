@@ -9,7 +9,7 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
   final String phonenumber;
   final AssessmentModel? assessment;
   final int state;
-  final String updated;
+  final DateTime? updated;
   final String game;
   final UserProfileModel player;
   final int attendancePercentage;

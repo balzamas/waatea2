@@ -19,6 +19,7 @@ from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.core import serializers
+from rest_framework.generics import DestroyAPIView
 
 class TrainingPartViewSet(viewsets.ModelViewSet):
     serializer_class = TrainingPartSerializer
@@ -340,6 +341,12 @@ class AttendanceCreateAPIView(CreateAPIView):
 class TrainingCreateAPIView(CreateAPIView):
     queryset = Training.objects.all()
     serializer_class = TrainingSerializer
+
+class TrainingDeleteAPIView(DestroyAPIView):
+    queryset = Training.objects.all()
+    serializer_class = TrainingSerializer
+    permission_classes = [IsAuthenticated]  # Add any permission classes you need
+
 
 class TrainingPartCreateAPIView(CreateAPIView):
     queryset = TrainingPart.objects.all()
