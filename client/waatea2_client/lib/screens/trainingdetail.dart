@@ -13,7 +13,6 @@ import 'package:waatea2_client/models/trainingattendance_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:screenshot/screenshot.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
@@ -33,8 +32,6 @@ class TrainingDetailScreen extends StatefulWidget {
 }
 
 class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
-  QuillController _controllerRemarks = QuillController.basic();
-  QuillController _controllerReview = QuillController.basic();
   List<TrainingPart> trainingParts = []; // Replace with TrainingPart list
   TextEditingController _trainingPartController = TextEditingController();
   FileGenerationStatus generationStatus = FileGenerationStatus.idle;
@@ -43,32 +40,6 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   void initState() {
     super.initState();
     fetchTrainingPartsForTraining();
-    final List<dynamic> operationsRemarks =
-        json.decode(widget.training.remarks);
-    final Delta deltaRemarks = Delta.fromJson(operationsRemarks);
-
-    if (deltaRemarks.isNotEmpty) {
-      _controllerRemarks = QuillController(
-        document: Document.fromDelta(deltaRemarks),
-        selection: TextSelection.collapsed(offset: 0),
-      );
-    } else {
-      // Create an empty document
-      _controllerRemarks = QuillController.basic();
-    }
-
-    final List<dynamic> operationsReview = json.decode(widget.training.review);
-    final Delta deltaReview = Delta.fromJson(operationsReview);
-
-    if (deltaReview.isNotEmpty) {
-      _controllerReview = QuillController(
-        document: Document.fromDelta(deltaReview),
-        selection: TextSelection.collapsed(offset: 0),
-      );
-    } else {
-      // Create an empty document
-      _controllerReview = QuillController.basic();
-    }
   }
 
   void _showDeleteConfirmationDialog() {
@@ -354,11 +325,6 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
               ),
             ),
 
-            QuillEditor.basic(
-              controller: _controllerRemarks,
-              readOnly: true,
-            ),
-
             SizedBox(height: 20), // Adjust spacing as needed
             // Draggable list of drills.
             Padding(
@@ -544,7 +510,6 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
               pw.Divider(),
               // Remarks
               pw.Text('Remarks:'),
-              pw.Paragraph(text: _controllerRemarks.document.toPlainText()),
               pw.Divider(),
               // Drills
               pw.Row(children: [pw.Text('Drills:')]),

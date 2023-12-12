@@ -5,11 +5,12 @@ from rest_framework import viewsets, generics, filters
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
-from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos
+from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos, Team
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
     UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, \
-    AbonnementSerializer, ClassificationSerializer, TrainingPartSerializer, LineUpPosSerializer
+    AbonnementSerializer, ClassificationSerializer, TrainingPartSerializer, LineUpPosSerializer, TeamSerializer, \
+    GameCreateSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -338,6 +339,9 @@ class AttendanceCreateAPIView(CreateAPIView):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
 
+class GameCreateAPIView(CreateAPIView):
+    queryset = Game.objects.all()
+    serializer_class = GameCreateSerializer
 class TrainingCreateAPIView(CreateAPIView):
     queryset = Training.objects.all()
     serializer_class = TrainingSerializer
@@ -379,6 +383,19 @@ def delete_training_part(request, pk):
 class CurrentSeasonFilterAPIView(generics.ListAPIView):
     queryset = CurrentSeason.objects.all()
     serializer_class = CurrentSeasonSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
+
+        return queryset
+
+class TeamsAPIView(generics.ListAPIView):
+    queryset = Team.objects.order_by('name')
+    serializer_class = TeamSerializer
 
     def get_queryset(self):
         queryset = super().get_queryset()

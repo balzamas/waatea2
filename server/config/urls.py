@@ -15,7 +15,7 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
     LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
     TrainingPartCreateAPIView, TrainingPartUpdateAPIView, LineUpPosCreateAPIView, LineUpPosUpdateAPIView, \
-    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView
+    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView, TeamsAPIView, GameCreateAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -52,15 +52,16 @@ urlpatterns = [
     path('api-token-auth/', restviews.obtain_auth_token, name='api-token-auth'),
     # Your stuff: custom urls includes go here
     path('api/games_current/filter/', GameCurrentFilterAPIView.as_view(), name='game-filter'),
-                  path('api/games_past/filter/', GamePastFilterAPIView.as_view(), name='game-filter'),
-
-                  path('api/games_current_avail/filter/', GameCurrentAvailCountFilterAPIView.as_view(), name='game-avail-filter'),
+    path('api/games_past/filter/', GamePastFilterAPIView.as_view(), name='game-filter'),
+    path('api/games_current_avail/filter/', GameCurrentAvailCountFilterAPIView.as_view(), name='game-avail-filter'),
 
     path('api/classifications/filter/', ClassificationFilterAPIView.as_view(), name='classification-filter'),
     path('api/assessments/filter/', AssessmentFilterAPIView.as_view(),
        name='assessments-filter'),
     path('api/abonnements/filter/', AbonnementFilterAPIView.as_view(),
        name='abonnement-filter'),
+
+                  path('api/game/', GameCreateAPIView.as_view(), name='game-create'),
 
                   path('api/game/<uuid:pk>/', GameUpdateAPIView.as_view(), name='game-update'),
 
@@ -84,7 +85,9 @@ urlpatterns = [
 
     path('api/currentseason/filter/', CurrentSeasonFilterAPIView.as_view(), name='currentseason-filter'),
 
-    path('api/trainings/', TrainingAttendanceCountAPIView.as_view(), name='training-list'),
+                  path('api/trainings/', TrainingAttendanceCountAPIView.as_view(), name='training-list'),
+
+                  path('api/teams/', TeamsAPIView.as_view(), name='teams-list'),
 
     path('api/trainingparts/', viewsets.TrainingPartViewSet.as_view({'get': 'list'}), name='trainingpart-list'),
     path('api/trainingpart/', TrainingPartCreateAPIView.as_view(), name='trainingpart-create'),

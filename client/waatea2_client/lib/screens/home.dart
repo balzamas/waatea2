@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waatea2_client/screens/games.dart';
 import 'package:waatea2_client/screens/links.dart';
 import 'package:waatea2_client/screens/showattendance.dart';
 import 'package:waatea2_client/screens/showplayers.dart';
@@ -68,6 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.face),
                     label: Text('Show Players'),
                   ),
+                if (globals.player.profile.permission >= 1)
+                  const NavigationRailDestination(
+                    icon: Icon(Icons.edit_square),
+                    label: Text('Edit Games'),
+                  ),
               ],
               selectedIndex: _currentIndex,
               onDestinationSelected: (value) {
@@ -104,6 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return ShowAttendance();
       case 6:
         return ShowPlayers();
+      case 7:
+        return ShowGames();
       default:
         return Container();
     }

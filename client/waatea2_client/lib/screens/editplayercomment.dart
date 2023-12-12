@@ -90,15 +90,15 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
               height: 600,
               child: Column(
                 children: [
-                  QuillToolbar.basic(controller: _controller),
-                  Expanded(
-                    child: Container(
-                      child: QuillEditor.basic(
-                        controller: _controller,
-                        readOnly: false,
-                      ),
-                    ),
-                  ),
+                  // QuillToolbar.basic(controller: _controller),
+                  // Expanded(
+                  //   child: Container(
+                  //     child: QuillEditor.basic(
+                  //       controller: _controller,
+                  //       readOnly: false,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

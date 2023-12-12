@@ -69,6 +69,20 @@ class GameSerializer(serializers.ModelSerializer):
             'lineup_published'
         ]
 
+class GameCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = [
+        'pk',
+        'home',
+        'away',
+        'club',
+        'date',
+        'dayofyear',
+        'season',
+            'lineup_published'
+        ]
+
 class GameAvailCountSerializer(serializers.ModelSerializer):
     home = TeamSerializer()
     away = TeamSerializer()
@@ -284,6 +298,11 @@ class TrainingSerializer(serializers.ModelSerializer):
         model = Training
         fields = '__all__'
 
+class TeamSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Team
+        fields = '__all__'
 
 class TrainingAttendanceCountSerializer(serializers.ModelSerializer):
     attendance_count = serializers.SerializerMethodField()
