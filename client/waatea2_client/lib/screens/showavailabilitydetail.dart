@@ -47,7 +47,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
   late Future<List<ShowAvailabilityDetailModel>> games;
   final availabilityListKey = GlobalKey<ShowAvailabilityDetailState>();
   SortOption currentSortOption = SortOption.name;
-  bool showOnlyAvailableMaybe = false;
+  List<int> showFilter = [];
   bool sortByNameAscending = true;
   FileGenerationStatus generationStatus = FileGenerationStatus.idle;
 
@@ -223,9 +223,13 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     });
   }
 
-  void onFilterChanged(bool newValue) {
+  void toggleFilterState(int state) {
     setState(() {
-      showOnlyAvailableMaybe = newValue;
+      if (showFilter.contains(state)) {
+        showFilter.remove(state); // Remove state if already in the filter
+      } else {
+        showFilter.add(state); // Add state to the filter if not present
+      }
     });
   }
 
@@ -342,14 +346,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               ),
             ],
           ),
-          IconButton(
-            icon: Icon(showOnlyAvailableMaybe
-                ? Icons.check_box
-                : Icons.check_box_outline_blank),
-            onPressed: () {
-              onFilterChanged(!showOnlyAvailableMaybe);
-            },
-          ),
         ],
       ),
       body: Column(
@@ -362,58 +358,91 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    radius: 25.0,
-                    child: CircleAvatar(
-                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-                      foregroundColor: Colors.green,
-                      radius: 20.0,
-                      child: Text(widget.isAvailable.toString(),
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    backgroundColor: showFilter.contains(3)
+                        ? Colors.green[700]
+                        : Colors.green,
+                    foregroundColor:
+                        showFilter.contains(3) ? Colors.white : null,
+                    // backgroundColor: Colors.green,
+                    // foregroundColor: Colors.white,
+                    radius: showFilter.contains(3) ? 27.0 : 25.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        toggleFilterState(3);
+                      },
+                      child: CircleAvatar(
+                        backgroundColor:
+                            const Color.fromARGB(255, 245, 245, 245),
+                        foregroundColor: Colors.green,
+                        radius: 20.0,
+                        child: Text(widget.isAvailable.toString(),
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 20),
                   CircleAvatar(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: showFilter.contains(2)
+                        ? Colors.orange[700]
+                        : Colors.orange,
                     foregroundColor: Colors.white,
-                    radius: 25.0,
-                    child: CircleAvatar(
-                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-                      foregroundColor: Colors.orange,
-                      radius: 20.0,
-                      child: Text(widget.isMaybe.toString(),
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    radius: showFilter.contains(2) ? 27.0 : 25.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        toggleFilterState(2);
+                      },
+                      child: CircleAvatar(
+                        backgroundColor:
+                            const Color.fromARGB(255, 245, 245, 245),
+                        foregroundColor: Colors.orange,
+                        radius: 20.0,
+                        child: Text(widget.isMaybe.toString(),
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 20),
                   CircleAvatar(
-                    backgroundColor: Colors.red,
+                    backgroundColor:
+                        showFilter.contains(1) ? Colors.red[700] : Colors.red,
                     foregroundColor: Colors.white,
-                    radius: 25.0,
-                    child: CircleAvatar(
-                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-                      foregroundColor: Colors.red,
-                      radius: 20.0,
-                      child: Text(widget.isNotAvailable.toString(),
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    radius: showFilter.contains(1) ? 27.0 : 25.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        toggleFilterState(1);
+                      },
+                      child: CircleAvatar(
+                        backgroundColor:
+                            const Color.fromARGB(255, 245, 245, 245),
+                        foregroundColor: Colors.red,
+                        radius: 20.0,
+                        child: Text(widget.isNotAvailable.toString(),
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 20),
                   CircleAvatar(
-                    backgroundColor: Colors.grey,
+                    backgroundColor:
+                        showFilter.contains(0) ? Colors.grey[700] : Colors.grey,
                     foregroundColor: Colors.white,
-                    radius: 25.0,
-                    child: CircleAvatar(
-                      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-                      foregroundColor: Colors.grey,
-                      radius: 20.0,
-                      child: Text(widget.isNotSet.toString(),
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    radius: showFilter.contains(0) ? 27.0 : 25.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        toggleFilterState(0);
+                      },
+                      child: CircleAvatar(
+                        backgroundColor:
+                            const Color.fromARGB(255, 245, 245, 245),
+                        foregroundColor: Colors.grey,
+                        radius: 20.0,
+                        child: Text(widget.isNotSet.toString(),
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                      ),
                     ),
                   ),
                 ],
@@ -428,8 +457,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
                 // Apply filtering
                 var filteredPlayers = snapshot.data!.where((player) {
-                  if (showOnlyAvailableMaybe) {
-                    return player.state == 2 || player.state == 3;
+                  if (showFilter.isNotEmpty) {
+                    return showFilter.contains(player.state);
                   }
                   return true;
                 }).toList();

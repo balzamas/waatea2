@@ -95,6 +95,9 @@ class Availability(models.Model):
     def __str__(self):
         return self.dayofyear.__str__() + " " + self.player.name
 
+    class Meta:
+       unique_together = ("player", "season", "dayofyear")
+
 class CurrentSeason(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)

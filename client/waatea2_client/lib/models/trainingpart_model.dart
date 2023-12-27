@@ -1,5 +1,5 @@
 class TrainingPart {
-  late final String? id;
+  late String? id;
   late final String trainingId;
   int minutes;
   String description;

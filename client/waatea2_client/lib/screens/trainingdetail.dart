@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdf/pdf.dart';
@@ -183,6 +183,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
 
                         // Close the dialog.
                         Navigator.of(context).pop();
+                        _save();
                       } else {
                         // Handle error if necessary.
                         print('API Error: ${partsResponse.statusCode}');
@@ -244,6 +245,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
           print('Created a new training part');
           // Update the trainingPart with the newly created primary key (pk).
           final Map<String, dynamic> responseData = jsonDecode(response.body);
+          trainingParts[index].id = responseData['id'];
           //trainingPart.id = responseData['id'];
         } else {
           // Handle error if necessary.
@@ -251,12 +253,6 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
         }
       }
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MyHomePage(initialIndex: 5),
-      ),
-    );
   }
 
   @override
@@ -271,17 +267,11 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             icon: Icon(Icons.share),
             onPressed: () async {
               final imageBytes = await screenshotController.capture();
+
+              saveAndDownloadFile("training.png", imageBytes!);
               Share.shareXFiles([XFile.fromData(imageBytes!)],
                   text:
                       "Training ${trainingDate.day}.${trainingDate.month}.${trainingDate.year}");
-            },
-          ),
-          // Add a save icon to the AppBar.
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () {
-              // Call the save method when the save icon is pressed.
-              _save();
             },
           ),
           IconButton(
@@ -350,6 +340,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                         final TrainingPart movedItem =
                             trainingParts.removeAt(oldIndex);
                         trainingParts.insert(newIndex, movedItem);
+                        _save();
                       });
                     },
                     children: trainingParts.asMap().entries.map((entry) {
@@ -458,6 +449,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                             int.parse(_editMinutesController.text);
                       });
                       // Close the edit dialog.
+                      _save();
                       Navigator.of(context).pop();
                     },
                   ),
@@ -616,7 +608,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             ),
             TextButton(
               child: Text('Add'),
-              onPressed: () {
+              onPressed: () async {
                 final newTrainingPartDescription =
                     _addDescriptionController.text;
                 final newTrainingPartMinutes =
@@ -635,6 +627,8 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                   setState(() {
                     trainingParts.add(newTrainingPart);
                   });
+
+                  _save();
 
                   Navigator.of(context).pop();
                 }

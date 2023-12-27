@@ -1,5 +1,14 @@
 # Waatea Changelog
 
+## V0.0.24
+- **Enhancement:** Filter availability by tapping on the circles
+
+## V0.0.23
+- **Enhancement:** AutoSave changes in trainings
+
+## V0.0.22
+- **New Feature:** Games can be added in UI
+
 ## V0.0.21
 - **Enhancement:** Trainings can be deleted in UI
 - **Enhancement:** Share button for trainings (would be a surprise if this works tbh)
