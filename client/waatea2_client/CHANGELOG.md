@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.25
+- **New Feature:** Players stats CSV export
+
 ## V0.0.24
 - **Enhancement:** Filter availability by tapping on the circles
 
