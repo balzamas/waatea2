@@ -241,7 +241,6 @@ class HomeState extends State<UserProfile> {
                     final Map<String, dynamic> body = {
                       'mobile_phone': newPhoneNumber,
                       'abo': _selectedAbonnement?.pk,
-                      'assessment': globals.player.profile.assessment?.pk,
                       'classification':
                           globals.player.profile.classification?.pk,
                     };
@@ -377,20 +376,9 @@ class HomeState extends State<UserProfile> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (globals.player.profile.assessment != null &&
-                        globals.player.profile.assessment?.icon != null)
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              right: 8.0), // Adjust spacing as needed
-                          child: Icon(
-                            IconData(
-                                int.parse(
-                                    '0x${globals.player.profile.assessment!.icon}'),
-                                fontFamily: 'MaterialIcons'),
-                          )),
-                    if (globals.player.profile.assessment != null &&
-                        globals.player.profile.assessment?.name != null)
-                      Text(globals.player.profile.assessment!.name),
+                    if (globals.player.profile.classification != null &&
+                        globals.player.profile.classification?.name != null)
+                      Text(globals.player.profile.classification!.name),
                   ],
                 )
               ],

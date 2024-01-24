@@ -85,7 +85,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
     List<List<dynamic>> csvData = [
       [
         'Name',
-        'Assessment',
         'Classification',
         'Availability',
         'Abonnement',
@@ -148,7 +147,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
       csvData.add([
         player.name,
-        player.playerProfile?.assessment?.name ?? 'Not Set',
         player.playerProfile?.classification?.name ?? 'Not Set',
         availabilityText,
         player.playerProfile?.abonnement?.name ?? 'Not Set',
@@ -487,7 +485,6 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                         name: data.name,
                         phonenumber: data.mobilephone,
                         state: data.state,
-                        assessment: data.playerProfile.assessment,
                         updated: data.updated,
                         player: data.playerProfile,
                         attendancePercentage: data.attendance_percentage,

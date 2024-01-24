@@ -68,6 +68,7 @@ class Classification(models.Model):
 class Abonnement(models.Model):
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    short = models.CharField(max_length=200)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

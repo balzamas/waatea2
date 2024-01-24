@@ -1,5 +1,4 @@
 import 'package:waatea2_client/models/abonnement_model.dart';
-import 'package:waatea2_client/models/assessment_model.dart';
 import 'package:waatea2_client/models/classification_model.dart';
 import 'package:waatea2_client/models/position_model.dart';
 
@@ -10,13 +9,11 @@ class UserProfileModel {
   final String mobilePhone;
 
   final AbonnementModel? abonnement;
-  final AssessmentModel? assessment;
   final ClassificationModel? classification;
   final List<PositionModel>? positions; // Add positions field
 
   UserProfileModel(
-      {required this.assessment,
-      required this.isPlaying,
+      {required this.isPlaying,
       required this.permission,
       required this.abonnement,
       required this.comment,
@@ -40,9 +37,6 @@ class UserProfileModel {
           : null,
       abonnement: json['abonnement'] != null
           ? AbonnementModel.fromJson(json['abonnement'])
-          : null,
-      assessment: json['assessment'] != null
-          ? AssessmentModel.fromJson(json['assessment'])
           : null,
       positions: positions,
     );

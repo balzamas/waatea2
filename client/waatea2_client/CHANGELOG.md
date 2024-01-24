@@ -1,5 +1,12 @@
 # Waatea Changelog
 
+## V0.0.26
+- **Miscellaneous:** Remove assesement
+- **Bug Fix:** Remove share button
+- **New Feature:** Show abo type in availibility overview
+- **New Feature:** Show avatars of al the players who attend training in the training sign up screen
+
+
 ## V0.0.25
 - **New Feature:** Players stats CSV export
 

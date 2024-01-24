@@ -36,7 +36,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
 class AbonnementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Abonnement
-        fields = ['pk', 'name']
+        fields = ['pk', 'name', 'short']
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:

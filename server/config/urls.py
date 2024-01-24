@@ -15,7 +15,7 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
     LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
     TrainingPartCreateAPIView, TrainingPartUpdateAPIView, LineUpPosCreateAPIView, LineUpPosUpdateAPIView, \
-    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView, TeamsAPIView, GameCreateAPIView
+    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView, TeamsAPIView, GameCreateAPIView, AttendingUsersViewSet
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -25,8 +25,6 @@ router.register('gamedetails', views.Game)
 router.register('userdetails', views.User)
 router.register('availabilitydetails', views.Availability)
 router.register('training-attendance', TrainingAttendanceViewSet, basename='training-attendance')
-
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FLUTTER_WEB_APP = os.path.join(BASE_DIR, 'client')
@@ -79,6 +77,8 @@ urlpatterns = [
 
     path('api/links/filter/', LinksFilterAPIView.as_view(), name='links-filter'),
 
+    path('api/attendingusers/<uuid:uid>/', AttendingUsersViewSet.as_view({'get': 'list'}),
+                       name='attending-users-list'),
     path('api/attendances/filter/', AttendanceFilterAPIView.as_view(), name='attendance-filter'),
     path('api/attendance/<uuid:pk>/', AttendanceUpdateAPIView.as_view(), name='attendance-update'),
     path('api/attendance/', AttendanceCreateAPIView.as_view(), name='attendance-create'),

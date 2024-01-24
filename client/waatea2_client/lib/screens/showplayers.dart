@@ -78,7 +78,6 @@ class _ShowPlayersState extends State<ShowPlayers> {
     List<List<dynamic>> csvData = [
       [
         'Name',
-        'Assessment',
         'Classification',
         'Abonnement',
         'Training l10',
@@ -164,7 +163,6 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
       csvData.add([
         player.name,
-        player.profile?.assessment?.name ?? 'Not Set',
         player.profile?.classification?.name ?? 'Not Set',
         player.profile?.abonnement?.name ?? 'Not Set',
         attended10,
@@ -350,16 +348,6 @@ class _ShowPlayersState extends State<ShowPlayers> {
                       child: Icon(
                         IconData(
                             int.parse('0x${user.profile.classification!.icon}'),
-                            fontFamily: 'MaterialIcons'),
-                      )),
-                if (user.profile.assessment != null &&
-                    user.profile.assessment?.icon != null)
-                  Padding(
-                      padding: EdgeInsets.only(
-                          right: 8.0), // Adjust spacing as needed
-                      child: Icon(
-                        IconData(
-                            int.parse('0x${user.profile.assessment!.icon}'),
                             fontFamily: 'MaterialIcons'),
                       )),
                 const SizedBox(width: 10),

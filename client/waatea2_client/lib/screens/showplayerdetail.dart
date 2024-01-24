@@ -77,17 +77,6 @@ class ShowPlayerDetail extends StatelessWidget {
                             int.parse('0x${user.profile.classification!.icon}'),
                             fontFamily: 'MaterialIcons'),
                       )),
-                if (user.profile.assessment != null &&
-                    user.profile.assessment?.icon != null)
-                  Padding(
-                      padding: const EdgeInsets.only(
-                          right: 8.0), // Adjust spacing as needed
-                      child: Icon(
-                        IconData(
-                            int.parse('0x${user.profile.assessment!.icon}'),
-                            fontFamily: 'MaterialIcons'),
-                      )),
-                const SizedBox(width: 16),
                 RandomAvatar(user.name, height: 80, width: 80),
                 const SizedBox(width: 16),
                 Icon(
@@ -100,9 +89,9 @@ class ShowPlayerDetail extends StatelessWidget {
             // SizedBox(height: 16),
             // Text('Email: ${user.email}'),
             const SizedBox(height: 16),
-            if (user.profile.assessment != null &&
-                user.profile.assessment?.icon != null)
-              Text(user.profile.assessment!.name),
+            if (user.profile.classification != null &&
+                user.profile.classification?.icon != null)
+              Text(user.profile.classification!.name),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

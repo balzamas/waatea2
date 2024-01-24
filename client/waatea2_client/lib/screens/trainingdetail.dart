@@ -15,7 +15,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:universal_html/html.dart' as uh;
 
@@ -263,17 +262,6 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
         title: Text(
             "${trainingDate.day}.${trainingDate.month}.${trainingDate.year}"),
         actions: [
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () async {
-              final imageBytes = await screenshotController.capture();
-
-              saveAndDownloadFile("training.png", imageBytes!);
-              Share.shareXFiles([XFile.fromData(imageBytes!)],
-                  text:
-                      "Training ${trainingDate.day}.${trainingDate.month}.${trainingDate.year}");
-            },
-          ),
           IconButton(
             icon: Icon(Icons.picture_as_pdf),
             onPressed: () {

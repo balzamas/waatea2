@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/helper.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:waatea2_client/models/assessment_model.dart';
 import 'package:waatea2_client/models/userprofile_model.dart';
 
 class ShowAvailabilityDetailRow extends StatefulWidget {
   final String name;
   final String phonenumber;
-  final AssessmentModel? assessment;
   final int state;
   final DateTime? updated;
   final String game;
@@ -18,7 +16,6 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
       {Key? key,
       required this.name,
       required this.phonenumber,
-      required this.assessment,
       required this.state,
       required this.updated,
       required this.game,
@@ -97,6 +94,14 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                                 )
                               : Icons.highlight_off,
                         )
+                      ])),
+              const SizedBox(width: 10),
+              Expanded(
+                  flex: 1,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(widget.player.abonnement?.short ?? '-')
                       ])),
               // const SizedBox(width: 10),
               // Expanded(

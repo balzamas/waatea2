@@ -311,6 +311,18 @@ class AvailabilityCreateAPIView(CreateAPIView):
     queryset = Availability.objects.all()
     serializer_class = AvailabilitySerializer
 
+class AttendingUsersViewSet(viewsets.ViewSet):
+    def list(self, request, uid=None):
+        try:
+            training = Training.objects.get(id=uid)
+        except Training.DoesNotExist:
+            return Response({'detail': 'Training not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        attendances = Attendance.objects.filter(training=training, attended=True).select_related('player')
+        attending_users = [attendance.player for attendance in attendances]
+        serializer = UserSerializer(attending_users, many=True)
+        return Response(serializer.data)
+
 class AttendanceFilterAPIView(generics.ListAPIView):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer

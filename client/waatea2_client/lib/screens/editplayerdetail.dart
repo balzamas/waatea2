@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/models/abonnement_model.dart';
-import 'package:waatea2_client/models/assessment_model.dart';
 import 'package:waatea2_client/models/classification_model.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/home.dart';
@@ -22,12 +21,10 @@ class EditPlayerDetail extends StatefulWidget {
 
 class _EditPlayerDetailState extends State<EditPlayerDetail> {
   bool _isPlaying = false;
-  AssessmentModel? _selectedAssessment;
   AbonnementModel? _selectedAbonnement;
   ClassificationModel? _selectedClassification; // Initialize as null
   List<ClassificationModel> classificationOptions = [];
   List<AbonnementModel> abonnementOptions = [];
-  List<AssessmentModel> assessmentOptions = [];
 
   @override
   void initState() {
@@ -67,22 +64,6 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
         }
       });
     });
-
-    fetchAssessments().then((assessments) {
-      setState(() {
-        assessmentOptions = assessments;
-        if (widget.user.profile.assessment != null) {
-          // If the assessment is not empty, set it based on the user's profile
-          _selectedAssessment = assessmentOptions.firstWhere(
-            (assessment) => assessment.pk == widget.user.profile.assessment!.pk,
-            // Set to null when no match is found
-          );
-        } else {
-          // If the assessment is empty, set it to null
-          _selectedAssessment = null;
-        }
-      });
-    });
   }
 
   Future<List<ClassificationModel>> fetchClassifications() async {
@@ -119,23 +100,6 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
     }
   }
 
-  Future<List<AssessmentModel>> fetchAssessments() async {
-    final response = await http.get(
-      Uri.parse(
-          '${globals.URL_PREFIX}/api/assessments/filter?club=${globals.clubId}'),
-      headers: {
-        'Authorization': 'Token ${globals.token}',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => AssessmentModel.fromJson(item)).toList();
-    } else {
-      throw Exception('Failed to load assessments');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,29 +122,6 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                   _isPlaying = newValue!;
                 });
               },
-            ),
-            const SizedBox(height: 16),
-            const Text('Select Level'),
-            DropdownButton<AssessmentModel>(
-              value: _selectedAssessment,
-              onChanged: (value) {
-                setState(() {
-                  _selectedAssessment = value!;
-                });
-              },
-              items: [
-                // Add a default "Select Classification" item as the first item
-                const DropdownMenuItem<AssessmentModel>(
-                  value: null,
-                  child: Text('Select Level'),
-                ),
-                ...assessmentOptions.map((assessment) {
-                  return DropdownMenuItem<AssessmentModel>(
-                    value: assessment,
-                    child: Text(assessment.name),
-                  );
-                }).toList(),
-              ],
             ),
             const SizedBox(height: 16),
             const Text('Classification'),
@@ -233,7 +174,6 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
               onPressed: () async {
                 final Map<String, dynamic> body = {
                   'is_playing': _isPlaying,
-                  'assessment': _selectedAssessment?.pk,
                   'abo': _selectedAbonnement?.pk,
                   'classification': _selectedClassification?.pk,
                 };
