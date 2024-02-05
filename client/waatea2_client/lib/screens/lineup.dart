@@ -680,7 +680,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
     // await file.writeAsBytes(await pdf.save());
 
     // Open the PDF directly without saving to disk
-    saveAndDownloadFile("training.pdf", pdfBytes);
+    saveAndDownloadFile("lineup.pdf", pdfBytes);
   }
 
   Future<void> saveAndDownloadFile(String fileName, Uint8List content) async {

@@ -33,7 +33,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
   Future<void> saveAndDownloadFile(String fileName, String content) async {
     try {
-      // File Download Linux
+      //File Download Linux
       // final directory = await getApplicationDocumentsDirectory();
       // final filePath = '${directory.path}/$fileName';
       // final file = File(filePath);
@@ -71,7 +71,19 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
     String responseBody = utf8.decode(response.bodyBytes);
     final items = json.decode(responseBody).cast<Map<String, dynamic>>();
-    List<GameModel> games = items.map<GameModel>((json) {
+    List<GameModel> gamesPast = items.map<GameModel>((json) {
+      return GameModel.fromJson(json);
+    }).toList();
+
+    final responseSeason = await http.get(
+        Uri.parse(
+            "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}&season=${globals.seasonID}"),
+        headers: {'Authorization': 'Token ${globals.token}'});
+
+    String responsebodyFuture = utf8.decode(responseSeason.bodyBytes);
+    final itemsFuture =
+        json.decode(responsebodyFuture).cast<Map<String, dynamic>>();
+    List<GameModel> gamesFuture = itemsFuture.map<GameModel>((json) {
       return GameModel.fromJson(json);
     }).toList();
 
@@ -83,19 +95,27 @@ class _ShowPlayersState extends State<ShowPlayers> {
         'Training l10',
         'Training l4',
         'Training Tot',
-        'Games Avail',
-        'Games Maybe',
-        'Games Unavail',
-        'Games Notset',
+        'Games Avail Past',
+        'Games Maybe Past',
+        'Games Unavail Past',
+        'Games Notset Past',
+        'Games Avail Future',
+        'Games Maybe Future',
+        'Games Unavail Future',
+        'Games Notset Future',
         'Caps'
       ]
     ];
 
     for (var player in players) {
-      int available = 0;
-      int maybe = 0;
-      int notavailable = 0;
-      int notset = 0;
+      int availablePast = 0;
+      int maybePast = 0;
+      int notavailablePast = 0;
+      int notsetPast = 0;
+      int availableFuture = 0;
+      int maybeFuture = 0;
+      int notavailableFuture = 0;
+      int notsetFuture = 0;
 
       final responseAvail = await http.get(
           Uri.parse(
@@ -112,21 +132,39 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
         if (availabilities.isNotEmpty) {
           for (AvailabilityModel availability in availabilities) {
-            if (games.any((obj) => obj.dayofyear == availability.dayofyear)) {
+            if (gamesPast
+                .any((obj) => obj.dayofyear == availability.dayofyear)) {
               if (availability.state == 1) {
-                notavailable = notavailable + 1;
+                notavailablePast = notavailablePast + 1;
               } else if (availability.state == 2) {
-                maybe = maybe + 1;
+                maybePast = maybePast + 1;
               } else if (availability.state == 3) {
-                available = available + 1;
+                availablePast = availablePast + 1;
+              }
+            }
+          }
+          for (AvailabilityModel availability in availabilities) {
+            if (gamesFuture
+                .any((obj) => obj.dayofyear == availability.dayofyear)) {
+              if (availability.state == 1) {
+                notavailableFuture = notavailableFuture + 1;
+              } else if (availability.state == 2) {
+                maybeFuture = maybeFuture + 1;
+              } else if (availability.state == 3) {
+                availableFuture = availableFuture + 1;
               }
             }
           }
         }
       }
 
-      int uniqueCount = games.map((obj) => obj.dayofyear).toSet().length;
-      notset = uniqueCount - (available + notavailable + maybe);
+      int uniqueCount = gamesPast.map((obj) => obj.dayofyear).toSet().length;
+      notsetPast = uniqueCount - (availablePast + notavailablePast + maybePast);
+
+      int uniquecountSeason =
+          gamesFuture.map((obj) => obj.dayofyear).toSet().length;
+      notsetFuture = uniquecountSeason -
+          (availableFuture + notavailableFuture + maybeFuture);
 
       int attended10 = 0;
       int attended4 = 0;
@@ -168,10 +206,14 @@ class _ShowPlayersState extends State<ShowPlayers> {
         attended10,
         attended4,
         attended_tot,
-        available,
-        maybe,
-        notavailable,
-        notset,
+        availablePast,
+        maybePast,
+        notavailablePast,
+        notsetPast,
+        availableFuture,
+        maybeFuture,
+        notavailableFuture,
+        notsetFuture,
         player.caps
       ]);
     }

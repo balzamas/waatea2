@@ -298,7 +298,6 @@ class AvailiabilityFilterAPIView(generics.ListAPIView):
         elif player and season:
             queryset = queryset.filter(player=player, season=season)
         elif dayofyear and season:
-            print("Right path")
             queryset = queryset.filter(dayofyear=dayofyear, season=season, player__userprofile__is_playing=True)
 
         return queryset

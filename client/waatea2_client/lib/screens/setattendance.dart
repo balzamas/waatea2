@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:random_avatar/random_avatar.dart';
+import 'package:waatea2_client/models/user_model.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -18,6 +20,8 @@ class SetAttendance extends StatefulWidget {
 
 class SetAttendanceState extends State<SetAttendance> {
   late Future<SetAttendanceModel> setAttendanceContent;
+  late List<UserModel> attendingPlayers;
+
   final availabilityListKey = GlobalKey<SetAttendanceState>();
   int state = 0;
   String? attendanceId = "";
@@ -72,6 +76,19 @@ class SetAttendanceState extends State<SetAttendance> {
     }
   }
 
+  Future<List<UserModel>> getAttendingPlayers(String trainingid) async {
+    final response = await http.get(
+        Uri.parse("${globals.URL_PREFIX}/api/attendingusers/${trainingId}/"),
+        headers: {'Authorization': 'Token ${globals.token}'});
+
+    final items = json.decode(response.body).cast<Map<String, dynamic>>();
+    List<UserModel> attending_players = items.map<UserModel>((json) {
+      return UserModel.fromJson(json);
+    }).toList();
+
+    return attending_players;
+  }
+
   Future<SetAttendanceModel> getCurrentTraining() async {
     final response = await http.get(
         Uri.parse(
@@ -87,6 +104,8 @@ class SetAttendanceState extends State<SetAttendance> {
 
     if (trainings.isNotEmpty) {
       trainingId = trainings[0].id;
+      attendingPlayers = await getAttendingPlayers(trainingId!);
+
       dayofhteyear = trainings[0].dayofyear;
       //Load attendance
       final responseAttend = await http.get(
@@ -248,7 +267,26 @@ class SetAttendanceState extends State<SetAttendance> {
                         style: const TextStyle(
                             fontSize: 23, fontWeight: FontWeight.bold),
                       )
-                    ]
+                    ],
+                    const SizedBox(height: 50),
+                    Center(
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 10, // Number of avatars per row
+                          mainAxisSpacing: 2.0, // Vertical spacing between rows
+                          crossAxisSpacing:
+                              2.0, // Horizontal spacing between avatars
+                        ),
+                        shrinkWrap:
+                            true, // Wrap content inside a SingleChildScrollView if needed
+                        itemCount: attendingPlayers.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return RandomAvatar(attendingPlayers[index].name,
+                              height: 800, width: 1000);
+                          //ToDo Umlauts
+                        },
+                      ),
+                    ),
                   ]
                 ],
               );

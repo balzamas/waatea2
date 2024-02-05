@@ -1,5 +1,9 @@
 # Waatea Changelog
 
+## V0.0.27
+- **New Feature:** Player export: show total avail. stats
+- **Bug Fix:** Rename line up PDF, shorter Last update text
+
 ## V0.0.26
 - **Miscellaneous:** Remove assesement
 - **Bug Fix:** Remove share button

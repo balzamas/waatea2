@@ -144,10 +144,10 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Last update:\n${widget.updated}",
+                      "${widget.updated?.day}.${widget.updated?.month}.${widget.updated?.year} ${widget.updated?.hour}.${widget.updated?.minute}",
                       style: DefaultTextStyle.of(context)
                           .style
-                          .apply(fontSizeFactor: 0.8),
+                          .apply(fontSizeFactor: 0.5),
                     ),
                   ],
                 ),
