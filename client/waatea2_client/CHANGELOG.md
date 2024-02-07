@@ -1,6 +1,10 @@
 # Waatea Changelog
 
-## V0.0.27
+
+## V0.0.29
+- **Bug Fix:** Width line up screen
+
+## V0.0.28
 - **Enhancement:** In line up tool load positions from db
 - **New Feature:** Edit positions in player detail ffs!!
 - **New Feature:** Add scrolling buttons in line up editor (to solve mobile problem)

@@ -80,7 +80,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
       if (gameList.isNotEmpty) {
         setState(() {
           team1Title =
-              "${gameList[0].home} - ${gameList[0].away}"; // Set the title
+              "${gameList[0].home}\n${gameList[0].away}"; // Set the title
           team1id = gameList[0].pk;
         });
         Future<List<LineUpPosModel>> playersTeam1 = getLineUp(team1id);
@@ -88,7 +88,9 @@ class _LineUpEditorState extends State<LineUpEditor> {
           player1List.forEach((player) {
             setState(() {
               if (player.player != null) {
-                team1Players[player.position].name = player.player!.name;
+                team1Players[player.position].name =
+                    player.player!.name.split(' ')[0] +
+                        player.player!.name.split(' ')[1][0];
                 team1Players[player.position].playerid = player.player!.pk;
                 addedPlayersTeam1.add(player.player!.pk);
               }
@@ -100,7 +102,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
       if (gameList.length > 1) {
         setState(() {
           team2Title =
-              "${gameList[1].home} - ${gameList[1].away}"; // Set the title
+              "${gameList[1].home}\n${gameList[1].away}"; // Set the title
 
           team2id = gameList[1].pk;
         });
@@ -109,7 +111,10 @@ class _LineUpEditorState extends State<LineUpEditor> {
           player2List.forEach((player) {
             setState(() {
               if (player.player != null) {
-                team2Players[player.position].name = player.player!.name;
+                team2Players[player.position].name =
+                    player.player!.name.split(' ')[0] +
+                        player.player!.name.split(' ')[1][0];
+                ;
                 team2Players[player.position].playerid = player.player!.pk;
                 addedPlayersTeam2.add(player.player!.pk);
               }
@@ -262,7 +267,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
               Expanded(
                 flex: 2,
                 child: Container(
-                  width: 300, // Set the desired width here
+                  width: 200, // Set the desired width here
                   child: SingleChildScrollView(
                     controller:
                         _scrollControllerPlayerList, // Add a ScrollController
@@ -346,10 +351,15 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                                   children: [
                                                     Row(
                                                       children: [
-                                                        Text(
+                                                        Text(availablePlayersFiltered[
+                                                                    i]
+                                                                .name
+                                                                .split(' ')[0] +
                                                             availablePlayersFiltered[
                                                                     i]
-                                                                .name),
+                                                                .name
+                                                                .split(
+                                                                    ' ')[1][0]),
                                                       ],
                                                     ),
                                                     Row(
@@ -411,7 +421,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
             ],
           ),
           Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Text(team1Title),
+            Text(team1Title, textScaleFactor: 0.8),
             IconButton(
               icon: const Icon(
                   Icons.open_in_browser), // Add an import icon button
@@ -435,7 +445,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
             ),
             Expanded(
               child: Container(
-                width: 300, // Set the desired width here
+                width: 120, // Set the desired width here
                 child: SingleChildScrollView(
                   controller: _scrollControllerGame1, // Add a ScrollController
 
@@ -496,11 +506,13 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                     addedPlayersTeam1
                                         .remove(team1Players[index].playerid);
                                     team1Players[index].playerid = playerPK;
+                                    String nameFull = availablePlayersFiltered
+                                        .firstWhere(
+                                            (player) => player.pk == playerPK)
+                                        .name;
                                     team1Players[index].name =
-                                        availablePlayersFiltered
-                                            .firstWhere((player) =>
-                                                player.pk == playerPK)
-                                            .name;
+                                        nameFull.split(' ')[0] +
+                                            nameFull.split(' ')[1][0];
                                     addedPlayersTeam1.add(playerPK);
                                   });
                                   selectedPlayerPK = -1;
@@ -569,7 +581,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(team2Title),
+                Text(team2Title, textScaleFactor: 0.8),
                 IconButton(
                   icon: const Icon(
                       Icons.open_in_browser), // Add an import icon button
@@ -593,7 +605,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                 ),
                 Expanded(
                   child: Container(
-                    width: 300, // Set the desired width here
+                    width: 120, // Set the desired width here
                     child: SingleChildScrollView(
                       controller:
                           _scrollControllerGame2, // Add a ScrollController
@@ -659,11 +671,15 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                             team2Players[index].playerid);
                                         team2Players[index].playerid =
                                             playerPK2;
-                                        team2Players[index].name =
+                                        String nameFull =
                                             availablePlayersFiltered
                                                 .firstWhere((player) =>
                                                     player.pk == playerPK2)
                                                 .name;
+                                        team2Players[index].name =
+                                            nameFull.split(' ')[0] +
+                                                nameFull.split(' ')[1][0];
+
                                         addedPlayersTeam2.add(playerPK2);
                                       });
                                       selectedPlayerPK = -1;
@@ -751,7 +767,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
               pw.Divider(),
               pw.SizedBox(height: 40),
 
-              pw.Text('First team'),
+              pw.Text(team1Title),
 
               pw.Divider(),
 
@@ -799,7 +815,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
               pw.Divider(),
               pw.SizedBox(height: 40),
 
-              pw.Text('Second team'),
+              pw.Text(team2Title),
 
               pw.Divider(),
 
