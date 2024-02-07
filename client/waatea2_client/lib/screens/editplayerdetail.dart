@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/models/abonnement_model.dart';
 import 'package:waatea2_client/models/classification_model.dart';
+import 'package:waatea2_client/models/position_model.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/home.dart';
 import '../globals.dart' as globals;
 import 'package:http/http.dart' as http;
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../helper.dart';
 
@@ -19,12 +21,24 @@ class EditPlayerDetail extends StatefulWidget {
   _EditPlayerDetailState createState() => _EditPlayerDetailState();
 }
 
+class Animal {
+  final int id;
+  final String name;
+
+  Animal({
+    required this.id,
+    required this.name,
+  });
+}
+
 class _EditPlayerDetailState extends State<EditPlayerDetail> {
   bool _isPlaying = false;
   AbonnementModel? _selectedAbonnement;
   ClassificationModel? _selectedClassification; // Initialize as null
   List<ClassificationModel> classificationOptions = [];
   List<AbonnementModel> abonnementOptions = [];
+  List<PositionModel> positionOptions = [];
+  List<PositionModel> _selectedPositions = [];
 
   @override
   void initState() {
@@ -64,6 +78,27 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
         }
       });
     });
+
+    fetchPositions().then((positions) {
+      setState(() {
+        positionOptions = positions;
+
+        //I don't understand why we have to initalive the list like this
+        int loop = 0;
+        for (PositionModel item in positionOptions) {
+          bool found = widget.user.profile.positions!
+              .any((secondItem) => secondItem.pk == item.pk);
+          if (found) {
+            if (_selectedPositions.isEmpty) {
+              _selectedPositions = [positionOptions[loop]];
+            } else {
+              _selectedPositions.add(positionOptions[loop]);
+            }
+          }
+          loop = loop + 1;
+        }
+      });
+    });
   }
 
   Future<List<ClassificationModel>> fetchClassifications() async {
@@ -97,6 +132,23 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
       return data.map((item) => AbonnementModel.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load abonnements');
+    }
+  }
+
+  Future<List<PositionModel>> fetchPositions() async {
+    final response = await http.get(
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/positions/filter?club=${globals.clubId}'),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((item) => PositionModel.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load positions');
     }
   }
 
@@ -147,6 +199,20 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
               ],
             ),
             const SizedBox(height: 16),
+            const Text('Select Positions'),
+            MultiSelectDialogField(
+              items: positionOptions
+                  .map((position) => MultiSelectItem<PositionModel>(
+                      position, position.position))
+                  .toList(),
+              initialValue: _selectedPositions,
+              onConfirm: (values) {
+                setState(() {
+                  _selectedPositions = values.cast<PositionModel>();
+                });
+              },
+            ),
+            const SizedBox(height: 16),
             const Text('Select Abo'),
             DropdownButton<AbonnementModel>(
               value: _selectedAbonnement,
@@ -172,10 +238,18 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
               onPressed: () async {
+                final List<Map<String, dynamic>> positionsData =
+                    _selectedPositions.map((position) {
+                  return {
+                    'pk': position.pk,
+                    'position': position.position,
+                  };
+                }).toList();
                 final Map<String, dynamic> body = {
                   'is_playing': _isPlaying,
                   'abo': _selectedAbonnement?.pk,
                   'classification': _selectedClassification?.pk,
+                  'positions': positionsData,
                 };
 
                 final http.Response response = await http.patch(

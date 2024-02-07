@@ -1,6 +1,11 @@
 # Waatea Changelog
 
 ## V0.0.27
+- **Enhancement:** In line up tool load positions from db
+- **New Feature:** Edit positions in player detail ffs!!
+- **New Feature:** Add scrolling buttons in line up editor (to solve mobile problem)
+
+## V0.0.27
 - **New Feature:** Player export: show total avail. stats
 - **Bug Fix:** Rename line up PDF, shorter Last update text
 

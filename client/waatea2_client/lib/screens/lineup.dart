@@ -14,6 +14,8 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'package:universal_html/html.dart' as uh;
 
+import '../models/position_model.dart';
+
 class LineUpEditor extends StatefulWidget {
   final List<ShowAvailabilityDetailModel> availablePlayers;
   final int dayoftheyear;
@@ -67,6 +69,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
   String selectedPosition = "All";
   late List<ShowAvailabilityDetailModel> availablePlayersFiltered;
   late List<ShowAvailabilityDetailModel> yourOriginalPlayerList;
+  List<PositionModel> positionOptions = [];
 
   @override
   void initState() {
@@ -116,6 +119,13 @@ class _LineUpEditorState extends State<LineUpEditor> {
         });
       }
     });
+
+    fetchPositions().then((positions) {
+      setState(() {
+        positionOptions = positions;
+      });
+    });
+
     //Load lineups
     availablePlayersFiltered = widget.availablePlayers
         .where((player) => player.state == 2 || player.state == 3)
@@ -123,8 +133,29 @@ class _LineUpEditorState extends State<LineUpEditor> {
     yourOriginalPlayerList = availablePlayersFiltered;
   }
 
+  Future<List<PositionModel>> fetchPositions() async {
+    final response = await http.get(
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/positions/filter?club=${globals.clubId}'),
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((item) => PositionModel.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load positions');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    ScrollController _scrollControllerPlayerList = ScrollController();
+    ScrollController _scrollControllerGame1 = ScrollController();
+    ScrollController _scrollControllerGame2 = ScrollController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Player Selection Screen"),
@@ -195,381 +226,511 @@ class _LineUpEditorState extends State<LineUpEditor> {
       ),
       body: Row(
         children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  const Text("Avail1."),
-                  Container(
-                    width: 200, // Set the desired width here
-                    child: DropdownButton<String>(
-                        value: selectedPosition,
-                        items:
-                            _buildPositionDropdownItems(), // Create this function
-                        onChanged: (value) {
-                          setState(() {
-                            selectedPosition = value!;
-                            // Call a function to filter the players based on the selected position
-                            filterPlayersByPosition();
-                          });
-                        }),
-                  ),
-                  NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification notification) {
-                      return true; // Return true to allow the scroll to continue.
-                    },
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: availablePlayersFiltered.length,
-                      itemBuilder: (context, index) {
-                        final startIndex = index * 2;
-                        final endIndex = startIndex + 2;
-                        return Row(
-                          children: [
-                            for (int i = startIndex; i < endIndex; i++)
-                              if (i < availablePlayersFiltered.length &&
-                                  (availablePlayersFiltered[i].state == 2 ||
-                                      availablePlayersFiltered[i].state == 3))
-                                Flexible(
-                                  child: GestureDetector(
-                                    behavior: HitTestBehavior
-                                        .translucent, // Allow touch events to pass through
-                                    onTap: () {
-                                      setState(() {
-                                        if (selectedPlayerPK ==
-                                            availablePlayersFiltered[i].pk) {
-                                          selectedPlayerPK =
-                                              -1; // Unselect if already selected
-                                        } else {
-                                          selectedPlayerPK =
-                                              availablePlayersFiltered[i].pk;
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          width: 4,
-                                          color: selectedPlayerPK ==
-                                                  availablePlayersFiltered[i].pk
-                                              ? Colors
-                                                  .red // Add a red border if selected
-                                              : Colors
-                                                  .transparent, // No border if not selected
-                                        ),
-                                      ),
-                                      child: Card(
-                                        elevation: 2,
-                                        color: addedPlayersTeam1.contains(
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text("Avail."),
+              Container(
+                width: 200, // Set the desired width here
+                child: DropdownButton<String>(
+                    value: selectedPosition,
+                    items:
+                        _buildPositionDropdownItems(), // Create this function
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPosition = value!;
+                        // Call a function to filter the players based on the selected position
+                        filterPlayersByPosition();
+                      });
+                    }),
+              ),
+              // Scroll Up Button
+
+              ElevatedButton(
+                onPressed: () {
+                  // Scroll up logic
+                  _scrollControllerPlayerList.animateTo(
+                    _scrollControllerPlayerList.offset -
+                        200, // Adjust this value as needed
+                    curve: Curves.linear,
+                    duration: Duration(
+                        milliseconds: 5), // Adjust this value as needed
+                  );
+                },
+                child: Icon(Icons.arrow_upward),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  width: 300, // Set the desired width here
+                  child: SingleChildScrollView(
+                    controller:
+                        _scrollControllerPlayerList, // Add a ScrollController
+                    child: Column(
+                      children: <Widget>[
+                        NotificationListener<ScrollNotification>(
+                          onNotification: (ScrollNotification notification) {
+                            return true; // Return true to allow the scroll to continue.
+                          },
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: availablePlayersFiltered.length,
+                            itemBuilder: (context, index) {
+                              final startIndex = index * 2;
+                              final endIndex = startIndex + 2;
+                              return Row(
+                                children: [
+                                  for (int i = startIndex; i < endIndex; i++)
+                                    if (i < availablePlayersFiltered.length &&
+                                        (availablePlayersFiltered[i].state ==
+                                                2 ||
+                                            availablePlayersFiltered[i].state ==
+                                                3))
+                                      Flexible(
+                                        child: GestureDetector(
+                                          behavior: HitTestBehavior
+                                              .translucent, // Allow touch events to pass through
+                                          onTap: () {
+                                            setState(() {
+                                              if (selectedPlayerPK ==
+                                                  availablePlayersFiltered[i]
+                                                      .pk) {
+                                                selectedPlayerPK =
+                                                    -1; // Unselect if already selected
+                                              } else {
+                                                selectedPlayerPK =
                                                     availablePlayersFiltered[i]
-                                                        .pk) &&
-                                                addedPlayersTeam2.contains(
-                                                    availablePlayersFiltered[i]
-                                                        .pk)
-                                            ? Colors
-                                                .grey // Player is in both columns
-                                            : addedPlayersTeam1.contains(
-                                                    availablePlayersFiltered[i]
-                                                        .pk)
-                                                ? Colors.green.withOpacity(
-                                                    0.3) // Player is only in team 1
-                                                : addedPlayersTeam2.contains(
-                                                        availablePlayersFiltered[i]
-                                                            .pk)
-                                                    ? Colors.blue.withOpacity(
-                                                        0.3) // Player is only in team 2
-                                                    : null,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text(availablePlayersFiltered[
-                                                          i]
-                                                      .name),
-                                                ],
+                                                        .pk;
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                width: 4,
+                                                color: selectedPlayerPK ==
+                                                        availablePlayersFiltered[
+                                                                i]
+                                                            .pk
+                                                    ? Colors
+                                                        .red // Add a red border if selected
+                                                    : Colors
+                                                        .transparent, // No border if not selected
                                               ),
-                                              Row(
-                                                children: [
-                                                  returnStateIcon(
-                                                      availablePlayersFiltered[
-                                                              i]
-                                                          .state),
-                                                  Icon(
-                                                    availablePlayersFiltered[i]
-                                                                .playerProfile
-                                                                .classification
-                                                                ?.icon !=
-                                                            null
-                                                        ? IconData(
-                                                            int.parse(
-                                                                '0x${availablePlayersFiltered[i].playerProfile.classification!.icon}'),
-                                                            fontFamily:
-                                                                'MaterialIcons',
-                                                          )
-                                                        : Icons.highlight_off,
-                                                  ),
-                                                  Text(
-                                                      "${availablePlayersFiltered[i].attendance_percentage}%"),
-                                                ],
+                                            ),
+                                            child: Card(
+                                              elevation: 2,
+                                              color: addedPlayersTeam1.contains(
+                                                          availablePlayersFiltered[i]
+                                                              .pk) &&
+                                                      addedPlayersTeam2.contains(
+                                                          availablePlayersFiltered[i]
+                                                              .pk)
+                                                  ? Colors
+                                                      .grey // Player is in both columns
+                                                  : addedPlayersTeam1.contains(
+                                                          availablePlayersFiltered[i]
+                                                              .pk)
+                                                      ? Colors.green.withOpacity(
+                                                          0.3) // Player is only in team 1
+                                                      : addedPlayersTeam2.contains(
+                                                              availablePlayersFiltered[i]
+                                                                  .pk)
+                                                          ? Colors.blue.withOpacity(
+                                                              0.3) // Player is only in team 2
+                                                          : null,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            availablePlayersFiltered[
+                                                                    i]
+                                                                .name),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        returnStateIcon(
+                                                            availablePlayersFiltered[
+                                                                    i]
+                                                                .state),
+                                                        Icon(
+                                                          availablePlayersFiltered[
+                                                                          i]
+                                                                      .playerProfile
+                                                                      .classification
+                                                                      ?.icon !=
+                                                                  null
+                                                              ? IconData(
+                                                                  int.parse(
+                                                                      '0x${availablePlayersFiltered[i].playerProfile.classification!.icon}'),
+                                                                  fontFamily:
+                                                                      'MaterialIcons',
+                                                                )
+                                                              : Icons
+                                                                  .highlight_off,
+                                                        ),
+                                                        Text(
+                                                            "${availablePlayersFiltered[i].attendance_percentage}%"),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                          ],
-                        );
-                      },
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+              ElevatedButton(
+                onPressed: () {
+                  // Scroll down logic
+                  _scrollControllerPlayerList.animateTo(
+                    _scrollControllerPlayerList.offset +
+                        200, // Adjust this value as needed
+                    curve: Curves.linear,
+                    duration: Duration(
+                        milliseconds: 5), // Adjust this value as needed
+                  );
+                },
+                child: Icon(Icons.arrow_downward),
+              ),
+            ],
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Text(team1Title),
-                  IconButton(
-                    icon: const Icon(
-                        Icons.open_in_browser), // Add an import icon button
-                    onPressed: () {
-                      // Show a popup menu to choose and import a lineup from a past game.
-                      _showImportPopup(team1Players, addedPlayersTeam1);
-                    },
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: team1Players.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onDoubleTap: () {
-                          // Double-clicked, remove the player
-                          setState(() {
-                            addedPlayersTeam1
-                                .remove(team1Players[index].playerid);
-                            team1Players[index].playerid = 0;
-                            team1Players[index].name = "-";
-                          });
-                        },
-                        onTap: () {
-                          if (selectedPlayerPK == -1) {
-                            if (selectedCardIndexTeam1 == -1) {
-                              setState(() {
-                                selectedCardIndexTeam1 = index;
-                              });
-                            } else if (selectedCardIndexTeam1 == index) {
-                              setState(() {
-                                selectedCardIndexTeam1 =
-                                    -1; // Deselect the card
-                              });
-                            } else {
-                              // Swap name and playerid between the selected and clicked cards
-                              final tempName =
-                                  team1Players[selectedCardIndexTeam1].name;
-                              final tempPlayerID =
-                                  team1Players[selectedCardIndexTeam1].playerid;
+          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Text(team1Title),
+            IconButton(
+              icon: const Icon(
+                  Icons.open_in_browser), // Add an import icon button
+              onPressed: () {
+                // Show a popup menu to choose and import a lineup from a past game.
+                _showImportPopup(team1Players, addedPlayersTeam1);
+              },
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Scroll down logic
+                _scrollControllerGame1.animateTo(
+                  _scrollControllerGame1.offset -
+                      200, // Adjust this value as needed
+                  curve: Curves.linear,
+                  duration:
+                      Duration(milliseconds: 5), // Adjust this value as needed
+                );
+              },
+              child: Icon(Icons.arrow_upward),
+            ),
+            Expanded(
+              child: Container(
+                width: 300, // Set the desired width here
+                child: SingleChildScrollView(
+                  controller: _scrollControllerGame1, // Add a ScrollController
 
-                              setState(() {
-                                team1Players[selectedCardIndexTeam1].name =
-                                    team1Players[index].name;
-                                team1Players[selectedCardIndexTeam1].playerid =
-                                    team1Players[index].playerid;
-                                team1Players[index].name = tempName;
-                                team1Players[index].playerid = tempPlayerID;
-                              });
-                              setState(() {
-                                selectedCardIndexTeam1 = -1;
-                              });
-                              // Deselect after the swap
-                            }
-                          } else {
-                            final playerPK = selectedPlayerPK;
-                            if (!addedPlayersTeam1.contains(playerPK)) {
+                  child: Column(
+                    children: <Widget>[
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: team1Players.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onDoubleTap: () {
+                              // Double-clicked, remove the player
                               setState(() {
                                 addedPlayersTeam1
                                     .remove(team1Players[index].playerid);
-                                team1Players[index].playerid = playerPK;
-                                team1Players[index].name =
-                                    availablePlayersFiltered
-                                        .firstWhere(
-                                            (player) => player.pk == playerPK)
-                                        .name;
-                                addedPlayersTeam1.add(playerPK);
+                                team1Players[index].playerid = 0;
+                                team1Players[index].name = "-";
                               });
-                              selectedPlayerPK = -1;
-                            }
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 4,
-                              color: selectedCardIndexTeam1 == index
-                                  ? Colors.red // Add a red border if selected
-                                  : Colors
-                                      .transparent, // No border if not selected
-                            ),
-                            color: yourOriginalPlayerList.any((player) =>
-                                        player.pk ==
-                                        team1Players[index].playerid) ||
-                                    team1Players[index].playerid == 0
-                                ? Colors.white.withOpacity(
-                                    0.3) // Player is in availablePlayersFiltered
-                                : Colors.red.withOpacity(0.3),
-                          ),
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Row(
+                            },
+                            onTap: () {
+                              if (selectedPlayerPK == -1) {
+                                if (selectedCardIndexTeam1 == -1) {
+                                  setState(() {
+                                    selectedCardIndexTeam1 = index;
+                                  });
+                                } else if (selectedCardIndexTeam1 == index) {
+                                  setState(() {
+                                    selectedCardIndexTeam1 =
+                                        -1; // Deselect the card
+                                  });
+                                } else {
+                                  // Swap name and playerid between the selected and clicked cards
+                                  final tempName =
+                                      team1Players[selectedCardIndexTeam1].name;
+                                  final tempPlayerID =
+                                      team1Players[selectedCardIndexTeam1]
+                                          .playerid;
+
+                                  setState(() {
+                                    team1Players[selectedCardIndexTeam1].name =
+                                        team1Players[index].name;
+                                    team1Players[selectedCardIndexTeam1]
+                                            .playerid =
+                                        team1Players[index].playerid;
+                                    team1Players[index].name = tempName;
+                                    team1Players[index].playerid = tempPlayerID;
+                                  });
+                                  setState(() {
+                                    selectedCardIndexTeam1 = -1;
+                                  });
+                                  // Deselect after the swap
+                                }
+                              } else {
+                                final playerPK = selectedPlayerPK;
+                                if (!addedPlayersTeam1.contains(playerPK)) {
+                                  setState(() {
+                                    addedPlayersTeam1
+                                        .remove(team1Players[index].playerid);
+                                    team1Players[index].playerid = playerPK;
+                                    team1Players[index].name =
+                                        availablePlayersFiltered
+                                            .firstWhere((player) =>
+                                                player.pk == playerPK)
+                                            .name;
+                                    addedPlayersTeam1.add(playerPK);
+                                  });
+                                  selectedPlayerPK = -1;
+                                }
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 4,
+                                  color: selectedCardIndexTeam1 == index
+                                      ? Colors
+                                          .red // Add a red border if selected
+                                      : Colors
+                                          .transparent, // No border if not selected
+                                ),
+                                color: yourOriginalPlayerList.any((player) =>
+                                            player.pk ==
+                                            team1Players[index].playerid) ||
+                                        team1Players[index].playerid == 0
+                                    ? Colors.white.withOpacity(
+                                        0.3) // Player is in availablePlayersFiltered
+                                    : Colors.red.withOpacity(0.3),
+                              ),
+                              child: Card(
+                                elevation: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
                                     children: [
-                                      Text(
-                                        "${team1Players[index].posid + 1} ${team1Players[index].name}",
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "${team1Players[index].posid + 1} ${team1Players[index].name}",
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
-          if (team2id != "")
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Text(team2Title),
-                    IconButton(
-                      icon: const Icon(
-                          Icons.open_in_browser), // Add an import icon button
-                      onPressed: () {
-                        // Show a popup menu to choose and import a lineup from a past game.
-                        _showImportPopup(team2Players, addedPlayersTeam2);
-                      },
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: team2Players.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onDoubleTap: () {
-                            // Double-clicked, remove the player
-                            setState(() {
-                              addedPlayersTeam2
-                                  .remove(team2Players[index].playerid);
-                              team2Players[index].playerid = 0;
-                              team2Players[index].name = "-";
-                            });
-                          },
-                          onTap: () {
-                            if (selectedPlayerPK == -1) {
-                              if (selectedCardIndexTeam2 == -1) {
-                                setState(() {
-                                  selectedCardIndexTeam2 = index;
-                                });
-                              } else if (selectedCardIndexTeam2 == index) {
-                                setState(() {
-                                  selectedCardIndexTeam2 =
-                                      -1; // Deselect the card
-                                });
-                              } else {
-                                // Swap name and playerid between the selected and clicked cards
-                                final tempName =
-                                    team2Players[selectedCardIndexTeam2].name;
-                                final tempPlayerID =
-                                    team2Players[selectedCardIndexTeam2]
-                                        .playerid;
-
-                                setState(() {
-                                  team2Players[selectedCardIndexTeam2].name =
-                                      team2Players[index].name;
-                                  team2Players[selectedCardIndexTeam2]
-                                      .playerid = team2Players[index].playerid;
-                                  team2Players[index].name = tempName;
-                                  team2Players[index].playerid = tempPlayerID;
-                                });
-                                setState(() {
-                                  selectedCardIndexTeam2 = -1;
-                                });
-                                // Deselect after the swap
-                              }
-                            } else {
-                              final playerPK2 = selectedPlayerPK;
-                              if (!addedPlayersTeam2.contains(playerPK2)) {
-                                setState(() {
-                                  addedPlayersTeam2
-                                      .remove(team2Players[index].playerid);
-                                  team2Players[index].playerid = playerPK2;
-                                  team2Players[index].name =
-                                      availablePlayersFiltered
-                                          .firstWhere((player) =>
-                                              player.pk == playerPK2)
-                                          .name;
-                                  addedPlayersTeam2.add(playerPK2);
-                                });
-                                selectedPlayerPK = -1;
-                              }
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 4,
-                                color: selectedCardIndexTeam2 == index
-                                    ? Colors.red // Add a red border if selected
-                                    : Colors
-                                        .transparent, // No border if not selected
-                              ),
-                              color: yourOriginalPlayerList.any((player) =>
-                                          player.pk ==
-                                          team2Players[index].playerid) ||
-                                      team2Players[index].playerid == 0
-                                  ? Colors.white.withOpacity(
-                                      0.3) // Player is in availablePlayersFiltered
-                                  : Colors.red.withOpacity(0.3),
-                            ), // Player is not in availablePlayersFiltered
-                            child: Card(
-                              elevation: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "${team2Players[index].posid + 1} ${team2Players[index].name}",
-                                        ),
-                                      ],
-                                    ),
-                                  ],
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    )
-                  ],
+                          );
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
+            ElevatedButton(
+              onPressed: () {
+                // Scroll down logic
+                _scrollControllerGame1.animateTo(
+                  _scrollControllerGame1.offset +
+                      200, // Adjust this value as needed
+                  curve: Curves.linear,
+                  duration:
+                      Duration(milliseconds: 5), // Adjust this value as needed
+                );
+              },
+              child: Icon(Icons.arrow_downward),
+            ),
+          ]),
+          if (team2id != "")
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(team2Title),
+                IconButton(
+                  icon: const Icon(
+                      Icons.open_in_browser), // Add an import icon button
+                  onPressed: () {
+                    // Show a popup menu to choose and import a lineup from a past game.
+                    _showImportPopup(team2Players, addedPlayersTeam2);
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Scroll up logic
+                    _scrollControllerGame2.animateTo(
+                      _scrollControllerGame2.offset -
+                          200, // Adjust this value as needed
+                      curve: Curves.linear,
+                      duration: Duration(
+                          milliseconds: 5), // Adjust this value as needed
+                    );
+                  },
+                  child: Icon(Icons.arrow_upward),
+                ),
+                Expanded(
+                  child: Container(
+                    width: 300, // Set the desired width here
+                    child: SingleChildScrollView(
+                      controller:
+                          _scrollControllerGame2, // Add a ScrollController
+
+                      child: Column(
+                        children: <Widget>[
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: team2Players.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onDoubleTap: () {
+                                  // Double-clicked, remove the player
+                                  setState(() {
+                                    addedPlayersTeam2
+                                        .remove(team2Players[index].playerid);
+                                    team2Players[index].playerid = 0;
+                                    team2Players[index].name = "-";
+                                  });
+                                },
+                                onTap: () {
+                                  if (selectedPlayerPK == -1) {
+                                    if (selectedCardIndexTeam2 == -1) {
+                                      setState(() {
+                                        selectedCardIndexTeam2 = index;
+                                      });
+                                    } else if (selectedCardIndexTeam2 ==
+                                        index) {
+                                      setState(() {
+                                        selectedCardIndexTeam2 =
+                                            -1; // Deselect the card
+                                      });
+                                    } else {
+                                      // Swap name and playerid between the selected and clicked cards
+                                      final tempName =
+                                          team2Players[selectedCardIndexTeam2]
+                                              .name;
+                                      final tempPlayerID =
+                                          team2Players[selectedCardIndexTeam2]
+                                              .playerid;
+
+                                      setState(() {
+                                        team2Players[selectedCardIndexTeam2]
+                                            .name = team2Players[index].name;
+                                        team2Players[selectedCardIndexTeam2]
+                                                .playerid =
+                                            team2Players[index].playerid;
+                                        team2Players[index].name = tempName;
+                                        team2Players[index].playerid =
+                                            tempPlayerID;
+                                      });
+                                      setState(() {
+                                        selectedCardIndexTeam2 = -1;
+                                      });
+                                      // Deselect after the swap
+                                    }
+                                  } else {
+                                    final playerPK2 = selectedPlayerPK;
+                                    if (!addedPlayersTeam2
+                                        .contains(playerPK2)) {
+                                      setState(() {
+                                        addedPlayersTeam2.remove(
+                                            team2Players[index].playerid);
+                                        team2Players[index].playerid =
+                                            playerPK2;
+                                        team2Players[index].name =
+                                            availablePlayersFiltered
+                                                .firstWhere((player) =>
+                                                    player.pk == playerPK2)
+                                                .name;
+                                        addedPlayersTeam2.add(playerPK2);
+                                      });
+                                      selectedPlayerPK = -1;
+                                    }
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 4,
+                                      color: selectedCardIndexTeam2 == index
+                                          ? Colors
+                                              .red // Add a red border if selected
+                                          : Colors
+                                              .transparent, // No border if not selected
+                                    ),
+                                    color: yourOriginalPlayerList.any(
+                                                (player) =>
+                                                    player.pk ==
+                                                    team2Players[index]
+                                                        .playerid) ||
+                                            team2Players[index].playerid == 0
+                                        ? Colors.white.withOpacity(
+                                            0.3) // Player is in availablePlayersFiltered
+                                        : Colors.red.withOpacity(0.3),
+                                  ), // Player is not in availablePlayersFiltered
+                                  child: Card(
+                                    elevation: 2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "${team2Players[index].posid + 1} ${team2Players[index].name}",
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Scroll down logic
+                    _scrollControllerGame2.animateTo(
+                      _scrollControllerGame2.offset +
+                          200, // Adjust this value as needed
+                      curve: Curves.linear,
+                      duration: Duration(
+                          milliseconds: 5), // Adjust this value as needed
+                    );
+                  },
+                  child: Icon(Icons.arrow_downward),
+                ),
+              ],
+            )
         ],
       ),
     );
@@ -818,16 +979,6 @@ class _LineUpEditorState extends State<LineUpEditor> {
   }
 
   List<DropdownMenuItem<String>> _buildPositionDropdownItems() {
-    List<String> yourPositionList = [
-      "C",
-      "B3",
-      "FH",
-      "SH",
-      "3R",
-      "2L",
-      "FR",
-    ];
-
     List<DropdownMenuItem<String>> items = [
       DropdownMenuItem<String>(
         value: "All",
@@ -835,10 +986,10 @@ class _LineUpEditorState extends State<LineUpEditor> {
       )
     ];
     // Add "All" as the first item
-    items.addAll(yourPositionList.map((position) {
+    items.addAll(positionOptions.map((position) {
       return DropdownMenuItem<String>(
-        value: position,
-        child: Text(position),
+        value: position.position,
+        child: Text(position.position),
       );
     }));
     return items;

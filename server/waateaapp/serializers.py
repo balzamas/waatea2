@@ -38,6 +38,12 @@ class AbonnementSerializer(serializers.ModelSerializer):
         model = Abonnement
         fields = ['pk', 'name', 'short']
 
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = ['pk', 'position']
+
+
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club

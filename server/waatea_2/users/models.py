@@ -41,6 +41,7 @@ class User(AbstractUser):
 
 class Position(models.Model):
     position = models.CharField(max_length=10)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE,  blank=True, null=True)
 
     def __str__(self):
         return self.position

@@ -4,13 +4,13 @@ from rest_framework.decorators import action
 from rest_framework import viewsets, generics, filters
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
-from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment
+from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment, Position
 from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos, Team
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
     UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, \
     AbonnementSerializer, ClassificationSerializer, TrainingPartSerializer, LineUpPosSerializer, TeamSerializer, \
-    GameCreateSerializer
+    GameCreateSerializer, PositionSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -213,6 +213,20 @@ class AbonnementFilterAPIView(generics.ListAPIView):
 
         return queryset
 
+class PositionFilterAPIView(generics.ListAPIView):
+    queryset = Position.objects.order_by('position')
+    serializer_class = PositionSerializer
+    ordering = ['position']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
+
+        return queryset
+
 class TrainingCurrentFilterAPIView(generics.ListAPIView):
     serializer_class = TrainingSerializer
     ordering = ['date']
@@ -274,6 +288,7 @@ class UserProfileDetail(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         # Include positions data in the update
         positions_data = self.request.data.get('positions')
+        print(positions_data)
         if positions_data is not None:
             serializer.save(positions=positions_data)
         else:

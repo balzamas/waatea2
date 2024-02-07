@@ -15,7 +15,7 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
     LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
     TrainingPartCreateAPIView, TrainingPartUpdateAPIView, LineUpPosCreateAPIView, LineUpPosUpdateAPIView, \
-    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView, TeamsAPIView, GameCreateAPIView, AttendingUsersViewSet
+    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView, TeamsAPIView, GameCreateAPIView, AttendingUsersViewSet, PositionFilterAPIView
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
@@ -58,6 +58,8 @@ urlpatterns = [
        name='assessments-filter'),
     path('api/abonnements/filter/', AbonnementFilterAPIView.as_view(),
        name='abonnement-filter'),
+                  path('api/positions/filter/', PositionFilterAPIView.as_view(),
+                       name='positions-filter'),
 
                   path('api/game/', GameCreateAPIView.as_view(), name='game-create'),
 
