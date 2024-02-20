@@ -38,7 +38,7 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
 
   @override
   Widget build(BuildContext context) {
-    Icon stateIcon = returnStateIcon(widget.state);
+    Icon stateIcon = returnStateIcon(widget.state, false);
 
     return Padding(
       padding: const EdgeInsets.all(7.0),

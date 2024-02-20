@@ -91,7 +91,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
   Widget build(BuildContext context) {
     Icon icon;
 
-    icon = returnStateIcon(state);
+    icon = returnStateIcon(state, false);
 
     return Padding(
       padding: const EdgeInsets.all(7.0),

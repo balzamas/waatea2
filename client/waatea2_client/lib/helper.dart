@@ -4,30 +4,36 @@ import 'package:flutter/material.dart';
 import 'package:waatea2_client/models/game_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:waatea2_client/models/lineuppos_model.dart';
+import 'package:waatea2_client/models/position_model.dart';
 import '../globals.dart' as globals;
 
-Icon returnStateIcon(int state) {
+String PositionsToString(List<PositionModel>? positions) {
+  String positionsString = "";
+  for (PositionModel position in positions!) {
+    if (positionsString.length == 0) {
+      positionsString = positionsString + position.position;
+    } else {
+      positionsString = "$positionsString, ${position.position}";
+    }
+  }
+  return positionsString;
+}
+
+Icon returnStateIcon(int state, bool setSmall) {
+  double? iconSize = setSmall ? 15.0 : null;
+
   switch (state) {
     case 1:
-      return const Icon(
-        Icons.thumb_down_alt_outlined,
-        color: Colors.red,
-      );
+      return Icon(Icons.thumb_down_alt_outlined,
+          color: Colors.red, size: iconSize);
     case 2:
-      return const Icon(
-        Icons.help_outline,
-        color: Colors.orange,
-      );
+      return Icon(Icons.help_outline, color: Colors.orange, size: iconSize);
     case 3:
-      return const Icon(
-        Icons.thumb_up_alt_outlined,
-        color: Colors.green,
-      );
+      return Icon(Icons.thumb_up_alt_outlined,
+          color: Colors.green, size: iconSize);
     default:
-      return const Icon(
-        Icons.warning_amber_rounded,
-        color: Colors.red,
-      );
+      return Icon(Icons.warning_amber_rounded,
+          color: Colors.red, size: iconSize);
   }
 }
 

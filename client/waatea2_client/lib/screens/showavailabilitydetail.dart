@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:waatea2_client/helper.dart';
+import 'package:waatea2_client/models/position_model.dart';
 import 'package:waatea2_client/screens/lineup.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:flutter/material.dart';
@@ -91,6 +93,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         'Training l10',
         'Training l4',
         'Training Tot',
+        'Positions',
         'Caps'
       ]
     ];
@@ -153,6 +156,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
         attended10,
         attended4,
         attended_tot,
+        PositionsToString(player.playerProfile.positions),
         player.caps
       ]);
     }

@@ -28,8 +28,7 @@ class ShowLineUp extends StatelessWidget {
             _buildTeamLineup(team1Title, team1Lineup),
           if (team2Title != "" &&
               team2Lineup.any((player) => player.player != null))
-            SizedBox(height: 20),
-          _buildTeamLineup(team2Title, team2Lineup),
+            _buildTeamLineup(team2Title, team2Lineup),
         ],
       ),
     );
@@ -43,6 +42,7 @@ class ShowLineUp extends StatelessWidget {
         ? SizedBox() // Return an empty SizedBox if no players are set
         : Column(
             children: [
+              SizedBox(height: 20),
               Text(
                 "$teamTitle",
                 style: TextStyle(

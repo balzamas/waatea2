@@ -70,6 +70,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
   late List<ShowAvailabilityDetailModel> availablePlayersFiltered;
   late List<ShowAvailabilityDetailModel> yourOriginalPlayerList;
   List<PositionModel> positionOptions = [];
+  double availColWidth = 225;
+  double teamsColWidth = 225;
 
   @override
   void initState() {
@@ -88,9 +90,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
           player1List.forEach((player) {
             setState(() {
               if (player.player != null) {
-                team1Players[player.position].name =
-                    player.player!.name.split(' ')[0] +
-                        player.player!.name.split(' ')[1][0];
+                team1Players[player.position].name = player.player!.name;
                 team1Players[player.position].playerid = player.player!.pk;
                 addedPlayersTeam1.add(player.player!.pk);
               }
@@ -99,8 +99,11 @@ class _LineUpEditorState extends State<LineUpEditor> {
           });
         });
       }
+
       if (gameList.length > 1) {
         setState(() {
+          teamsColWidth = 140;
+          availColWidth = 170;
           team2Title =
               "${gameList[1].home}\n${gameList[1].away}"; // Set the title
 
@@ -111,11 +114,10 @@ class _LineUpEditorState extends State<LineUpEditor> {
           player2List.forEach((player) {
             setState(() {
               if (player.player != null) {
-                team2Players[player.position].name =
-                    player.player!.name.split(' ')[0] +
-                        player.player!.name.split(' ')[1][0];
+                team2Players[player.position].name = player.player!.name;
                 ;
                 team2Players[player.position].playerid = player.player!.pk;
+
                 addedPlayersTeam2.add(player.player!.pk);
               }
               team2Players[player.position].fieldid = player.id;
@@ -236,7 +238,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
             children: <Widget>[
               const Text("Avail."),
               Container(
-                width: 200, // Set the desired width here
+                width: 100, // Set the desired width here
                 child: DropdownButton<String>(
                     value: selectedPosition,
                     items:
@@ -256,7 +258,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                   // Scroll up logic
                   _scrollControllerPlayerList.animateTo(
                     _scrollControllerPlayerList.offset -
-                        200, // Adjust this value as needed
+                        300, // Adjust this value as needed
                     curve: Curves.linear,
                     duration: Duration(
                         milliseconds: 5), // Adjust this value as needed
@@ -267,7 +269,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
               Expanded(
                 flex: 2,
                 child: Container(
-                  width: 200, // Set the desired width here
+                  width: availColWidth, // Set the desired width here
                   child: SingleChildScrollView(
                     controller:
                         _scrollControllerPlayerList, // Add a ScrollController
@@ -281,121 +283,96 @@ class _LineUpEditorState extends State<LineUpEditor> {
                             shrinkWrap: true,
                             itemCount: availablePlayersFiltered.length,
                             itemBuilder: (context, index) {
-                              final startIndex = index * 2;
-                              final endIndex = startIndex + 2;
-                              return Row(
-                                children: [
-                                  for (int i = startIndex; i < endIndex; i++)
-                                    if (i < availablePlayersFiltered.length &&
-                                        (availablePlayersFiltered[i].state ==
-                                                2 ||
-                                            availablePlayersFiltered[i].state ==
-                                                3))
-                                      Flexible(
-                                        child: GestureDetector(
-                                          behavior: HitTestBehavior
-                                              .translucent, // Allow touch events to pass through
-                                          onTap: () {
-                                            setState(() {
-                                              if (selectedPlayerPK ==
-                                                  availablePlayersFiltered[i]
-                                                      .pk) {
-                                                selectedPlayerPK =
-                                                    -1; // Unselect if already selected
-                                              } else {
-                                                selectedPlayerPK =
-                                                    availablePlayersFiltered[i]
-                                                        .pk;
-                                              }
-                                            });
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                width: 4,
-                                                color: selectedPlayerPK ==
-                                                        availablePlayersFiltered[
-                                                                i]
-                                                            .pk
-                                                    ? Colors
-                                                        .red // Add a red border if selected
-                                                    : Colors
-                                                        .transparent, // No border if not selected
-                                              ),
-                                            ),
-                                            child: Card(
-                                              elevation: 2,
-                                              color: addedPlayersTeam1.contains(
-                                                          availablePlayersFiltered[i]
-                                                              .pk) &&
-                                                      addedPlayersTeam2.contains(
-                                                          availablePlayersFiltered[i]
-                                                              .pk)
-                                                  ? Colors
-                                                      .grey // Player is in both columns
-                                                  : addedPlayersTeam1.contains(
-                                                          availablePlayersFiltered[i]
-                                                              .pk)
-                                                      ? Colors.green.withOpacity(
-                                                          0.3) // Player is only in team 1
-                                                      : addedPlayersTeam2.contains(
-                                                              availablePlayersFiltered[i]
-                                                                  .pk)
-                                                          ? Colors.blue.withOpacity(
-                                                              0.3) // Player is only in team 2
-                                                          : null,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(availablePlayersFiltered[
-                                                                    i]
-                                                                .name
-                                                                .split(' ')[0] +
-                                                            availablePlayersFiltered[
-                                                                    i]
-                                                                .name
-                                                                .split(
-                                                                    ' ')[1][0]),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        returnStateIcon(
-                                                            availablePlayersFiltered[
-                                                                    i]
-                                                                .state),
-                                                        Icon(
-                                                          availablePlayersFiltered[
-                                                                          i]
-                                                                      .playerProfile
-                                                                      .classification
-                                                                      ?.icon !=
-                                                                  null
-                                                              ? IconData(
-                                                                  int.parse(
-                                                                      '0x${availablePlayersFiltered[i].playerProfile.classification!.icon}'),
-                                                                  fontFamily:
-                                                                      'MaterialIcons',
-                                                                )
-                                                              : Icons
-                                                                  .highlight_off,
-                                                        ),
-                                                        Text(
-                                                            "${availablePlayersFiltered[i].attendance_percentage}%"),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                              return GestureDetector(
+                                behavior: HitTestBehavior
+                                    .translucent, // Allow touch events to pass through
+                                onTap: () {
+                                  setState(() {
+                                    if (selectedPlayerPK ==
+                                        availablePlayersFiltered[index].pk) {
+                                      selectedPlayerPK =
+                                          -1; // Unselect if already selected
+                                    } else {
+                                      selectedPlayerPK =
+                                          availablePlayersFiltered[index].pk;
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 4,
+                                      color: selectedPlayerPK ==
+                                              availablePlayersFiltered[index].pk
+                                          ? Colors
+                                              .red // Add a red border if selected
+                                          : Colors
+                                              .transparent, // No border if not selected
+                                    ),
+                                  ),
+                                  child: Card(
+                                    elevation: 2,
+                                    color: addedPlayersTeam1.contains(
+                                                availablePlayersFiltered[index]
+                                                    .pk) &&
+                                            addedPlayersTeam2.contains(
+                                                availablePlayersFiltered[index]
+                                                    .pk)
+                                        ? Colors
+                                            .grey // Player is in both columns
+                                        : addedPlayersTeam1.contains(
+                                                availablePlayersFiltered[index]
+                                                    .pk)
+                                            ? Colors.green.withOpacity(
+                                                0.3) // Player is only in team 1
+                                            : addedPlayersTeam2.contains(
+                                                    availablePlayersFiltered[index]
+                                                        .pk)
+                                                ? Colors.blue.withOpacity(
+                                                    0.3) // Player is only in team 2
+                                                : null,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(availablePlayersFiltered[
+                                                      index]
+                                                  .name),
+                                            ],
                                           ),
-                                        ),
+                                          Row(
+                                            children: [
+                                              returnStateIcon(
+                                                  availablePlayersFiltered[
+                                                          index]
+                                                      .state,
+                                                  true),
+                                              Icon(
+                                                availablePlayersFiltered[index]
+                                                            .playerProfile
+                                                            .classification
+                                                            ?.icon !=
+                                                        null
+                                                    ? IconData(
+                                                        int.parse(
+                                                            '0x${availablePlayersFiltered[index].playerProfile.classification!.icon}'),
+                                                        fontFamily:
+                                                            'MaterialIcons',
+                                                      )
+                                                    : Icons.highlight_off,
+                                                size: 15,
+                                              ),
+                                              Text(
+                                                  "${availablePlayersFiltered[index].attendance_percentage}%"),
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                ],
+                                    ),
+                                  ),
+                                ),
                               );
                             },
                           ),
@@ -405,12 +382,13 @@ class _LineUpEditorState extends State<LineUpEditor> {
                   ),
                 ),
               ),
+
               ElevatedButton(
                 onPressed: () {
                   // Scroll down logic
                   _scrollControllerPlayerList.animateTo(
                     _scrollControllerPlayerList.offset +
-                        200, // Adjust this value as needed
+                        300, // Adjust this value as needed
                     curve: Curves.linear,
                     duration: Duration(
                         milliseconds: 5), // Adjust this value as needed
@@ -435,7 +413,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                 // Scroll down logic
                 _scrollControllerGame1.animateTo(
                   _scrollControllerGame1.offset -
-                      200, // Adjust this value as needed
+                      300, // Adjust this value as needed
                   curve: Curves.linear,
                   duration:
                       Duration(milliseconds: 5), // Adjust this value as needed
@@ -445,7 +423,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
             ),
             Expanded(
               child: Container(
-                width: 120, // Set the desired width here
+                width: teamsColWidth, // Set the desired width here
                 child: SingleChildScrollView(
                   controller: _scrollControllerGame1, // Add a ScrollController
 
@@ -510,9 +488,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                         .firstWhere(
                                             (player) => player.pk == playerPK)
                                         .name;
-                                    team1Players[index].name =
-                                        nameFull.split(' ')[0] +
-                                            nameFull.split(' ')[1][0];
+                                    team1Players[index].name = nameFull;
                                     addedPlayersTeam1.add(playerPK);
                                   });
                                   selectedPlayerPK = -1;
@@ -550,6 +526,50 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                           ),
                                         ],
                                       ),
+                                      Row(
+                                        children: [
+                                          if (team1Players[index].playerid != 0)
+                                            returnStateIcon(
+                                                availablePlayersFiltered
+                                                    .firstWhere((player) =>
+                                                        player.pk ==
+                                                        team1Players[index]
+                                                            .playerid)
+                                                    .state,
+                                                true),
+                                          if (team1Players[index].playerid != 0)
+                                            Icon(
+                                              availablePlayersFiltered
+                                                          .firstWhere(
+                                                              (player) =>
+                                                                  player.pk ==
+                                                                  team1Players[
+                                                                          index]
+                                                                      .playerid)
+                                                          .playerProfile
+                                                          .classification
+                                                          ?.icon !=
+                                                      null
+                                                  ? IconData(
+                                                      int.parse(
+                                                          '0x${availablePlayersFiltered.firstWhere((player) => player.pk == team1Players[index].playerid).playerProfile.classification!.icon}'),
+                                                      fontFamily:
+                                                          'MaterialIcons',
+                                                    )
+                                                  : Icons.highlight_off,
+                                              size: 15,
+                                            ),
+                                          if (team1Players[index].playerid != 0)
+                                            Text(availablePlayersFiltered
+                                                    .firstWhere((player) =>
+                                                        player.pk ==
+                                                        team1Players[index]
+                                                            .playerid)
+                                                    .attendance_percentage
+                                                    .toString() +
+                                                "%")
+                                        ],
+                                      )
                                     ],
                                   ),
                                 ),
@@ -568,7 +588,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                 // Scroll down logic
                 _scrollControllerGame1.animateTo(
                   _scrollControllerGame1.offset +
-                      200, // Adjust this value as needed
+                      300, // Adjust this value as needed
                   curve: Curves.linear,
                   duration:
                       Duration(milliseconds: 5), // Adjust this value as needed
@@ -595,7 +615,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                     // Scroll up logic
                     _scrollControllerGame2.animateTo(
                       _scrollControllerGame2.offset -
-                          200, // Adjust this value as needed
+                          300, // Adjust this value as needed
                       curve: Curves.linear,
                       duration: Duration(
                           milliseconds: 5), // Adjust this value as needed
@@ -605,7 +625,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                 ),
                 Expanded(
                   child: Container(
-                    width: 120, // Set the desired width here
+                    width: teamsColWidth, // Set the desired width here
                     child: SingleChildScrollView(
                       controller:
                           _scrollControllerGame2, // Add a ScrollController
@@ -676,10 +696,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                                 .firstWhere((player) =>
                                                     player.pk == playerPK2)
                                                 .name;
-                                        team2Players[index].name =
-                                            nameFull.split(' ')[0] +
-                                                nameFull.split(' ')[1][0];
-
+                                        team2Players[index].name = nameFull;
                                         addedPlayersTeam2.add(playerPK2);
                                       });
                                       selectedPlayerPK = -1;
@@ -719,6 +736,55 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                               ),
                                             ],
                                           ),
+                                          Row(
+                                            children: [
+                                              if (team2Players[index]
+                                                      .playerid !=
+                                                  0)
+                                                returnStateIcon(
+                                                    availablePlayersFiltered
+                                                        .firstWhere((player) =>
+                                                            player.pk ==
+                                                            team2Players[index]
+                                                                .playerid)
+                                                        .state,
+                                                    true),
+                                              if (team2Players[index]
+                                                      .playerid !=
+                                                  0)
+                                                Icon(
+                                                  availablePlayersFiltered
+                                                              .firstWhere((player) =>
+                                                                  player.pk ==
+                                                                  team2Players[
+                                                                          index]
+                                                                      .playerid)
+                                                              .playerProfile
+                                                              .classification
+                                                              ?.icon !=
+                                                          null
+                                                      ? IconData(
+                                                          int.parse(
+                                                              '0x${availablePlayersFiltered.firstWhere((player) => player.pk == team2Players[index].playerid).playerProfile.classification!.icon}'),
+                                                          fontFamily:
+                                                              'MaterialIcons',
+                                                        )
+                                                      : Icons.highlight_off,
+                                                  size: 15,
+                                                ),
+                                              if (team2Players[index]
+                                                      .playerid !=
+                                                  0)
+                                                Text(availablePlayersFiltered
+                                                        .firstWhere((player) =>
+                                                            player.pk ==
+                                                            team2Players[index]
+                                                                .playerid)
+                                                        .attendance_percentage
+                                                        .toString() +
+                                                    "%")
+                                            ],
+                                          )
                                         ],
                                       ),
                                     ),
@@ -737,7 +803,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                     // Scroll down logic
                     _scrollControllerGame2.animateTo(
                       _scrollControllerGame2.offset +
-                          200, // Adjust this value as needed
+                          300, // Adjust this value as needed
                       curve: Curves.linear,
                       duration: Duration(
                           milliseconds: 5), // Adjust this value as needed
