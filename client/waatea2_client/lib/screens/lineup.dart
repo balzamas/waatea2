@@ -484,7 +484,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                     addedPlayersTeam1
                                         .remove(team1Players[index].playerid);
                                     team1Players[index].playerid = playerPK;
-                                    String nameFull = availablePlayersFiltered
+                                    String nameFull = widget.availablePlayers
                                         .firstWhere(
                                             (player) => player.pk == playerPK)
                                         .name;
@@ -530,7 +530,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                         children: [
                                           if (team1Players[index].playerid != 0)
                                             returnStateIcon(
-                                                availablePlayersFiltered
+                                                widget.availablePlayers
                                                     .firstWhere((player) =>
                                                         player.pk ==
                                                         team1Players[index]
@@ -539,7 +539,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                                 true),
                                           if (team1Players[index].playerid != 0)
                                             Icon(
-                                              availablePlayersFiltered
+                                              widget.availablePlayers
                                                           .firstWhere(
                                                               (player) =>
                                                                   player.pk ==
@@ -552,7 +552,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                                       null
                                                   ? IconData(
                                                       int.parse(
-                                                          '0x${availablePlayersFiltered.firstWhere((player) => player.pk == team1Players[index].playerid).playerProfile.classification!.icon}'),
+                                                          '0x${widget.availablePlayers.firstWhere((player) => player.pk == team1Players[index].playerid).playerProfile.classification!.icon}'),
                                                       fontFamily:
                                                           'MaterialIcons',
                                                     )
@@ -560,7 +560,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                               size: 15,
                                             ),
                                           if (team1Players[index].playerid != 0)
-                                            Text(availablePlayersFiltered
+                                            Text(widget.availablePlayers
                                                     .firstWhere((player) =>
                                                         player.pk ==
                                                         team1Players[index]
@@ -691,11 +691,11 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                             team2Players[index].playerid);
                                         team2Players[index].playerid =
                                             playerPK2;
-                                        String nameFull =
-                                            availablePlayersFiltered
-                                                .firstWhere((player) =>
-                                                    player.pk == playerPK2)
-                                                .name;
+                                        String nameFull = widget
+                                            .availablePlayers
+                                            .firstWhere((player) =>
+                                                player.pk == playerPK2)
+                                            .name;
                                         team2Players[index].name = nameFull;
                                         addedPlayersTeam2.add(playerPK2);
                                       });
@@ -742,7 +742,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                                       .playerid !=
                                                   0)
                                                 returnStateIcon(
-                                                    availablePlayersFiltered
+                                                    widget.availablePlayers
                                                         .firstWhere((player) =>
                                                             player.pk ==
                                                             team2Players[index]
@@ -753,7 +753,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                                       .playerid !=
                                                   0)
                                                 Icon(
-                                                  availablePlayersFiltered
+                                                  widget.availablePlayers
                                                               .firstWhere((player) =>
                                                                   player.pk ==
                                                                   team2Players[
@@ -765,7 +765,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                                           null
                                                       ? IconData(
                                                           int.parse(
-                                                              '0x${availablePlayersFiltered.firstWhere((player) => player.pk == team2Players[index].playerid).playerProfile.classification!.icon}'),
+                                                              '0x${widget.availablePlayers.firstWhere((player) => player.pk == team2Players[index].playerid).playerProfile.classification!.icon}'),
                                                           fontFamily:
                                                               'MaterialIcons',
                                                         )
@@ -775,7 +775,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                               if (team2Players[index]
                                                       .playerid !=
                                                   0)
-                                                Text(availablePlayersFiltered
+                                                Text(widget.availablePlayers
                                                         .firstWhere((player) =>
                                                             player.pk ==
                                                             team2Players[index]

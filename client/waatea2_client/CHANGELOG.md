@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.31
+- **Bug Fix:** LineUp Editor glitch (look up in wrong players list)
+
 ## V0.0.30
 - **New Feature:** Export positions in availability and player CSV
 - **Enhancement:** Another change in the line up tool, show stats also in teams columns, only show one colum for the available players etc.
