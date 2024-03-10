@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/screens/games.dart';
 import 'package:waatea2_client/screens/links.dart';
+import 'package:waatea2_client/screens/rankings.dart';
 import 'package:waatea2_client/screens/showattendance.dart';
 import 'package:waatea2_client/screens/showplayers.dart';
 import 'package:waatea2_client/screens/training_demo.dart';
@@ -56,6 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Links'),
                 ),
                 const NavigationRailDestination(
+                  icon: Icon(Icons.military_tech),
+                  label: Text('Rankings'),
+                ),
+                const NavigationRailDestination(
                   icon: Icon(Icons.settings),
                   label: Text('User Profile'),
                 ),
@@ -105,12 +110,14 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         return ShowLinks();
       case 4:
-        return UserProfile();
+        return ShowRankings();
       case 5:
-        return ShowAttendance();
+        return UserProfile();
       case 6:
-        return ShowPlayers();
+        return ShowAttendance();
       case 7:
+        return ShowPlayers();
+      case 8:
         return ShowGames();
       default:
         return Container();

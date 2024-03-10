@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.32
+- **New Feature:** Training ranking
+
 ## V0.0.31
 - **Bug Fix:** LineUp Editor glitch (look up in wrong players list)
 
