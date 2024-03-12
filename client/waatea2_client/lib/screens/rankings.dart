@@ -1,23 +1,11 @@
-import 'dart:typed_data';
-
-import 'package:csv/csv.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:random_avatar/random_avatar.dart';
-import 'package:waatea2_client/helper.dart';
-import 'package:waatea2_client/models/availability_model.dart';
-import 'package:waatea2_client/models/user_model.dart';
-import 'package:waatea2_client/screens/showplayerdetail.dart';
-import 'package:waatea2_client/widgets/showplayerattendance.dart';
-import 'dart:convert';
 import '../globals.dart' as globals;
-import 'package:universal_html/html.dart' as uh;
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import '../models/game_model.dart';
-import '../models/showavailabilitydetail_model.dart';
+import '../models/user_model.dart';
 
-enum FileGenerationStatus { idle, generating, complete, error }
+enum RankingType { trainingPercentage, caps }
 
 class ShowRankings extends StatefulWidget {
   ShowRankings();
@@ -28,7 +16,7 @@ class ShowRankings extends StatefulWidget {
 
 class _ShowRankingsState extends State<ShowRankings> {
   List<UserModel> users = [];
-  bool showOnlyActive = true;
+  RankingType rankingType = RankingType.trainingPercentage;
 
   @override
   void initState() {
@@ -50,67 +38,70 @@ class _ShowRankingsState extends State<ShowRankings> {
       List<dynamic> data = jsonDecode(responseBody);
       setState(() {
         users = data.map((item) => UserModel.fromJson(item)).toList();
+        sortUsers();
       });
     }
   }
 
-  List<UserModel> getFilteredUsers() {
-    List<UserModel> filteredUsers =
-        users.where((user) => user.profile.isPlaying).toList();
+  void sortUsers() {
+    if (rankingType == RankingType.trainingPercentage) {
+      users.sort(
+          (a, b) => b.attendancePercentage.compareTo(a.attendancePercentage));
+    } else {
+      users.sort((a, b) => b.caps.compareTo(a.caps));
+    }
+  }
 
-    // Sort the filtered list by attendancePercentage
-    filteredUsers.sort(
-        (a, b) => b.attendancePercentage.compareTo(a.attendancePercentage));
+  void toggleRankingType() {
+    setState(() {
+      rankingType = rankingType == RankingType.trainingPercentage
+          ? RankingType.caps
+          : RankingType.trainingPercentage;
+      sortUsers();
+    });
+  }
 
-    return filteredUsers.take(15).toList();
+  String getAppBarTitle() {
+    return rankingType == RankingType.trainingPercentage
+        ? 'Training Kings'
+        : 'Caps';
   }
 
   @override
   Widget build(BuildContext context) {
+    int itemCount =
+        rankingType == RankingType.trainingPercentage ? 20 : users.length;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Training kings'),
-        actions: [],
+        title: Text(getAppBarTitle()),
+        actions: [
+          IconButton(
+            icon: Icon(rankingType == RankingType.trainingPercentage
+                ? Icons.fitness_center
+                : Icons.sports_handball),
+            onPressed: toggleRankingType,
+          ),
+        ],
       ),
       body: ListView.builder(
-        itemCount: getFilteredUsers().length,
+        itemCount: itemCount,
         itemBuilder: (context, index) {
-          final user = getFilteredUsers()[index];
-          Color playerColor = Colors.black;
-          if (!user.profile.isPlaying) {
-            playerColor = Colors.red;
-          }
+          final user = users[index];
+          Color playerColor =
+              user.profile.isPlaying ? Colors.black : Colors.red;
 
           return ListTile(
             leading: RandomAvatar(user.name, height: 40, width: 40),
             title: Text(
               user.name,
-              style: DefaultTextStyle.of(context)
-                  .style
-                  .apply(fontSizeFactor: 1, color: playerColor),
+              style: TextStyle(fontSize: 16, color: playerColor),
             ),
-            // subtitle: Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Container(
-            //       width: 500, // Replace with your desired width
-            //       height: 40, // Replace with your desired height
-            //       child:
-            //           ShowPlayerAttendance(user.pk, 6, MainAxisAlignment.start),
-            //     ),
-            //   ],
-            // ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(width: 10),
-                Text(
-                  user.attendancePercentage.toString() + "%",
-                  style: DefaultTextStyle.of(context)
-                      .style
-                      .apply(fontSizeFactor: 1, color: playerColor),
-                ),
-              ],
+            trailing: Text(
+              rankingType == RankingType.trainingPercentage
+                  ? '${user.attendancePercentage.toString()}%'
+                  : '${user.caps}',
+              style: TextStyle(fontSize: 16, color: playerColor),
             ),
           );
         },

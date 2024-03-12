@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.33
+- **Enhancement:** Ranking: Games, total trainings
+
 ## V0.0.32
 - **New Feature:** Training ranking
 
