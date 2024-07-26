@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.34
+- **Enhancement:** Add fitness module
+
 ## V0.0.33
 - **Enhancement:** Ranking: Games, total trainings
 

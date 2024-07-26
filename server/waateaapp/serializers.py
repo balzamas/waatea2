@@ -3,8 +3,9 @@ from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 from rest_framework.exceptions import ValidationError
 from .models import Game, User, Club, Team, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, \
-    TrainingPart, LineUpPos
+    TrainingPart, LineUpPos, Fitness
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment, Position
+from django.db.models import Sum
 
 class HistoricalGameSerializer(serializers.ModelSerializer):
     class Meta:
@@ -239,6 +240,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     attendance_percentage = serializers.SerializerMethodField()
     caps = serializers.SerializerMethodField()
+    fitness = serializers.SerializerMethodField()
 
     club = ClubSerializer()
     profile = UserProfileSerializer(source='userprofile')
@@ -251,17 +253,19 @@ class UserSerializer(serializers.ModelSerializer):
         'club',
         'profile',
             'attendance_percentage',
-            'caps'
+            'caps',
+            'fitness'
         ]
 
     def get_caps(self, obj):
         return HistoricalGame.objects.filter(player=obj.pk).order_by('-date').count()
 
     def get_attendance_percentage(self, obj):
+        season = CurrentSeason.objects.get(club=obj.club)
 
-        #ToDo: only current season, check if there are less then 10 trainings yet and calculate accordingly
+        #ToDo: check if there are less then 10 trainings yet and calculate accordingly
         # Step 1: Retrieve the last 10 training records.
-        last_10_trainings = Training.objects.filter(date__lte=datetime.now()).order_by('-date')[:10]
+        last_10_trainings = Training.objects.filter(date__lte=datetime.now(), season=season.season).order_by('-date')[:10]
 
         # Step 2: Filter the attendances for the specified player and last 10 trainings.
         count = Attendance.objects.filter(player=obj.pk, attended=True, training__in=last_10_trainings).count()
@@ -272,6 +276,19 @@ class UserSerializer(serializers.ModelSerializer):
                 percentage = int(100 * count / 10)
 
         return percentage
+
+    def get_fitness(self, obj):
+
+        #ToDo: past 6 weeks
+
+        season = CurrentSeason.objects.get(club=obj.club)
+
+
+        fitness_records = Fitness.objects.filter(player=obj.pk, season=season.season)
+
+        total_points = fitness_records.aggregate(Sum('points'))['points__sum'] or 0
+
+        return total_points
 
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -296,6 +313,18 @@ class AttendanceSerializer(serializers.ModelSerializer):
         'dayofyear',
         'season',
         'training'
+        ]
+
+class FitnessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fitness
+        fields = [
+        'pk',
+        'player',
+        'date',
+        'season',
+        'points',
+        'note'
         ]
 
 class TrainingSerializer(serializers.ModelSerializer):

@@ -3,7 +3,7 @@ description: Waatea 2 Client App.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 0.0.33+1
+version: 0.0.34+1
 
 environment:
   sdk: '>=2.12.0 <4.0.0'
@@ -65,3 +65,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/shuttle_run.png
+    - assets/figure_of_8.png
+    - assets/scotland_drill.png
+    - assets/complex_shuttles.png
+    - assets/broken_broncos.png

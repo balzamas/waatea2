@@ -52,6 +52,18 @@ class Team(models.Model):
         return self.name
 
 
+class Fitness(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    player = models.ForeignKey(User, on_delete=models.CASCADE)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    points = models.IntegerField(default=1)
+    note = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.date.__str__() + " " + self.player.name + " " + str(self.points)  + " "+ str(self.note)
+
+
 class Attendance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(User, on_delete=models.CASCADE)

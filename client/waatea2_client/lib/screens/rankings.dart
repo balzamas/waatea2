@@ -5,7 +5,7 @@ import 'package:random_avatar/random_avatar.dart';
 import '../globals.dart' as globals;
 import '../models/user_model.dart';
 
-enum RankingType { trainingPercentage, caps }
+enum RankingType { trainingPercentage, caps, fitness }
 
 class ShowRankings extends StatefulWidget {
   ShowRankings();
@@ -47,24 +47,54 @@ class _ShowRankingsState extends State<ShowRankings> {
     if (rankingType == RankingType.trainingPercentage) {
       users.sort(
           (a, b) => b.attendancePercentage.compareTo(a.attendancePercentage));
-    } else {
+    } else if (rankingType == RankingType.caps) {
       users.sort((a, b) => b.caps.compareTo(a.caps));
+    } else {
+      users.sort((a, b) => b.caps.compareTo(a.fitness));
     }
   }
 
   void toggleRankingType() {
     setState(() {
-      rankingType = rankingType == RankingType.trainingPercentage
-          ? RankingType.caps
-          : RankingType.trainingPercentage;
+      switch (rankingType) {
+        case RankingType.trainingPercentage:
+          rankingType = RankingType.caps;
+          break;
+        case RankingType.caps:
+          rankingType = RankingType.fitness;
+          break;
+        case RankingType.fitness:
+          rankingType = RankingType.trainingPercentage;
+          break;
+      }
       sortUsers();
     });
   }
 
   String getAppBarTitle() {
-    return rankingType == RankingType.trainingPercentage
-        ? 'Training Kings'
-        : 'Caps';
+    switch (rankingType) {
+      case RankingType.trainingPercentage:
+        return 'Training Kings';
+      case RankingType.caps:
+        return 'Caps';
+      case RankingType.fitness:
+        return 'Fitness Kings';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  IconData getRankingIcon() {
+    switch (rankingType) {
+      case RankingType.trainingPercentage:
+        return Icons.sports_handball;
+      case RankingType.caps:
+        return Icons.emoji_events;
+      case RankingType.fitness:
+        return Icons.directions_run;
+      default:
+        return Icons.star;
+    }
   }
 
   @override
@@ -77,9 +107,7 @@ class _ShowRankingsState extends State<ShowRankings> {
         title: Text(getAppBarTitle()),
         actions: [
           IconButton(
-            icon: Icon(rankingType == RankingType.trainingPercentage
-                ? Icons.fitness_center
-                : Icons.sports_handball),
+            icon: Icon(getRankingIcon()),
             onPressed: toggleRankingType,
           ),
         ],
@@ -100,7 +128,9 @@ class _ShowRankingsState extends State<ShowRankings> {
             trailing: Text(
               rankingType == RankingType.trainingPercentage
                   ? '${user.attendancePercentage.toString()}%'
-                  : '${user.caps}',
+                  : rankingType == RankingType.caps
+                      ? '${user.caps}'
+                      : '${user.fitness}', // Assuming `user` has a `fitnessPoints` property
               style: TextStyle(fontSize: 16, color: playerColor),
             ),
           );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waatea2_client/screens/fitness.dart';
 import 'package:waatea2_client/screens/games.dart';
 import 'package:waatea2_client/screens/links.dart';
 import 'package:waatea2_client/screens/rankings.dart';
@@ -51,6 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 const NavigationRailDestination(
                   icon: Icon(Icons.emoji_events_outlined),
                   label: Text('Show Availabilities'),
+                ),
+                const NavigationRailDestination(
+                  icon: Icon(Icons.directions_run),
+                  label: Text('Fitness'),
                 ),
                 const NavigationRailDestination(
                   icon: Icon(Icons.link),
@@ -108,16 +113,18 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         return ShowAvailability();
       case 3:
-        return ShowLinks();
+        return Fitness(); //-> Fitness
       case 4:
-        return ShowRankings();
+        return ShowLinks();
       case 5:
-        return UserProfile();
+        return ShowRankings();
       case 6:
-        return ShowAttendance();
+        return UserProfile();
       case 7:
-        return ShowPlayers();
+        return ShowAttendance();
       case 8:
+        return ShowPlayers();
+      case 9:
         return ShowGames();
       default:
         return Container();

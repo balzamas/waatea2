@@ -5,12 +5,12 @@ from rest_framework import viewsets, generics, filters
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.decorators import api_view
 from waatea_2.users.models import UserProfile, Classification, Abonnement, Assessment, Position
-from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos, Team
+from .models import Game, User, Availability, Attendance, Training, CurrentSeason, HistoricalGame, Links, TrainingPart, LineUpPos, Team, Fitness
 from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer, AttendanceSerializer, \
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
     UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, \
     AbonnementSerializer, ClassificationSerializer, TrainingPartSerializer, LineUpPosSerializer, TeamSerializer, \
-    GameCreateSerializer, PositionSerializer
+    GameCreateSerializer, PositionSerializer, FitnessSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -21,6 +21,9 @@ from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.core import serializers
 from rest_framework.generics import DestroyAPIView
+from django.utils.dateparse import parse_datetime
+from datetime import datetime
+from django.utils.dateparse import parse_date
 
 class TrainingPartViewSet(viewsets.ModelViewSet):
     serializer_class = TrainingPartSerializer
@@ -364,6 +367,43 @@ class AttendanceUpdateAPIView(UpdateAPIView):
 class AttendanceCreateAPIView(CreateAPIView):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
+
+class FitnessFilterAPIView(generics.ListAPIView):
+    queryset = Fitness.objects.all()
+    serializer_class = FitnessSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by('-date')
+        player = self.request.query_params.get('player')
+        season = self.request.query_params.get('season')
+        date_str = self.request.query_params.get('date')
+
+        print(date_str)
+
+        if player and season and date_str:
+
+            datetime_obj = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+
+            # Extract the date part from the datetime object
+            date_only = datetime_obj.date()
+
+            # Debugging step to check parsed date
+            print(f"Parsed date: {date_only}")
+
+            if date_only:
+                queryset = queryset.filter(player=player, season=season, date__date=date_only)
+        elif player and season:
+                queryset = queryset.filter(player=player, season=season)
+
+        return queryset
+class FitnessUpdateAPIView(UpdateAPIView):
+    queryset = Fitness.objects.all()
+    serializer_class = FitnessSerializer
+
+class FitnessCreateAPIView(CreateAPIView):
+    queryset = Fitness.objects.all()
+    serializer_class = FitnessSerializer
+
 
 class GameCreateAPIView(CreateAPIView):
     queryset = Game.objects.all()
