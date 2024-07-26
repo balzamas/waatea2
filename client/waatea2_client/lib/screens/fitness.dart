@@ -158,6 +158,8 @@ class _FitnessState extends State<Fitness> {
                 'Game Conditioning',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              Text('One of these drills:'),
+              SizedBox(height: 8),
               SizedBox(height: 16),
               Text('Drill 1: Shuttle Run'),
               SizedBox(height: 8),

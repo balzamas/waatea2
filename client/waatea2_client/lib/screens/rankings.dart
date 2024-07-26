@@ -50,7 +50,7 @@ class _ShowRankingsState extends State<ShowRankings> {
     } else if (rankingType == RankingType.caps) {
       users.sort((a, b) => b.caps.compareTo(a.caps));
     } else {
-      users.sort((a, b) => b.caps.compareTo(a.fitness));
+      users.sort((a, b) => b.fitness.compareTo(a.fitness));
     }
   }
 
@@ -130,7 +130,7 @@ class _ShowRankingsState extends State<ShowRankings> {
                   ? '${user.attendancePercentage.toString()}%'
                   : rankingType == RankingType.caps
                       ? '${user.caps}'
-                      : '${user.fitness}', // Assuming `user` has a `fitnessPoints` property
+                      : '${user.fitness}',
               style: TextStyle(fontSize: 16, color: playerColor),
             ),
           );
