@@ -45,13 +45,13 @@ class _FitnessState extends State<Fitness> {
     }
   }
 
-  Future<void> _submitExercise(int points) async {
+  Future<void> _submitExercise(int points, String note) async {
     setState(() {
       _isSubmitting = true;
     });
 
     final date = DateTime.now().toUtc().toIso8601String();
-    final season = globals.seasonID; // Example season, update accordingly
+    final season = globals.seasonID;
 
     // Check if there's already an exercise entry for today
     final responseCheck = await http.get(
@@ -71,12 +71,6 @@ class _FitnessState extends State<Fitness> {
           return;
         }
       }
-    }
-
-    String note = "-";
-
-    if (_noteController.text != "") {
-      note = _noteController.text;
     }
 
     // Submit the exercise entry
@@ -100,7 +94,6 @@ class _FitnessState extends State<Fitness> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Exercise recorded successfully!')),
       );
-      _noteController.clear();
       _fetchExercises(); // Refresh the exercise list
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -138,6 +131,41 @@ class _FitnessState extends State<Fitness> {
         false;
   }
 
+  Future<void> _showNoteDialog(int points) async {
+    _noteController.clear();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('What did you do?'),
+        content: TextField(
+          controller: _noteController,
+          maxLength: 300,
+          decoration: InputDecoration(
+            labelText: 'Add a note',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(_noteController.text),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.black, // Background color
+            ),
+            child: Text('Submit'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null) {
+      _submitExercise(points, result);
+    }
+  }
+
   void _showExerciseInfo() {
     showDialog(
       context: context,
@@ -152,7 +180,7 @@ class _FitnessState extends State<Fitness> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                  'Any gym or cardio session (play Touch, weights, HIIT, run, swim, cycle, etc.)'),
+                  'Any gym or cardio session (play Touch, weights, HIIT, run, swim, cycle, etc.), ~1 hour or more'),
               SizedBox(height: 16),
               Text(
                 'Game Conditioning',
@@ -223,7 +251,7 @@ class _FitnessState extends State<Fitness> {
         child: Column(
           children: [
             ElevatedButton(
-              onPressed: _isSubmitting ? null : () => _submitExercise(2),
+              onPressed: _isSubmitting ? null : () => _showNoteDialog(2),
               style: ElevatedButton.styleFrom(
                 primary: Colors.black, // Background color
                 padding: EdgeInsets.symmetric(
@@ -234,23 +262,14 @@ class _FitnessState extends State<Fitness> {
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _isSubmitting ? null : () => _submitExercise(1),
+              onPressed: _isSubmitting ? null : () => _showNoteDialog(1),
               style: ElevatedButton.styleFrom(
                 primary: Colors.black, // Background color
                 padding: EdgeInsets.symmetric(
                     horizontal: 50, vertical: 20), // Button size
                 textStyle: TextStyle(fontSize: 18), // Text size
               ),
-              child: Text('General Fitness'),
-            ),
-            SizedBox(height: 32), // Added more space before the note field
-            TextField(
-              controller: _noteController,
-              maxLength: 300,
-              decoration: InputDecoration(
-                labelText: 'Add a note',
-                border: OutlineInputBorder(),
-              ),
+              child: Text('General Fitness (~1 hr or more)'),
             ),
             if (_isSubmitting) ...[
               SizedBox(height: 16),

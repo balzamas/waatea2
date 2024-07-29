@@ -378,8 +378,6 @@ class FitnessFilterAPIView(generics.ListAPIView):
         season = self.request.query_params.get('season')
         date_str = self.request.query_params.get('date')
 
-        print(date_str)
-
         if player and season and date_str:
 
             datetime_obj = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
@@ -391,9 +389,11 @@ class FitnessFilterAPIView(generics.ListAPIView):
             print(f"Parsed date: {date_only}")
 
             if date_only:
-                queryset = queryset.filter(player=player, season=season, date__date=date_only)
+                queryset = queryset.filter(player=player, season=season, date__date=date_only)[:3]
         elif player and season:
                 queryset = queryset.filter(player=player, season=season)
+        elif season: #Show most three recent addition this season
+                queryset = queryset.filter(season=season).order_by('-date')[:5]
 
         return queryset
 class FitnessUpdateAPIView(UpdateAPIView):

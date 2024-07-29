@@ -316,16 +316,21 @@ class AttendanceSerializer(serializers.ModelSerializer):
         ]
 
 class FitnessSerializer(serializers.ModelSerializer):
+    player_name = serializers.SerializerMethodField()
     class Meta:
         model = Fitness
         fields = [
         'pk',
         'player',
+            'player_name',
         'date',
         'season',
         'points',
         'note'
         ]
+
+    def get_player_name(self, obj):
+        return obj.player.name
 
 class TrainingSerializer(serializers.ModelSerializer):
 

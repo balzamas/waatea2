@@ -12,6 +12,8 @@ import '../models/training_model.dart';
 
 //Todo: programmiert mit Kindergeschrei im Hintergrund, total mess, aufräumen
 
+import 'package:intl/intl.dart';
+
 class SetAttendance extends StatefulWidget {
   const SetAttendance();
   @override
@@ -21,6 +23,7 @@ class SetAttendance extends StatefulWidget {
 class SetAttendanceState extends State<SetAttendance> {
   late Future<SetAttendanceModel> setAttendanceContent;
   late List<UserModel> attendingPlayers;
+  List<Map<String, dynamic>> _exercises = [];
 
   final availabilityListKey = GlobalKey<SetAttendanceState>();
   int state = 0;
@@ -32,6 +35,63 @@ class SetAttendanceState extends State<SetAttendance> {
   void initState() {
     super.initState();
     setAttendanceContent = getCurrentTraining();
+    _fetchExercises().then((_) {
+      _showLastExercisesDialog();
+    });
+  }
+
+  Future<void> _fetchExercises() async {
+    final response = await http.get(
+      Uri.parse(
+          "${globals.URL_PREFIX}/api/fitness/filter?season=${globals.seasonID}"),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
+
+    if (response.statusCode == 200) {
+      final exercises = json.decode(response.body) as List;
+      setState(() {
+        _exercises = exercises.map((e) {
+          return {
+            'player': e['player_name'],
+            'date': DateFormat('yyyy-MM-dd').format(DateTime.parse(e['date'])),
+            'note': e['note'],
+          };
+        }).toList();
+      });
+    }
+  }
+
+  Future<void> _showLastExercisesDialog() async {
+    if (_exercises.isEmpty) return;
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Latest fitness entries'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: _exercises.map((exercise) {
+              return ListTile(
+                leading:
+                    RandomAvatar(exercise['player'], height: 50, width: 50),
+                title: Text(
+                    '${exercise['player']} had gains: ${exercise['note'] ?? 'No note'}'),
+                subtitle: Text(exercise['date']),
+              );
+            }).toList(),
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.black, // Background color
+            ),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future setAttendanceNow(int state) async {
@@ -251,10 +311,10 @@ class SetAttendanceState extends State<SetAttendance> {
                       ],
                     ),
                     const SizedBox(height: 50),
-                    Text(
+                    const Text(
                       "Your attendance rate:",
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "${globals.player.attendancePercentage}%",
@@ -262,9 +322,9 @@ class SetAttendanceState extends State<SetAttendance> {
                           fontSize: 23, fontWeight: FontWeight.bold),
                     ),
                     if (globals.player.attendancePercentage > 79) ...[
-                      Text(
+                      const Text(
                         "❤️LOVELY!❤️",
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 23, fontWeight: FontWeight.bold),
                       )
                     ],
