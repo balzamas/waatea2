@@ -35,8 +35,8 @@ class ShowLineUp extends StatelessWidget {
   }
 
   Widget _buildTeamLineup(String teamTitle, List<LineUpPosModel> lineup) {
-    final filteredLineup =
-        lineup.where((player) => player.player != null).toList();
+    final filteredLineup = lineup;
+    //lineup.where((player) => player.player != null).toList();
 
     return filteredLineup.isEmpty
         ? SizedBox() // Return an empty SizedBox if no players are set
@@ -54,8 +54,8 @@ class ShowLineUp extends StatelessWidget {
                 children: filteredLineup
                     .map((player) => LineupCard(
                         position: player.position,
-                        playerName: player.player!.name,
-                        playerId: player.player!.pk))
+                        playerName: player.player?.name ?? '-',
+                        playerId: player.player?.pk ?? -1))
                     .toList(),
               ),
             ],

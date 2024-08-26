@@ -1,6 +1,8 @@
+import 'package:waatea2_client/models/user_model.dart';
+
 class FitnessModel {
   final String pk;
-  final int player;
+  final UserModel player;
   final String date;
   final String season;
   final int points;
@@ -17,7 +19,7 @@ class FitnessModel {
   factory FitnessModel.fromJson(Map<String, dynamic> json) {
     return FitnessModel(
         pk: json['pk'],
-        player: json['player'],
+        player: UserModel.fromJson(json['player']),
         date: json['date'],
         season: json['season'],
         note: json['note'],

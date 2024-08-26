@@ -1,7 +1,13 @@
 # Waatea Changelog
 
+## V0.0.36
+- **Bug Fix:** Show all positions in line up
+
+## V0.0.35
+- **Enhancement:** Show latest fitness entries
+
 ## V0.0.34
-- **Enhancement:** Add fitness module
+- **New Feature:** Add fitness module
 
 ## V0.0.33
 - **Enhancement:** Ranking: Games, total trainings

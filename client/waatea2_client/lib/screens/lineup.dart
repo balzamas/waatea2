@@ -827,18 +827,13 @@ class _LineUpEditorState extends State<LineUpEditor> {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Training date
               pw.Text('Line up'),
-
               pw.Divider(),
               pw.SizedBox(height: 40),
-
               pw.Text(team1Title),
-
               pw.Divider(),
-
               for (var index = 0; index < team1Players.length; index++)
-                if (index < 15 || team1Players[index].playerid != 0)
+                if (index < 15)
                   pw.Column(
                     children: [
                       pw.Container(
@@ -875,18 +870,13 @@ class _LineUpEditorState extends State<LineUpEditor> {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Training date
               pw.Text('Line up'),
-
               pw.Divider(),
               pw.SizedBox(height: 40),
-
               pw.Text(team2Title),
-
               pw.Divider(),
-
               for (var index = 0; index < team2Players.length; index++)
-                if (index < 15 || team2Players[index].playerid != 0)
+                if (index < 15)
                   pw.Column(
                     children: [
                       pw.Container(
