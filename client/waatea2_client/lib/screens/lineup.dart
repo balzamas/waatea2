@@ -833,31 +833,29 @@ class _LineUpEditorState extends State<LineUpEditor> {
               pw.Text(team1Title),
               pw.Divider(),
               for (var index = 0; index < team1Players.length; index++)
-                if (index < 15)
-                  pw.Column(
-                    children: [
-                      pw.Container(
-                        color: index % 2 == 0
-                            ? PdfColors.grey200
-                            : PdfColors.white,
-                        child: pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text(
-                              (team1Players[index].posid + 1).toString(),
-                              textAlign: pw.TextAlign.left,
-                            ),
-                            pw.SizedBox(width: 30),
-                            pw.Text(
-                              team1Players[index].name,
-                              textAlign: pw.TextAlign.left,
-                            ),
-                          ],
-                        ),
+                pw.Column(
+                  children: [
+                    pw.Container(
+                      color:
+                          index % 2 == 0 ? PdfColors.grey200 : PdfColors.white,
+                      child: pw.Row(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            (team1Players[index].posid + 1).toString(),
+                            textAlign: pw.TextAlign.left,
+                          ),
+                          pw.SizedBox(width: 30),
+                          pw.Text(
+                            team1Players[index].name,
+                            textAlign: pw.TextAlign.left,
+                          ),
+                        ],
                       ),
-                      pw.SizedBox(height: 10),
-                    ],
-                  ),
+                    ),
+                    pw.SizedBox(height: 10),
+                  ],
+                ),
             ],
           );
         },
@@ -876,31 +874,29 @@ class _LineUpEditorState extends State<LineUpEditor> {
               pw.Text(team2Title),
               pw.Divider(),
               for (var index = 0; index < team2Players.length; index++)
-                if (index < 15)
-                  pw.Column(
-                    children: [
-                      pw.Container(
-                        color: index % 2 == 0
-                            ? PdfColors.grey200
-                            : PdfColors.white,
-                        child: pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text(
-                              (team1Players[index].posid + 1).toString(),
-                              textAlign: pw.TextAlign.left,
-                            ),
-                            pw.SizedBox(width: 30),
-                            pw.Text(
-                              team2Players[index].name,
-                              textAlign: pw.TextAlign.left,
-                            ),
-                          ],
-                        ),
+                pw.Column(
+                  children: [
+                    pw.Container(
+                      color:
+                          index % 2 == 0 ? PdfColors.grey200 : PdfColors.white,
+                      child: pw.Row(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            (team1Players[index].posid + 1).toString(),
+                            textAlign: pw.TextAlign.left,
+                          ),
+                          pw.SizedBox(width: 30),
+                          pw.Text(
+                            team2Players[index].name,
+                            textAlign: pw.TextAlign.left,
+                          ),
+                        ],
                       ),
-                      pw.SizedBox(height: 10),
-                    ],
-                  ),
+                    ),
+                    pw.SizedBox(height: 10),
+                  ],
+                ),
             ],
           );
         },
