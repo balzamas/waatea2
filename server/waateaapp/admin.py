@@ -53,3 +53,4 @@ class UserProfileAdmin(admin.ModelAdmin):
 class HistoricalGameAdmin(admin.ModelAdmin):
     list_display = ["played_for", "played_against", "player", "date", "position", "competition"]
     ordering = ['player__name']
+    list_per_page = 500
