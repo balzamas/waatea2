@@ -35,9 +35,9 @@ class SetAttendanceState extends State<SetAttendance> {
   void initState() {
     super.initState();
     setAttendanceContent = getCurrentTraining();
-    _fetchExercises().then((_) {
-      _showLastExercisesDialog();
-    });
+    // _fetchExercises().then((_) {
+    //   _showLastExercisesDialog();
+    // });
   }
 
   Future<void> _fetchExercises() async {
