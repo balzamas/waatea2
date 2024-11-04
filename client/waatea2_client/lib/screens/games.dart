@@ -33,7 +33,8 @@ class ShowGamesState extends State<ShowGames> {
 
   Future<void> loadTeams() async {
     final response = await http.get(
-      Uri.parse('${globals.URL_PREFIX}/api/teams/'),
+      Uri.parse(
+          '${globals.URL_PREFIX}/api/teams/filter?club=${globals.clubId}'),
       headers: {'Authorization': 'Token ${globals.token}'},
     );
     String responseBody = utf8.decode(response.bodyBytes);

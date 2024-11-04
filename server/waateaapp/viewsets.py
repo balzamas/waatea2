@@ -88,6 +88,20 @@ class GameCurrentFilterAPIView(generics.ListAPIView):
 
         return queryset
 
+class TeamFilterAPIView(generics.ListAPIView):
+    queryset = Team.objects.filter().order_by('name')
+    serializer_class = TeamSerializer
+    ordering = ['name']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        club = self.request.query_params.get('club')
+
+        if club:
+            queryset = queryset.filter(club=club)
+
+        return queryset
+
 class GamePastFilterAPIView(generics.ListAPIView):
     queryset = Game.objects.filter(date__lte=datetime.now()).order_by('-date')
     serializer_class = GameSerializer
@@ -268,7 +282,7 @@ class UserFilterAPIView(generics.ListAPIView):
         if email:
             queryset = queryset.filter(email=email)
         elif is_playing and club:
-            queryset = queryset.filter(userprofile__is_playing=is_playing)
+            queryset = queryset.filter(userprofile__is_playing=is_playing, club=club)
         elif club:
             queryset = queryset.filter(club=club)
 

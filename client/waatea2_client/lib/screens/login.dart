@@ -28,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _loadCredentialsAndLogin() {
     _loadCredentials().then((_) {
-      print(_token);
       if (_token.isNotEmpty) {
         Future.delayed(Duration.zero, () {
           _login_process(_token, _usernameController.text);
@@ -120,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
         // Login successful, extract the token from the response
         String token = json.decode(response.body)['token'];
 
-        print(token);
         sharedPreferences.setString('token', token);
 
         //Final login
