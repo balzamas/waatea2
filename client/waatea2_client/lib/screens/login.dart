@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _loadCredentials().then((_) {
       if (_token.isNotEmpty) {
         Future.delayed(Duration.zero, () {
-          _login_process(_token, _usernameController.text);
+          _login_process(_token, _usernameController.text.toLowerCase());
         });
       }
     });
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
         sharedPreferences.setString('token', token);
 
         //Final login
-        _login_process(token, username);
+        _login_process(token, username.toLowerCase());
       } else {
         showDialog(
           context: context,

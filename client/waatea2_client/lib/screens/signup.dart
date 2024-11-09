@@ -75,7 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     final Map<String, dynamic> data = {
       "name": _nameController.text.trim(),
-      "email": _emailController.text.trim(),
+      "email": _emailController.text.trim().toLowerCase(),
       "password": _passwordController.text,
       "club": _selectedClub!.pk
     };

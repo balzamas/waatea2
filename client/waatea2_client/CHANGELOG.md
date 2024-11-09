@@ -1,5 +1,12 @@
 # Waatea Changelog
 
+## V0.0.37
+- **Bug Fix:** Filter AvailPlayers, Teams by club
+- **Enhancement:** More filtering by club
+- **Bug Fix:** Lowercase only as e-mail-address
+
+
+
 ## V0.0.36
 - **Bug Fix:** Show all positions in line up
 

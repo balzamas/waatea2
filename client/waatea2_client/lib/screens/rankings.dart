@@ -74,11 +74,11 @@ class _ShowRankingsState extends State<ShowRankings> {
   String getAppBarTitle() {
     switch (rankingType) {
       case RankingType.trainingPercentage:
-        return 'Training Kings';
+        return 'Training Stars';
       case RankingType.caps:
         return 'Caps';
       case RankingType.fitness:
-        return 'Fitness Kings';
+        return 'Fitness Stars';
       default:
         return 'Unknown';
     }
