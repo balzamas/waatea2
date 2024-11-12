@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.39
+- **Bug Fix:** Fix Umlauts in fitness
+
 ## V0.0.38
 - **Enhancement:** Fitness winter
 

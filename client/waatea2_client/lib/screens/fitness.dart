@@ -33,7 +33,7 @@ class _FitnessState extends State<Fitness> {
     );
 
     if (response.statusCode == 200) {
-      final exercises = json.decode(response.body) as List;
+      final exercises = json.decode(utf8.decode(response.bodyBytes)) as List;
       setState(() {
         _exercises = exercises.map((e) {
           return {
