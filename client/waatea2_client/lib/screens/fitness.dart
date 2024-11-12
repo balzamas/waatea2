@@ -176,11 +176,30 @@ class _FitnessState extends State<Fitness> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'General Fitness',
+                'Moderate',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              Text('Moderate strength/cardio'),
+              Text('For example:'),
+              Text('Short Runs (4–5 km)'),
+              Text('Moderate Swimming (20–30 minutes, steady pace)'),
+              Text('Cycling (10–15 km)'),
+              Text('Gym session  (min. 30 - 40 min)'),
+              Text('Normal Rugby training'),
+
+              SizedBox(height: 16),
               Text(
-                  'Any gym or cardio session (play Touch, weights, HIIT, run, swim, cycle, etc.), ~1 hour or more'),
+                'Challenging',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text('Challenging strength/cardio'),
+              Text('For example:'),
+              Text('Longer Runs (>6 km)'),
+              Text('Intense Swimming (30–45 minutes, intervals or fast pace)'),
+              Text('Cycling (>15 km with some hills or higher intensity)'),
+              Text('Touch Rugby (lasting at least 45 minutes)'),
+              Text('Structured stength/hypertrophy gym program'),
+
               SizedBox(height: 16),
               Text(
                 'Game Conditioning',
@@ -251,17 +270,6 @@ class _FitnessState extends State<Fitness> {
         child: Column(
           children: [
             ElevatedButton(
-              onPressed: _isSubmitting ? null : () => _showNoteDialog(2),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.black, // Background color
-                padding: EdgeInsets.symmetric(
-                    horizontal: 50, vertical: 20), // Button size
-                textStyle: TextStyle(fontSize: 18), // Text size
-              ),
-              child: Text('Game conditioning'),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
               onPressed: _isSubmitting ? null : () => _showNoteDialog(1),
               style: ElevatedButton.styleFrom(
                 primary: Colors.black, // Background color
@@ -269,7 +277,29 @@ class _FitnessState extends State<Fitness> {
                     horizontal: 50, vertical: 20), // Button size
                 textStyle: TextStyle(fontSize: 18), // Text size
               ),
-              child: Text('General Fitness (~1 hr or more)'),
+              child: Text('Moderate'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _isSubmitting ? null : () => _showNoteDialog(2),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black, // Background color
+                padding: EdgeInsets.symmetric(
+                    horizontal: 50, vertical: 20), // Button size
+                textStyle: TextStyle(fontSize: 18), // Text size
+              ),
+              child: Text('Challenging'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _isSubmitting ? null : () => _showNoteDialog(4),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black, // Background color
+                padding: EdgeInsets.symmetric(
+                    horizontal: 50, vertical: 20), // Button size
+                textStyle: TextStyle(fontSize: 18), // Text size
+              ),
+              child: Text('Game Conditioning'),
             ),
             if (_isSubmitting) ...[
               SizedBox(height: 16),

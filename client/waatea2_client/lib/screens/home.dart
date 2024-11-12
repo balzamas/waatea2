@@ -53,10 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   icon: Icon(Icons.emoji_events_outlined),
                   label: Text('Show Availabilities'),
                 ),
-/*                 const NavigationRailDestination(
+                const NavigationRailDestination(
                   icon: Icon(Icons.directions_run),
                   label: Text('Fitness'),
-                ), */
+                ),
                 const NavigationRailDestination(
                   icon: Icon(Icons.link),
                   label: Text('Links'),
@@ -112,19 +112,19 @@ class _MyHomePageState extends State<MyHomePage> {
         return const SetAttendance();
       case 2:
         return ShowAvailability();
-/*       case 3:
-        return Fitness(); //-> Fitness */
       case 3:
-        return ShowLinks();
+        return Fitness();
       case 4:
-        return ShowRankings();
+        return ShowLinks();
       case 5:
-        return UserProfile();
+        return ShowRankings();
       case 6:
-        return ShowAttendance();
+        return UserProfile();
       case 7:
-        return ShowPlayers();
+        return ShowAttendance();
       case 8:
+        return ShowPlayers();
+      case 9:
         return ShowGames();
       default:
         return Container();

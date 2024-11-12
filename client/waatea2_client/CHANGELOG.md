@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.38
+- **Enhancement:** Fitness winter
+
 ## V0.0.37
 - **Bug Fix:** Filter AvailPlayers, Teams by club
 - **Enhancement:** More filtering by club

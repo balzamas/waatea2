@@ -26,6 +26,8 @@ class _ShowRankingsState extends State<ShowRankings> {
 
   Future<void> fetchUsers() async {
     final response = await http.get(
+      // Uri.parse(
+      //     '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}'),
       Uri.parse(
           '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}'),
       headers: {
