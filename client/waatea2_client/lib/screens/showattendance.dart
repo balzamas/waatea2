@@ -39,6 +39,7 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                 season: item['season'],
                 dayofyear: item['dayofyear'],
                 attendanceCount: item['attendance_count'],
+                nonattendanceCount: item['nonattendance_count'],
                 current: item['current'],
                 remarks: item['remarks'],
                 review: item['review']))
@@ -192,6 +193,7 @@ class _ShowAttendanceState extends State<ShowAttendance> {
           columns: const [
             DataColumn(label: Text('Training')),
             DataColumn(label: Text('Attendance')),
+            DataColumn(label: Text('Nope')),
           ],
           rows: trainings.map((training) {
             if (training.current) {
@@ -222,6 +224,7 @@ class _ShowAttendanceState extends State<ShowAttendance> {
                     ),
                   ),
                   DataCell(Text(training.attendanceCount.toString())),
+                  DataCell(Text(training.nonattendanceCount.toString())),
                 ]);
           }).toList(),
         ),

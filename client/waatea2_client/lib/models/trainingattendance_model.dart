@@ -5,6 +5,8 @@ class TrainingAttendanceModel {
   final String date;
   final String club;
   final int attendanceCount;
+  final int nonattendanceCount;
+
   final bool current;
   final String remarks;
   final String review;
@@ -16,6 +18,7 @@ class TrainingAttendanceModel {
       required this.date,
       required this.club,
       required this.attendanceCount,
+      required this.nonattendanceCount,
       required this.current,
       required this.remarks,
       required this.review});
@@ -28,6 +31,7 @@ class TrainingAttendanceModel {
       date: json['date'],
       club: json['club'],
       attendanceCount: json['attendanceCount'],
+      nonattendanceCount: json['nonattendanceCount'],
       current: json['current'],
       remarks: json['remarks'],
       review: json['review'],

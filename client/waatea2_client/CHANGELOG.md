@@ -1,5 +1,9 @@
 # Waatea Changelog
 
+## V0.0.40
+- **Bug Fix** Show available players by Club
+- **Enhancement:** Show number of players
+
 ## V0.0.39
 - **Bug Fix:** Fix Umlauts in fitness
 

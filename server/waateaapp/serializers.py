@@ -115,17 +115,17 @@ class GameAvailCountSerializer(serializers.ModelSerializer):
         ]
 
     def get_avail(self, obj):
-        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=3, player__userprofile__is_playing=True).count()
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=3, player__userprofile__is_playing=True, player__club=obj.club).count()
 
     def get_maybe(self, obj):
-        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=2, player__userprofile__is_playing=True).count()
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=2, player__userprofile__is_playing=True, player__club=obj.club).count()
 
     def get_noavail(self, obj):
-        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=1, player__userprofile__is_playing=True).count()
+        return Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, state=1, player__userprofile__is_playing=True, player__club=obj.club).count()
 
     def get_notset(selfself, obj):
         usercount = User.objects.filter(club=obj.club, userprofile__is_playing=True).count()
-        return usercount - Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, player__userprofile__is_playing=True).count()
+        return usercount - Availability.objects.filter(dayofyear=obj.dayofyear, season=obj.season, player__userprofile__is_playing=True, player__club=obj.club).count()
 
 
 class ClassificationField(serializers.PrimaryKeyRelatedField):
@@ -346,10 +346,14 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class TrainingAttendanceCountSerializer(serializers.ModelSerializer):
     attendance_count = serializers.SerializerMethodField()
+    nonattendance_count = serializers.SerializerMethodField()
     current = serializers.SerializerMethodField()
 
     def get_attendance_count(self, obj):
         return obj.attendances.filter(attended=True).count()
+
+    def get_nonattendance_count(self, obj):
+        return obj.attendances.filter(attended=False).count()
     def get_current(self, obj):
         date = obj.date
 
