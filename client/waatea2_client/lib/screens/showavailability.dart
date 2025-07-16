@@ -5,12 +5,11 @@ import 'dart:convert';
 import '../globals.dart' as globals;
 
 import '../models/showavailability_model.dart';
-import '../models/user_model.dart';
 
 import '../widgets/showavailability_row.dart';
 
 class ShowAvailability extends StatefulWidget {
-  ShowAvailability();
+  const ShowAvailability({Key? key}) : super(key: key);
   @override
   ShowAvailabilityState createState() => ShowAvailabilityState();
 }
@@ -55,8 +54,9 @@ class ShowAvailabilityState extends State<ShowAvailability> {
           future: games,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData)
+            if (!snapshot.hasData) {
               return CircularProgressIndicator(color: Colors.black);
+            }
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,

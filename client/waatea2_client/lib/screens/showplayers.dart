@@ -12,15 +12,12 @@ import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 import 'package:universal_html/html.dart' as uh;
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import '../models/game_model.dart';
-import '../models/showavailabilitydetail_model.dart';
 
 enum FileGenerationStatus { idle, generating, complete, error }
 
 class ShowPlayers extends StatefulWidget {
-  ShowPlayers();
+  const ShowPlayers({Key? key}) : super(key: key);
 
   @override
   _ShowPlayersState createState() => _ShowPlayersState();
@@ -43,7 +40,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
       final blob = uh.Blob([Uint8List.fromList(content.codeUnits)]);
       final url = uh.Url.createObjectUrlFromBlob(blob);
       final anchor = uh.AnchorElement(href: url)
-        ..setAttribute('download', '$fileName')
+        ..setAttribute('download', fileName)
         ..click();
       uh.Url.revokeObjectUrl(url);
 
@@ -169,8 +166,8 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
       int attended10 = 0;
       int attended4 = 0;
-      int attended_tot = 0;
-      int training_count = 0;
+      int attendedTot = 0;
+      int trainingCount = 0;
 
       List<AttendedViewModel> trainings10 = [];
       final response = await http.get(
@@ -187,12 +184,12 @@ class _ShowPlayersState extends State<ShowPlayers> {
                 ))
             .toList();
         for (AttendedViewModel training in trainings10) {
-          training_count = training_count + 1;
+          trainingCount = trainingCount + 1;
           if (training.attended) {
-            attended_tot = attended_tot + 1;
-            if (training_count < 11) {
+            attendedTot = attendedTot + 1;
+            if (trainingCount < 11) {
               attended10 = attended10 + 1;
-              if (training_count < 5) {
+              if (trainingCount < 5) {
                 attended4 = attended4 + 1;
               }
             }
@@ -202,11 +199,11 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
       csvData.add([
         player.name,
-        player.profile?.classification?.name ?? 'Not Set',
-        player.profile?.abonnement?.name ?? 'Not Set',
+        player.profile.classification?.name ?? 'Not Set',
+        player.profile.abonnement?.name ?? 'Not Set',
         attended10,
         attended4,
-        attended_tot,
+        attendedTot,
         PositionsToString(player.profile.positions),
         availablePast,
         maybePast,
@@ -326,7 +323,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                   generationStatus = FileGenerationStatus.generating;
                 });
 
-                var players = await users; // Await the completion of the Future
+                var players = users; // Await the completion of the Future
                 await saveCSVToFile(players);
                 Navigator.of(context).pop();
                 setState(() {
@@ -396,7 +393,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                       )),
                 const SizedBox(width: 10),
                 Text(
-                  user.attendancePercentage.toString() + "%",
+                  "${user.attendancePercentage}%",
                   style: DefaultTextStyle.of(context)
                       .style
                       .apply(fontSizeFactor: 1, color: playerColor),

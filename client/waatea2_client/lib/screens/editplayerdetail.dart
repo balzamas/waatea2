@@ -10,12 +10,11 @@ import '../globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-import '../helper.dart';
 
 class EditPlayerDetail extends StatefulWidget {
   final UserModel user;
 
-  const EditPlayerDetail({required this.user});
+  const EditPlayerDetail({Key? key, required this.user}) : super(key: key);
 
   @override
   _EditPlayerDetailState createState() => _EditPlayerDetailState();
@@ -195,7 +194,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                     value: classification,
                     child: Text(classification.name),
                   );
-                }).toList(),
+                }),
               ],
             ),
             const SizedBox(height: 16),
@@ -231,7 +230,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                     value: abonnement,
                     child: Text(abonnement.name),
                   );
-                }).toList(),
+                }),
               ],
             ),
             const SizedBox(height: 16),

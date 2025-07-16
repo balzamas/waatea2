@@ -3,10 +3,9 @@ import 'package:waatea2_client/screens/fitness.dart';
 import 'package:waatea2_client/screens/games.dart';
 import 'package:waatea2_client/screens/links.dart';
 import 'package:waatea2_client/screens/rankings.dart';
+import 'package:waatea2_client/screens/score_image_page.dart';
 import 'package:waatea2_client/screens/showattendance.dart';
 import 'package:waatea2_client/screens/showplayers.dart';
-import 'package:waatea2_client/screens/training_demo.dart';
-import 'package:waatea2_client/screens/trainingdetail.dart';
 import 'setattendance.dart';
 import 'setavailability.dart';
 import 'showavailability.dart';
@@ -16,7 +15,7 @@ import '../globals.dart' as globals;
 class MyHomePage extends StatefulWidget {
   final int initialIndex; // Add this parameter
 
-  MyHomePage({this.initialIndex = 0}); // Provide a default value
+  const MyHomePage({Key? key, this.initialIndex = 0}) : super(key: key); // Provide a default value
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -53,10 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   icon: Icon(Icons.emoji_events_outlined),
                   label: Text('Show Availabilities'),
                 ),
-                const NavigationRailDestination(
-                  icon: Icon(Icons.directions_run),
-                  label: Text('Fitness'),
-                ),
+                // const NavigationRailDestination(
+                //   icon: Icon(Icons.directions_run),
+                //   label: Text('Fitness'),
+                // ),
                 const NavigationRailDestination(
                   icon: Icon(Icons.link),
                   label: Text('Links'),
@@ -84,6 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.edit_square),
                     label: Text('Edit Games'),
                   ),
+                // if (globals.player.profile.permission >= 1)
+                //   const NavigationRailDestination(
+                //     icon: Icon(Icons.edit_square),
+                //     label: Text('Edit Games'),
+                //   ),
               ],
               selectedIndex: _currentIndex,
               onDestinationSelected: (value) {
@@ -112,20 +116,22 @@ class _MyHomePageState extends State<MyHomePage> {
         return const SetAttendance();
       case 2:
         return ShowAvailability();
+      // case 3:
+      //   return Fitness();
       case 3:
-        return Fitness();
-      case 4:
         return ShowLinks();
-      case 5:
+      case 4:
         return ShowRankings();
-      case 6:
+      case 5:
         return UserProfile();
-      case 7:
+      case 6:
         return ShowAttendance();
-      case 8:
+      case 7:
         return ShowPlayers();
-      case 9:
+      case 8:
         return ShowGames();
+      // case 9:
+      //   return ScoreImagePage();
       default:
         return Container();
     }

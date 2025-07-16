@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waatea2_client/helper.dart';
 import 'package:waatea2_client/models/game_model.dart';
-import 'package:waatea2_client/models/lineuppos_model.dart';
 import 'package:waatea2_client/screens/showlineup.dart';
 import '../globals.dart' as globals;
 import '../screens/showavailabilitydetail.dart';

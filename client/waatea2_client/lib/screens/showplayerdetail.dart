@@ -9,14 +9,13 @@ import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/screens/setavailability.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 
-import '../helper.dart';
 
 class ShowPlayerDetail extends StatelessWidget {
   final UserModel user;
 
-  ShowPlayerDetail({
+  const ShowPlayerDetail({Key? key, 
     required this.user,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +119,7 @@ class ShowPlayerDetail extends StatelessWidget {
                     )),
             const SizedBox(height: 10),
 
-            Container(
+            SizedBox(
               width: 500, // Replace with your desired width
               height: 30, // Replace with your desired height
               child:
@@ -132,7 +131,7 @@ class ShowPlayerDetail extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     )),
-            Container(
+            SizedBox(
               width: 500, // Replace with your desired width
               height: 300, // Replace with your desired height
               child: SetAvailability(user.pk),

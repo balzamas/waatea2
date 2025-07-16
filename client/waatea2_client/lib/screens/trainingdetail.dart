@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdf/pdf.dart';
@@ -10,12 +9,8 @@ import 'dart:convert';
 import '../globals.dart' as globals;
 
 import 'package:waatea2_client/models/trainingattendance_model.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'dart:io';
 import 'package:universal_html/html.dart' as uh;
 
 enum FileGenerationStatus { idle, generating, complete, error }
@@ -24,7 +19,7 @@ final screenshotController = ScreenshotController();
 
 class TrainingDetailScreen extends StatefulWidget {
   final TrainingAttendanceModel training;
-  TrainingDetailScreen({required this.training});
+  const TrainingDetailScreen({Key? key, required this.training}) : super(key: key);
 
   @override
   _TrainingDetailScreenState createState() => _TrainingDetailScreenState();
@@ -32,7 +27,7 @@ class TrainingDetailScreen extends StatefulWidget {
 
 class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   List<TrainingPart> trainingParts = []; // Replace with TrainingPart list
-  TextEditingController _trainingPartController = TextEditingController();
+  final TextEditingController _trainingPartController = TextEditingController();
   FileGenerationStatus generationStatus = FileGenerationStatus.idle;
 
   @override
@@ -169,7 +164,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
 
                         // Add the imported training parts to the current training.
                         setState(() {
-                          importedParts.forEach((TrainingPart trainingPart) {
+                          for (var trainingPart in importedParts) {
                             // Perform your action on 'trainingPart' here.
                             trainingParts.add(TrainingPart(
                                 id: null,
@@ -177,7 +172,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                                 order: trainingPart.order,
                                 description: trainingPart.description,
                                 minutes: trainingPart.minutes));
-                          });
+                          }
                         });
 
                         // Close the dialog.
@@ -315,7 +310,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             Screenshot(
               controller: screenshotController, // create a ScreenshotController
 // Draggable list of training parts.
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width - 60,
                 child: SizedBox(
                   height: 900, // Set the desired height.
@@ -392,9 +387,9 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
 
   void _showEditTrainingPartDialog(
       BuildContext context, TrainingPart trainingPart) {
-    TextEditingController _editDescriptionController =
+    TextEditingController editDescriptionController =
         TextEditingController(text: trainingPart.description);
-    TextEditingController _editMinutesController =
+    TextEditingController editMinutesController =
         TextEditingController(text: trainingPart.minutes.toString());
 
     showDialog(
@@ -405,12 +400,12 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
           content: Column(
             children: [
               TextField(
-                controller: _editDescriptionController,
+                controller: editDescriptionController,
                 maxLines: null,
                 decoration: InputDecoration(labelText: 'Drill Description'),
               ),
               TextField(
-                controller: _editMinutesController,
+                controller: editMinutesController,
                 decoration: InputDecoration(labelText: 'Minutes'),
                 keyboardType: TextInputType.number, // Ensure numeric input.
               ),
@@ -432,9 +427,9 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                       // Update the training part's content with the edited text and minutes.
                       setState(() {
                         trainingPart.description =
-                            _editDescriptionController.text;
+                            editDescriptionController.text;
                         trainingPart.minutes =
-                            int.parse(_editMinutesController.text);
+                            int.parse(editMinutesController.text);
                       });
                       // Close the edit dialog.
                       _save();
@@ -553,7 +548,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
       final blob = uh.Blob([Uint8List.fromList(content)]);
       final url = uh.Url.createObjectUrlFromBlob(blob);
       final anchor = uh.AnchorElement(href: url)
-        ..setAttribute('download', '$fileName')
+        ..setAttribute('download', fileName)
         ..click();
       uh.Url.revokeObjectUrl(url);
     } catch (e) {
@@ -563,8 +558,8 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   }
 
   void _showAddTrainingPartDialog(BuildContext context) async {
-    TextEditingController _addDescriptionController = TextEditingController();
-    TextEditingController _addMinutesController = TextEditingController();
+    TextEditingController addDescriptionController = TextEditingController();
+    TextEditingController addMinutesController = TextEditingController();
 
     await showDialog(
       context: context,
@@ -575,12 +570,12 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             child: Column(
               children: [
                 TextField(
-                  controller: _addDescriptionController,
+                  controller: addDescriptionController,
                   decoration: InputDecoration(labelText: 'Drill Description'),
                   maxLines: null,
                 ),
                 TextField(
-                  controller: _addMinutesController,
+                  controller: addMinutesController,
                   decoration: InputDecoration(labelText: 'Minutes'),
                   keyboardType: TextInputType.number, // Ensure numeric input.
                 ),
@@ -598,9 +593,9 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
               child: Text('Add'),
               onPressed: () async {
                 final newTrainingPartDescription =
-                    _addDescriptionController.text;
+                    addDescriptionController.text;
                 final newTrainingPartMinutes =
-                    int.parse(_addMinutesController.text);
+                    int.parse(addMinutesController.text);
 
                 if (newTrainingPartDescription.isNotEmpty) {
                   // Create a new TrainingPart and add it to the list

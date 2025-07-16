@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 
 class UserProfile extends StatefulWidget {
-  UserProfile();
+  const UserProfile({Key? key}) : super(key: key);
   @override
   HomeState createState() => HomeState();
 }
@@ -220,7 +220,7 @@ class HomeState extends State<UserProfile> {
                           value: abonnement,
                           child: Text(abonnement.name),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ],
@@ -421,7 +421,7 @@ class HomeState extends State<UserProfile> {
                 const SizedBox(width: 34),
                 const Icon(Icons.fitness_center),
                 const SizedBox(width: 24),
-                Container(
+                SizedBox(
                   width: 400, // Replace with your desired width
                   height: 30, // Replace with your desired height
                   child: ShowPlayerAttendance(

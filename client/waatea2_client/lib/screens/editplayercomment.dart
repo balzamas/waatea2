@@ -2,18 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_quill/quill_delta.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/home.dart';
 import '../globals.dart' as globals;
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
-import '../helper.dart';
 
 class EditPlayerComment extends StatefulWidget {
   final UserModel user;
 
-  const EditPlayerComment({required this.user});
+  const EditPlayerComment({Key? key, required this.user}) : super(key: key);
 
   @override
   _EditPlayerCommentState createState() => _EditPlayerCommentState();
@@ -85,7 +85,7 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
+            SizedBox(
               width: 500,
               height: 600,
               child: Column(

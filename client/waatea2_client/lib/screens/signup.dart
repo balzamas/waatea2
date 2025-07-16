@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -112,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Uri.parse(
               '${globals.URL_PREFIX}/api/user-profile/${_emailController.text}/'),
           headers: {
-            'Authorization': 'Token ${token}',
+            'Authorization': 'Token $token',
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: json.encode(body),

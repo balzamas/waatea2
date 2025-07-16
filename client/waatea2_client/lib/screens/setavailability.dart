@@ -11,8 +11,8 @@ import '../models/availability_model.dart';
 import '../widgets/setavailability_row.dart';
 
 class SetAvailability extends StatefulWidget {
-  late final int playerId;
-  SetAvailability(this.playerId);
+  final int playerId;
+  const SetAvailability(this.playerId, {Key? key}) : super(key: key);
   @override
   SetAvailabilityState createState() => SetAvailabilityState();
 }
@@ -102,10 +102,11 @@ class SetAvailabilityState extends State<SetAvailability> {
           future: games,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData)
+            if (!snapshot.hasData) {
               return const CircularProgressIndicator(
                 color: Colors.black,
               );
+            }
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,

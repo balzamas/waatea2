@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
-import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:waatea2_client/screens/detail_screen.dart';
 
 class ReorderableListScreen extends StatefulWidget {
+  const ReorderableListScreen({Key? key}) : super(key: key);
+
   @override
   _ReorderableListScreenState createState() => _ReorderableListScreenState();
 }

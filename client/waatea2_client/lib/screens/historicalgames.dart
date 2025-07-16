@@ -7,7 +7,7 @@ import '../globals.dart' as globals;
 class HistoricalGamesScreen extends StatelessWidget {
   final int playerId;
 
-  HistoricalGamesScreen({required this.playerId});
+  const HistoricalGamesScreen({Key? key, required this.playerId}) : super(key: key);
 
   Future<List<HistoricalGameModel>> getHistoricalGames() async {
     List<HistoricalGameModel> historicalGames = [];

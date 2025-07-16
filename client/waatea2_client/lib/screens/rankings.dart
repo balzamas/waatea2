@@ -8,7 +8,7 @@ import '../models/user_model.dart';
 enum RankingType { trainingPercentage, caps, fitness }
 
 class ShowRankings extends StatefulWidget {
-  ShowRankings();
+  const ShowRankings({Key? key}) : super(key: key);
 
   @override
   _ShowRankingsState createState() => _ShowRankingsState();

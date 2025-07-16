@@ -8,7 +8,7 @@ import 'package:waatea2_client/screens/trainingdetail.dart';
 import '../globals.dart' as globals;
 
 class ShowAttendance extends StatefulWidget {
-  ShowAttendance();
+  const ShowAttendance({Key? key}) : super(key: key);
 
   @override
   _ShowAttendanceState createState() => _ShowAttendanceState();
@@ -201,9 +201,9 @@ class _ShowAttendanceState extends State<ShowAttendance> {
             }
             return DataRow(
                 color: training.current
-                    ? MaterialStateColor.resolveWith(
+                    ? WidgetStateColor.resolveWith(
                         (states) => Colors.lightGreenAccent)
-                    : MaterialStateColor.resolveWith(
+                    : WidgetStateColor.resolveWith(
                         (states) => Colors.transparent),
                 cells: [
                   DataCell(

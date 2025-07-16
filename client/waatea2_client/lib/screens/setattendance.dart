@@ -15,7 +15,7 @@ import '../models/training_model.dart';
 import 'package:intl/intl.dart';
 
 class SetAttendance extends StatefulWidget {
-  const SetAttendance();
+  const SetAttendance({Key? key}) : super(key: key);
   @override
   SetAttendanceState createState() => SetAttendanceState();
 }
@@ -35,9 +35,9 @@ class SetAttendanceState extends State<SetAttendance> {
   void initState() {
     super.initState();
     setAttendanceContent = getCurrentTraining();
-    _fetchExercises().then((_) {
-      _showLastExercisesDialog();
-    });
+    // _fetchExercises().then((_) {
+    //   _showLastExercisesDialog();
+    // });
   }
 
   Future<void> _fetchExercises() async {
@@ -85,7 +85,7 @@ class SetAttendanceState extends State<SetAttendance> {
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ElevatedButton.styleFrom(
-              primary: Colors.black, // Background color
+              backgroundColor: Colors.black, // Background color
             ),
             child: Text('Close'),
           ),
@@ -138,15 +138,15 @@ class SetAttendanceState extends State<SetAttendance> {
 
   Future<List<UserModel>> getAttendingPlayers(String trainingid) async {
     final response = await http.get(
-        Uri.parse("${globals.URL_PREFIX}/api/attendingusers/${trainingId}/"),
+        Uri.parse("${globals.URL_PREFIX}/api/attendingusers/$trainingId/"),
         headers: {'Authorization': 'Token ${globals.token}'});
 
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
-    List<UserModel> attending_players = items.map<UserModel>((json) {
+    List<UserModel> attendingPlayers = items.map<UserModel>((json) {
       return UserModel.fromJson(json);
     }).toList();
 
-    return attending_players;
+    return attendingPlayers;
   }
 
   Future<SetAttendanceModel> getCurrentTraining() async {

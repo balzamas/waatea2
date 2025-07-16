@@ -4,11 +4,11 @@ import 'package:http/http.dart' as http;
 import '../globals.dart' as globals;
 
 class ShowPlayerAttendance extends StatefulWidget {
-  late final int player;
-  late final int last_n;
-  late final MainAxisAlignment alignment;
+  final int player;
+  final int last_n;
+  final MainAxisAlignment alignment;
 
-  ShowPlayerAttendance(this.player, this.last_n, this.alignment);
+  const ShowPlayerAttendance(this.player, this.last_n, this.alignment, {Key? key}) : super(key: key);
 
   @override
   _ShowPlayerAttendanceState createState() => _ShowPlayerAttendanceState();
@@ -58,8 +58,9 @@ class _ShowPlayerAttendanceState extends State<ShowPlayerAttendance> {
           future: trainAttendList,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData)
+            if (!snapshot.hasData) {
               return const CircularProgressIndicator(color: Colors.black);
+            }
             // Render icons with dates under each icon
             return Container(
               color: Colors.transparent, // Set transparent background

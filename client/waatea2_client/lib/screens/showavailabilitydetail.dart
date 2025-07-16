@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:waatea2_client/helper.dart';
-import 'package:waatea2_client/models/position_model.dart';
 import 'package:waatea2_client/screens/lineup.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'package:flutter/material.dart';
@@ -21,17 +20,17 @@ enum SortOption { state, updated, name }
 enum FileGenerationStatus { idle, generating, complete, error }
 
 class ShowAvailabilityDetail extends StatefulWidget {
-  late final String gameid;
-  late final String game;
-  late final String gameDate;
-  late final int dayofyear;
-  late final String season;
-  late final int isAvailable;
-  late final int isNotAvailable;
-  late final int isMaybe;
-  late final int isNotSet;
+  final String gameid;
+  final String game;
+  final String gameDate;
+  final int dayofyear;
+  final String season;
+  final int isAvailable;
+  final int isNotAvailable;
+  final int isMaybe;
+  final int isNotSet;
 
-  ShowAvailabilityDetail(
+  const ShowAvailabilityDetail(
       this.gameid,
       this.game,
       this.gameDate,
@@ -40,7 +39,7 @@ class ShowAvailabilityDetail extends StatefulWidget {
       this.isAvailable,
       this.isNotAvailable,
       this.isMaybe,
-      this.isNotSet);
+      this.isNotSet, {Key? key}) : super(key: key);
   @override
   ShowAvailabilityDetailState createState() => ShowAvailabilityDetailState();
 }
@@ -65,7 +64,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
       final blob = uh.Blob([Uint8List.fromList(content.codeUnits)]);
       final url = uh.Url.createObjectUrlFromBlob(blob);
       final anchor = uh.AnchorElement(href: url)
-        ..setAttribute('download', '$fileName')
+        ..setAttribute('download', fileName)
         ..click();
       uh.Url.revokeObjectUrl(url);
       setState(() {
@@ -117,8 +116,8 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
       int attended10 = 0;
       int attended4 = 0;
-      int attended_tot = 0;
-      int training_count = 0;
+      int attendedTot = 0;
+      int trainingCount = 0;
 
       List<AttendedViewModel> trainings10 = [];
       final response = await http.get(
@@ -135,12 +134,12 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
                 ))
             .toList();
         for (AttendedViewModel training in trainings10) {
-          training_count = training_count + 1;
+          trainingCount = trainingCount + 1;
           if (training.attended) {
-            attended_tot = attended_tot + 1;
-            if (training_count < 11) {
+            attendedTot = attendedTot + 1;
+            if (trainingCount < 11) {
               attended10 = attended10 + 1;
-              if (training_count < 5) {
+              if (trainingCount < 5) {
                 attended4 = attended4 + 1;
               }
             }
@@ -150,12 +149,12 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
 
       csvData.add([
         player.name,
-        player.playerProfile?.classification?.name ?? 'Not Set',
+        player.playerProfile.classification?.name ?? 'Not Set',
         availabilityText,
-        player.playerProfile?.abonnement?.name ?? 'Not Set',
+        player.playerProfile.abonnement?.name ?? 'Not Set',
         attended10,
         attended4,
-        attended_tot,
+        attendedTot,
         PositionsToString(player.playerProfile.positions),
         player.caps
       ]);
@@ -454,8 +453,9 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
               future: games,
               builder: (BuildContext context,
                   AsyncSnapshot<List<ShowAvailabilityDetailModel>> snapshot) {
-                if (!snapshot.hasData)
+                if (!snapshot.hasData) {
                   return const CircularProgressIndicator(color: Colors.black);
+                }
 
                 // Apply filtering
                 var filteredPlayers = snapshot.data!.where((player) {

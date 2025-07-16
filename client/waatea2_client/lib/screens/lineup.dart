@@ -21,10 +21,10 @@ class LineUpEditor extends StatefulWidget {
   final int dayoftheyear;
   final String season;
 
-  LineUpEditor(
-      {required this.availablePlayers,
+  const LineUpEditor(
+      {Key? key, required this.availablePlayers,
       required this.dayoftheyear,
-      required this.season});
+      required this.season}) : super(key: key);
 
   @override
   _LineUpEditorState createState() => _LineUpEditorState();
@@ -55,11 +55,11 @@ class _LineUpEditorState extends State<LineUpEditor> {
 
   int selectedPlayerPK = -1; // Track the selected player in the first column
   Set<int> addedPlayersTeam1 =
-      Set(); // Track players already added to the second column
+      {}; // Track players already added to the second column
   int selectedCardIndexTeam1 =
       -1; // Track the index of the selected card in the second column
   Set<int> addedPlayersTeam2 =
-      Set(); // Track players already added to the third column
+      {}; // Track players already added to the third column
   int selectedCardIndexTeam2 =
       -1; // Track the index of the selected card in the third column
   String team1Title = ""; // Initialize with an empty string
@@ -87,7 +87,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
         });
         Future<List<LineUpPosModel>> playersTeam1 = getLineUp(team1id);
         playersTeam1.then((player1List) {
-          player1List.forEach((player) {
+          for (var player in player1List) {
             setState(() {
               if (player.player != null) {
                 team1Players[player.position].name = player.player!.name;
@@ -96,7 +96,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
               }
               team1Players[player.position].fieldid = player.id;
             });
-          });
+          }
         });
       }
 
@@ -111,18 +111,17 @@ class _LineUpEditorState extends State<LineUpEditor> {
         });
         Future<List<LineUpPosModel>> playersTeam2 = getLineUp(team2id);
         playersTeam2.then((player2List) {
-          player2List.forEach((player) {
+          for (var player in player2List) {
             setState(() {
               if (player.player != null) {
                 team2Players[player.position].name = player.player!.name;
-                ;
                 team2Players[player.position].playerid = player.player!.pk;
 
                 addedPlayersTeam2.add(player.player!.pk);
               }
               team2Players[player.position].fieldid = player.id;
             });
-          });
+          }
         });
       }
     });
@@ -159,9 +158,9 @@ class _LineUpEditorState extends State<LineUpEditor> {
 
   @override
   Widget build(BuildContext context) {
-    ScrollController _scrollControllerPlayerList = ScrollController();
-    ScrollController _scrollControllerGame1 = ScrollController();
-    ScrollController _scrollControllerGame2 = ScrollController();
+    ScrollController scrollControllerPlayerList = ScrollController();
+    ScrollController scrollControllerGame1 = ScrollController();
+    ScrollController scrollControllerGame2 = ScrollController();
 
     return Scaffold(
       appBar: AppBar(
@@ -237,7 +236,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const Text("Avail."),
-              Container(
+              SizedBox(
                 width: 100, // Set the desired width here
                 child: DropdownButton<String>(
                     value: selectedPosition,
@@ -256,8 +255,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
               ElevatedButton(
                 onPressed: () {
                   // Scroll up logic
-                  _scrollControllerPlayerList.animateTo(
-                    _scrollControllerPlayerList.offset -
+                  scrollControllerPlayerList.animateTo(
+                    scrollControllerPlayerList.offset -
                         300, // Adjust this value as needed
                     curve: Curves.linear,
                     duration: Duration(
@@ -268,11 +267,11 @@ class _LineUpEditorState extends State<LineUpEditor> {
               ),
               Expanded(
                 flex: 2,
-                child: Container(
+                child: SizedBox(
                   width: availColWidth, // Set the desired width here
                   child: SingleChildScrollView(
                     controller:
-                        _scrollControllerPlayerList, // Add a ScrollController
+                        scrollControllerPlayerList, // Add a ScrollController
                     child: Column(
                       children: <Widget>[
                         NotificationListener<ScrollNotification>(
@@ -386,8 +385,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
               ElevatedButton(
                 onPressed: () {
                   // Scroll down logic
-                  _scrollControllerPlayerList.animateTo(
-                    _scrollControllerPlayerList.offset +
+                  scrollControllerPlayerList.animateTo(
+                    scrollControllerPlayerList.offset +
                         300, // Adjust this value as needed
                     curve: Curves.linear,
                     duration: Duration(
@@ -411,8 +410,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
             ElevatedButton(
               onPressed: () {
                 // Scroll down logic
-                _scrollControllerGame1.animateTo(
-                  _scrollControllerGame1.offset -
+                scrollControllerGame1.animateTo(
+                  scrollControllerGame1.offset -
                       300, // Adjust this value as needed
                   curve: Curves.linear,
                   duration:
@@ -422,10 +421,10 @@ class _LineUpEditorState extends State<LineUpEditor> {
               child: Icon(Icons.arrow_upward),
             ),
             Expanded(
-              child: Container(
+              child: SizedBox(
                 width: teamsColWidth, // Set the desired width here
                 child: SingleChildScrollView(
-                  controller: _scrollControllerGame1, // Add a ScrollController
+                  controller: scrollControllerGame1, // Add a ScrollController
 
                   child: Column(
                     children: <Widget>[
@@ -560,14 +559,12 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                               size: 15,
                                             ),
                                           if (team1Players[index].playerid != 0)
-                                            Text(widget.availablePlayers
+                                            Text("${widget.availablePlayers
                                                     .firstWhere((player) =>
                                                         player.pk ==
                                                         team1Players[index]
                                                             .playerid)
-                                                    .attendance_percentage
-                                                    .toString() +
-                                                "%")
+                                                    .attendance_percentage}%")
                                         ],
                                       )
                                     ],
@@ -586,8 +583,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
             ElevatedButton(
               onPressed: () {
                 // Scroll down logic
-                _scrollControllerGame1.animateTo(
-                  _scrollControllerGame1.offset +
+                scrollControllerGame1.animateTo(
+                  scrollControllerGame1.offset +
                       300, // Adjust this value as needed
                   curve: Curves.linear,
                   duration:
@@ -613,8 +610,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
                 ElevatedButton(
                   onPressed: () {
                     // Scroll up logic
-                    _scrollControllerGame2.animateTo(
-                      _scrollControllerGame2.offset -
+                    scrollControllerGame2.animateTo(
+                      scrollControllerGame2.offset -
                           300, // Adjust this value as needed
                       curve: Curves.linear,
                       duration: Duration(
@@ -624,11 +621,11 @@ class _LineUpEditorState extends State<LineUpEditor> {
                   child: Icon(Icons.arrow_upward),
                 ),
                 Expanded(
-                  child: Container(
+                  child: SizedBox(
                     width: teamsColWidth, // Set the desired width here
                     child: SingleChildScrollView(
                       controller:
-                          _scrollControllerGame2, // Add a ScrollController
+                          scrollControllerGame2, // Add a ScrollController
 
                       child: Column(
                         children: <Widget>[
@@ -775,14 +772,12 @@ class _LineUpEditorState extends State<LineUpEditor> {
                                               if (team2Players[index]
                                                       .playerid !=
                                                   0)
-                                                Text(widget.availablePlayers
+                                                Text("${widget.availablePlayers
                                                         .firstWhere((player) =>
                                                             player.pk ==
                                                             team2Players[index]
                                                                 .playerid)
-                                                        .attendance_percentage
-                                                        .toString() +
-                                                    "%")
+                                                        .attendance_percentage}%")
                                             ],
                                           )
                                         ],
@@ -801,8 +796,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
                 ElevatedButton(
                   onPressed: () {
                     // Scroll down logic
-                    _scrollControllerGame2.animateTo(
-                      _scrollControllerGame2.offset +
+                    scrollControllerGame2.animateTo(
+                      scrollControllerGame2.offset +
                           300, // Adjust this value as needed
                       curve: Curves.linear,
                       duration: Duration(
@@ -918,7 +913,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
       final blob = uh.Blob([Uint8List.fromList(content)]);
       final url = uh.Url.createObjectUrlFromBlob(blob);
       final anchor = uh.AnchorElement(href: url)
-        ..setAttribute('download', '$fileName')
+        ..setAttribute('download', fileName)
         ..click();
       uh.Url.revokeObjectUrl(url);
     } catch (e) {
@@ -929,7 +924,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
 
   Future<void> _publish(String gameid) async {
     final response = await http.patch(
-      Uri.parse('${globals.URL_PREFIX}/api/game/${gameid}/'),
+      Uri.parse('${globals.URL_PREFIX}/api/game/$gameid/'),
       headers: {'Authorization': 'Token ${globals.token}'},
       body: {'lineup_published': 'true'},
     );

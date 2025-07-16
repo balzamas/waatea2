@@ -9,12 +9,12 @@ class ShowLineUp extends StatelessWidget {
   final String team2Title;
   final List<LineUpPosModel> team2Lineup;
 
-  ShowLineUp({
+  const ShowLineUp({Key? key, 
     required this.team1Title,
     required this.team1Lineup,
     required this.team2Title,
     required this.team2Lineup,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class ShowLineUp extends StatelessWidget {
             children: [
               SizedBox(height: 20),
               Text(
-                "$teamTitle",
+                teamTitle,
                 style: TextStyle(
                   fontSize: 24, // Set the font size to make the title larger
                   fontWeight: FontWeight.bold, // You can also make it bold
@@ -68,10 +68,10 @@ class LineupCard extends StatelessWidget {
   final String playerName;
   final int playerId;
 
-  LineupCard(
-      {required this.position,
+  const LineupCard(
+      {Key? key, required this.position,
       required this.playerName,
-      required this.playerId});
+      required this.playerId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

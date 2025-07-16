@@ -8,7 +8,7 @@ import '../globals.dart' as globals;
 class Fitness extends StatefulWidget {
   final int playerId = globals.playerId;
 
-  Fitness();
+  Fitness({Key? key}) : super(key: key);
 
   @override
   _FitnessState createState() => _FitnessState();
@@ -121,7 +121,7 @@ class _FitnessState extends State<Fitness> {
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.black, // Background color
+                  backgroundColor: Colors.black, // Background color
                 ),
                 child: Text('Confirm'),
               ),
@@ -153,7 +153,7 @@ class _FitnessState extends State<Fitness> {
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(_noteController.text),
             style: ElevatedButton.styleFrom(
-              primary: Colors.black, // Background color
+              backgroundColor: Colors.black, // Background color
             ),
             child: Text('Submit'),
           ),
@@ -244,7 +244,7 @@ class _FitnessState extends State<Fitness> {
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ElevatedButton.styleFrom(
-              primary: Colors.black, // Background color
+              backgroundColor: Colors.black, // Background color
             ),
             child: Text('Close'),
           ),
@@ -272,7 +272,7 @@ class _FitnessState extends State<Fitness> {
             ElevatedButton(
               onPressed: _isSubmitting ? null : () => _showNoteDialog(1),
               style: ElevatedButton.styleFrom(
-                primary: Colors.black, // Background color
+                backgroundColor: Colors.black, // Background color
                 padding: EdgeInsets.symmetric(
                     horizontal: 50, vertical: 20), // Button size
                 textStyle: TextStyle(fontSize: 18), // Text size
@@ -283,7 +283,7 @@ class _FitnessState extends State<Fitness> {
             ElevatedButton(
               onPressed: _isSubmitting ? null : () => _showNoteDialog(2),
               style: ElevatedButton.styleFrom(
-                primary: Colors.black, // Background color
+                backgroundColor: Colors.black, // Background color
                 padding: EdgeInsets.symmetric(
                     horizontal: 50, vertical: 20), // Button size
                 textStyle: TextStyle(fontSize: 18), // Text size
@@ -294,7 +294,7 @@ class _FitnessState extends State<Fitness> {
             ElevatedButton(
               onPressed: _isSubmitting ? null : () => _showNoteDialog(4),
               style: ElevatedButton.styleFrom(
-                primary: Colors.black, // Background color
+                backgroundColor: Colors.black, // Background color
                 padding: EdgeInsets.symmetric(
                     horizontal: 50, vertical: 20), // Button size
                 textStyle: TextStyle(fontSize: 18), // Text size

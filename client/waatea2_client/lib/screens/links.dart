@@ -6,7 +6,7 @@ import 'dart:convert';
 import '../globals.dart' as globals;
 
 class ShowLinks extends StatefulWidget {
-  ShowLinks();
+  const ShowLinks({Key? key}) : super(key: key);
 
   @override
   _ShowLinksState createState() => _ShowLinksState();

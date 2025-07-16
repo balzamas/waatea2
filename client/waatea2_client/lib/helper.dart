@@ -10,7 +10,7 @@ import '../globals.dart' as globals;
 String PositionsToString(List<PositionModel>? positions) {
   String positionsString = "";
   for (PositionModel position in positions!) {
-    if (positionsString.length == 0) {
+    if (positionsString.isEmpty) {
       positionsString = positionsString + position.position;
     } else {
       positionsString = "$positionsString, ${position.position}";
@@ -41,7 +41,7 @@ Future<List<GameModel>> getGameList(String season, int dayoftheyear) async {
   //Get games
   final response = await http.get(
       Uri.parse(
-          "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}&season=${season}&dayofyear=${dayoftheyear}"),
+          "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}&season=$season&dayofyear=$dayoftheyear"),
       headers: {'Authorization': 'Token ${globals.token}'});
 
   String responseBody = utf8.decode(response.bodyBytes);
@@ -57,7 +57,7 @@ Future<List<GameModel>> getGameList(String season, int dayoftheyear) async {
 Future<List<LineUpPosModel>> getLineUp(String gameid) async {
   //Get players
   final responsePlayer = await http.get(
-      Uri.parse("${globals.URL_PREFIX}/api/lineupposes?game=${gameid}"),
+      Uri.parse("${globals.URL_PREFIX}/api/lineupposes?game=$gameid"),
       headers: {'Authorization': 'Token ${globals.token}'});
 
   String responseBody = utf8.decode(responsePlayer.bodyBytes);

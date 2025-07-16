@@ -5,16 +5,13 @@ import 'package:waatea2_client/models/game_model.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
-import '../models/showavailability_model.dart';
 import '../models/team_model.dart';
-import '../models/user_model.dart';
 
 import '../widgets/game_row.dart';
-import '../widgets/showavailability_row.dart';
 import 'home.dart';
 
 class ShowGames extends StatefulWidget {
-  ShowGames();
+  const ShowGames({Key? key}) : super(key: key);
   @override
   ShowGamesState createState() => ShowGamesState();
 }
@@ -246,8 +243,9 @@ class ShowGamesState extends State<ShowGames> {
           future: games,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
-            if (!snapshot.hasData)
+            if (!snapshot.hasData) {
               return CircularProgressIndicator(color: Colors.black);
+            }
             // Render employee lists
             return ListView.builder(
               itemCount: snapshot.data.length,
