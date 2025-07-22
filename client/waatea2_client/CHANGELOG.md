@@ -1,4 +1,6 @@
 # Waatea Changelog
+## V0.0.42
+- **Enhancement:** List of players who will attend a training
 
 ## V0.0.41
 - **Enhancement:** Many stuff updated in docker/django/flutter, removed fitness

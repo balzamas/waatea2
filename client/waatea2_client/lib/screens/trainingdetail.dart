@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:waatea2_client/models/training_model.dart';
 import 'package:waatea2_client/models/trainingpart_model.dart';
 import 'package:waatea2_client/screens/home.dart';
+import 'package:waatea2_client/screens/training_playerattendancestatus.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -257,6 +258,18 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
         title: Text(
             "${trainingDate.day}.${trainingDate.month}.${trainingDate.year}"),
         actions: [
+                    IconButton(
+            icon: Icon(Icons.people_outline),
+            onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              PlayerAttendanceStatusScreen(trainingId: widget.training.pk),
+        ),
+      );
+    },
+          ),
           IconButton(
             icon: Icon(Icons.picture_as_pdf),
             onPressed: () {
