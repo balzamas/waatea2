@@ -24,17 +24,6 @@ class ShowPlayerDetail extends StatelessWidget {
         title: Text(user.name),
         actions: [
           IconButton(
-            icon: const Icon(Icons.contact_page),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditPlayerComment(user: user),
-                ),
-              );
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
               Navigator.push(

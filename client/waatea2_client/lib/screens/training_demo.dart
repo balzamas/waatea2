@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
+//import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:waatea2_client/screens/detail_screen.dart';
 
 class ReorderableListScreen extends StatefulWidget {
@@ -10,7 +10,7 @@ class ReorderableListScreen extends StatefulWidget {
 }
 
 class _ReorderableListScreenState extends State<ReorderableListScreen> {
-  QuillController _controller = QuillController.basic();
+  //QuillController _controller = QuillController.basic();
 
   List<String> elements = ['Warm up', 'Cool down'];
   List<String> availableItems = [
@@ -27,7 +27,7 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
   void initState() {
     super.initState();
 
-    _controller = QuillController.basic();
+   // _controller = QuillController.basic();
   }
 
   void _showAddItemsDialog() {
@@ -66,15 +66,15 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final docx = Document()
-      ..insert(0, "Hello, this is some initial text.")
-      ..insert(28, '\n') // Add a line break
-      ..insert(29, '• ')
-      ..insert(30, ' Hello World'); // Add a bullet point
+    // final docx = Document()
+    //   ..insert(0, "Hello, this is some initial text.")
+    //   ..insert(28, '\n') // Add a line break
+    //   ..insert(29, '• ')
+    //   ..insert(30, ' Hello World'); // Add a bullet point
 
-    _controller.document = docx;
+    // _controller.document = docx;
 
-    final doc = _controller.document.toPlainText();
+    // final doc = _controller.document.toPlainText();
 
     return Scaffold(
       appBar: AppBar(
@@ -88,10 +88,10 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
             crossAxisAlignment:
                 CrossAxisAlignment.start, // Align children to the left
             children: [
-              const Text("Remarks:"),
-              Text(doc),
-              const Text("Review:"),
-              Text(doc),
+              // const Text("Remarks:"),
+              // Text(doc),
+              // const Text("Review:"),
+              // Text(doc),
             ],
           ),
           Expanded(

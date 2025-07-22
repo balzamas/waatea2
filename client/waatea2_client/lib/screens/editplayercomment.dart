@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
-import 'package:flutter_quill/quill_delta.dart';
+//import 'package:flutter_quill/flutter_quill.dart' hide Text;
+//import 'package:flutter_quill/quill_delta.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/home.dart';
 import '../globals.dart' as globals;
@@ -20,31 +20,31 @@ class EditPlayerComment extends StatefulWidget {
 }
 
 class _EditPlayerCommentState extends State<EditPlayerComment> {
-  QuillController _controller = QuillController.basic();
+  //QuillController _controller = QuillController.basic();
 
   @override
   void initState() {
     super.initState();
 
-    final List<dynamic> operations = json.decode(widget.user.profile.comment);
-    final Delta delta = Delta.fromJson(operations);
+    // final List<dynamic> operations = json.decode(widget.user.profile.comment);
+    // final Delta delta = Delta.fromJson(operations);
 
-    if (delta.isNotEmpty) {
-      _controller = QuillController(
-        document: Document.fromDelta(delta),
-        selection: TextSelection.collapsed(offset: 0),
-      );
-    } else {
-      // Create an empty document
-      _controller = QuillController.basic();
-    }
+    // if (delta.isNotEmpty) {
+    //   _controller = QuillController(
+    //     document: Document.fromDelta(delta),
+    //     selection: TextSelection.collapsed(offset: 0),
+    //   );
+    // } else {
+    //   // Create an empty document
+    //   _controller = QuillController.basic();
+    // }
   }
 
   Future<void> _saveData(BuildContext context) async {
     final Map<String, dynamic> body = {
-      'comment': jsonEncode(
-        _controller.document.toDelta().toJson(),
-      ),
+      // 'comment': jsonEncode(
+      //   _controller.document.toDelta().toJson(),
+      // ),
     };
 
     final http.Response response = await http.patch(

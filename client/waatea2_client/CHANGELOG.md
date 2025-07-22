@@ -3,7 +3,6 @@
 ## V0.0.41
 - **Enhancement:** Many stuff updated in docker/django/flutter, removed fitness
 
-
 ## V0.0.40
 - **Bug Fix** Show available players by Club
 - **Enhancement:** Show number of players
