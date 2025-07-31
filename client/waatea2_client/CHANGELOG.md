@@ -1,4 +1,10 @@
 # Waatea Changelog
+
+## V0.0.43
+- **Enhancement:** Coaches cann add players to a training
+- **Bug Fix** Sort players in training attended list
+- **Bug Fix** Correct training attendance
+
 ## V0.0.42
 - **Enhancement:** List of players who will attend a training
 

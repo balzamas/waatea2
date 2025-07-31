@@ -265,7 +265,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         #ToDo: check if there are less then 10 trainings yet and calculate accordingly
         # Step 1: Retrieve the last 10 training records.
-        last_10_trainings = Training.objects.filter(date__lte=datetime.now(), season=season.season).order_by('-date')[:10]
+        last_10_trainings = Training.objects.filter(date__lte=datetime.now(), season=season.season, club=obj.club).order_by('-date')[:10]
 
         # Step 2: Filter the attendances for the specified player and last 10 trainings.
         count = Attendance.objects.filter(player=obj.pk, attended=True, training__in=last_10_trainings).count()
