@@ -1,5 +1,13 @@
 # Waatea Changelog
 
+## V0.0.44
+- **Enhancement:** Attendance for future trainings can be set
+- **Enhancement:** Game calendar, for import into Google/Iphone (ics-File)
+- **Enhancement:** Training calendar, for import into Google/Iphone (ics-File)
+- **Bug Fix** Standard training start time 20:15
+
+
+
 ## V0.0.43
 - **Enhancement:** Coaches cann add players to a training
 - **Bug Fix** Sort players in training attended list

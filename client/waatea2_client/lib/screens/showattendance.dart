@@ -53,7 +53,7 @@ class _ShowAttendanceState extends State<ShowAttendance> {
       context: context,
       builder: (BuildContext context) {
         DateTime selectedDateTime = DateTime(DateTime.now().year,
-            DateTime.now().month, DateTime.now().day, 20, 30);
+            DateTime.now().month, DateTime.now().day, 20, 15);
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {

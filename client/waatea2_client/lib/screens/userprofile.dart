@@ -8,8 +8,11 @@ import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/screens/home.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'dart:convert';
-import '../globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart'; // Clipboard
+import 'package:url_launcher/url_launcher.dart'; // url_launcher
+
+import '../globals.dart' as globals;
 import '../models/user_model.dart';
 
 class UserProfile extends StatefulWidget {
@@ -26,24 +29,21 @@ class HomeState extends State<UserProfile> {
 
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController abonnementController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    //userinfo = getUserInfo();
     _getAppVersion();
 
     fetchAbonnements().then((abonnements) {
       setState(() {
         abonnementOptions = abonnements;
         if (globals.player.profile.abonnement != null) {
-          // If the abonnement is not empty, set it based on the user's profile
           _selectedAbonnement = abonnementOptions.firstWhere(
             (abonnement) =>
                 abonnement.pk == globals.player.profile.abonnement!.pk,
-            // Set to null when no match is found
           );
         } else {
-          // If the abonnement is empty, set it to null
           _selectedAbonnement = null;
         }
       });
@@ -74,6 +74,103 @@ class HomeState extends State<UserProfile> {
       _version = version;
     });
   }
+
+  // ---------- ICS helper functions ----------
+  String _playerTrainingIcsHttpsUrl() {
+    final base = globals.URL_PREFIX;
+    final playerId = globals.playerId;
+    final season = globals.seasonID;
+    final club = globals.clubId;
+
+    final uri = Uri.parse(base).replace(
+      path: "/calendar/player/$playerId/trainings.ics",
+      queryParameters: {
+        "season": season.toString(),
+        "club": club.toString(),
+      },
+    );
+    return uri.toString();
+  }
+
+  String _playerTrainingIcsWebcalUrl() {
+    final https = _playerTrainingIcsHttpsUrl();
+    return https.replaceFirst(RegExp(r'^https?://'), 'webcal://');
+  }
+
+  Future<void> _copyToClipboard(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Link copied')),
+      );
+    }
+  }
+
+  Future<void> _launchUrlString(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Was not able to open link: $url')),
+        );
+      }
+    }
+  }
+
+  void _showIcsActionsSheet() {
+    final httpsUrl = _playerTrainingIcsHttpsUrl();
+    final webcalUrl = _playerTrainingIcsWebcalUrl();
+
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ListTile(
+                leading: Icon(Icons.calendar_month),
+                title: Text('Training calendar'),
+                subtitle: Text('Subscribe ICS or copy link'),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.open_in_browser),
+                title: const Text('Open in Google calendar (https)'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _launchUrlString(httpsUrl);
+                },
+                subtitle: Text(httpsUrl,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+              ListTile(
+                leading: const Icon(Icons.phone_iphone),
+                title: const Text('Subscribe on iPhone (webcal)'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _launchUrlString(webcalUrl);
+                },
+                subtitle: Text(webcalUrl,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: const Text('Copy link (https)'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _copyToClipboard(httpsUrl);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  // ---------- end ICS helpers ----------
 
   void _showSuccessDialog() {
     showDialog(
@@ -107,18 +204,13 @@ class HomeState extends State<UserProfile> {
       );
 
       if (response.statusCode == 200) {
-        // Password changed successfully
         _showSuccessDialog();
         final sharedPreferences = await SharedPreferences.getInstance();
-
         sharedPreferences.setString('password', newPassword);
       } else {
-        // Handle API error
-        //ToDo: inform user
         print('Failed to change password. Status code: ${response.statusCode}');
       }
     } catch (error) {
-      // Handle network error
       print('Error while changing password: $error');
     }
   }
@@ -169,7 +261,6 @@ class HomeState extends State<UserProfile> {
                 }
 
                 changePassword(newPassword);
-
                 Navigator.of(context).pop();
               },
             ),
@@ -183,7 +274,6 @@ class HomeState extends State<UserProfile> {
     TextEditingController phoneNumberController = TextEditingController();
     TextEditingController abonnementController = TextEditingController();
 
-    // Initialize _selectedAbonnement with the value from the user's profile
     phoneNumberController.text = globals.player.profile.mobilePhone;
     showDialog(
       context: context,
@@ -210,7 +300,6 @@ class HomeState extends State<UserProfile> {
                       });
                     },
                     items: [
-                      // Add a default "Select Classification" item as the first item
                       const DropdownMenuItem<AbonnementModel>(
                         value: null,
                         child: Text('Select Abonnement'),
@@ -235,7 +324,6 @@ class HomeState extends State<UserProfile> {
                 TextButton(
                   child: const Text('Save Changes'),
                   onPressed: () async {
-                    // Save the changes to the server and update the UI as needed
                     String newPhoneNumber = phoneNumberController.text;
 
                     final Map<String, dynamic> body = {
@@ -272,7 +360,7 @@ class HomeState extends State<UserProfile> {
 
                       globals.player = users[0];
 
-                      Navigator.of(context).pop(); // Close the dialog
+                      Navigator.of(context).pop();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -293,29 +381,35 @@ class HomeState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: employeeListKey,
-        appBar: AppBar(title: const Text('User Info'), actions: [
+      key: employeeListKey,
+      appBar: AppBar(
+        title: const Text('User Info'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.event_available_outlined),
+            tooltip: 'Training ICS',
+            onPressed: _showIcsActionsSheet,
+          ),
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
-              // Show the edit dialog
-              _showEditDialog();
-            },
+            onPressed: _showEditDialog,
           ),
           IconButton(
             icon: const Icon(Icons.history_edu_rounded),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        HistoricalGamesScreen(playerId: globals.playerId),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      HistoricalGamesScreen(playerId: globals.playerId),
+                ),
+              );
             },
           ),
-        ]),
-        body: Center(
-            child: Column(
+        ],
+      ),
+      body: Center(
+        child: Column(
           children: [
             const SizedBox(height: 24),
             RandomAvatar(globals.player.name, height: 80, width: 80),
@@ -408,9 +502,7 @@ class HomeState extends State<UserProfile> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      globals.player.caps.toString(),
-                    )
+                    Text(globals.player.caps.toString()),
                   ],
                 )
               ],
@@ -422,8 +514,8 @@ class HomeState extends State<UserProfile> {
                 const Icon(Icons.fitness_center),
                 const SizedBox(width: 24),
                 SizedBox(
-                  width: 400, // Replace with your desired width
-                  height: 30, // Replace with your desired height
+                  width: 400,
+                  height: 30,
                   child: ShowPlayerAttendance(
                       globals.playerId, 15, MainAxisAlignment.start),
                 )
@@ -439,6 +531,8 @@ class HomeState extends State<UserProfile> {
             const SizedBox(height: 12),
             Text('Waatea version: ${_version.toString()}'),
           ],
-        )));
+        ),
+      ),
+    );
   }
 }

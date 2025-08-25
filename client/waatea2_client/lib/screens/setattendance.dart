@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/models/user_model.dart';
+import 'package:waatea2_client/screens/upcomingtrainingattendancescreen.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
 
@@ -218,9 +219,30 @@ class SetAttendanceState extends State<SetAttendance> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: availabilityListKey,
+
       appBar: AppBar(
-        title: const Text('Current training'),
-      ),
+  title: const Text('Current training'),
+  actions: [
+    IconButton(
+      tooltip: 'Upcoming trainings',
+      icon: const Icon(Icons.event_available_outlined),
+      onPressed: () async {
+        // Screen öffnen
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const UpcomingTrainingAttendanceScreen(),
+          ),
+        );
+
+        // (Optional) Nach Rückkehr den „Aktuell“-Screen neu laden,
+        // falls sich deine Teilnahme geändert hat:
+        setState(() {
+          setAttendanceContent = getCurrentTraining();
+        });
+      },
+    ),
+  ],
+),
       body: Center(
         child: FutureBuilder<SetAttendanceModel>(
           future: setAttendanceContent,
@@ -328,7 +350,7 @@ class SetAttendanceState extends State<SetAttendance> {
                             fontSize: 23, fontWeight: FontWeight.bold),
                       )
                     ],
-                    const SizedBox(height: 50),
+                                        const SizedBox(height: 50),
                     Center(
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -6,6 +6,7 @@ from django.views import defaults as default_views
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from waateaapp import views, viewsets
+from waateaapp.views import calendar_feed, calendar_player_trainings
 from rest_framework import routers
 from rest_framework.authtoken import views as restviews
 from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, AvailiabilityFilterAPIView, \
@@ -33,6 +34,8 @@ def flutter_redirect(request, resource):
     return serve(request, resource, FLUTTER_WEB_APP)
 
 urlpatterns = [
+      path("calendar/club/<uuid:club_id>.ics", calendar_feed, name="calendar_feed"),
+      path("calendar/player/<int:player_id>/trainings.ics", calendar_player_trainings, name="calendar_player_trainings",),
       path('api/register/', register_user, name='register'),
       path('client/', lambda r: flutter_redirect(r, 'index.html')),
       path('client/<path:resource>', flutter_redirect),
