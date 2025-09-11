@@ -221,7 +221,8 @@ class SetAttendanceState extends State<SetAttendance> {
       key: availabilityListKey,
 
       appBar: AppBar(
-  title: const Text('Current training'),
+  title: const Text('Current training',
+    style: TextStyle(color: Colors.white)),
   actions: [
     IconButton(
       tooltip: 'Upcoming trainings',
@@ -312,7 +313,7 @@ class SetAttendanceState extends State<SetAttendance> {
                           },
                           child: const Text("Yey!",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
                         ),
                         const SizedBox(width: 20),
                         ElevatedButton(
@@ -328,7 +329,7 @@ class SetAttendanceState extends State<SetAttendance> {
                           },
                           child: const Text("No",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
                         ),
                       ],
                     ),

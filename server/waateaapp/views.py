@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils import timezone
 from datetime import timedelta
 import hashlib
@@ -42,6 +42,11 @@ def calendar_feed(request, club_id: UUID):
     # Wenn Season auch UUID ist, kommentier die nächste Zeile ein:
     season_id = UUID(season_param) if season_param else None
 
+    try:
+        club = Club.objects.only("name").get(pk=club_id)
+    except Club.DoesNotExist:
+        raise Http404("Club not found")
+
     now = timezone.now()
 
     g_qs = GameModel.objects.filter(
@@ -50,6 +55,10 @@ def calendar_feed(request, club_id: UUID):
         date__gte=now,
     ).order_by("date")
 
+    # Build calendar name/description
+    cal_name = f"{club.name} – Game calendar"
+    cal_desc = f"Upcoming games for {club.name}"
+
     # Kopf
     lines = [
         "BEGIN:VCALENDAR",
@@ -57,10 +66,13 @@ def calendar_feed(request, club_id: UUID):
         "VERSION:2.0",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
-        "X-WR-CALNAME:Game calendar",
-        "X-WR-CALDESC:Game calendar",
-
-    "X-WR-TIMEZONE:Europe/Zurich",
+        # Display name (Apple/Google recognize X-WR-CALNAME)
+        f"X-WR-CALNAME:{_esc(cal_name)}",
+        f"X-WR-CALDESC:{_esc(cal_desc)}",
+        # Optional: RFC 7986 properties (harmless if ignored)
+        f"NAME:{_esc(cal_name)}",
+        f"DESCRIPTION:{_esc(cal_desc)}",
+        "X-WR-TIMEZONE:Europe/Zurich",
     ]
 
     nowstamp = _to_ics_utc(now)

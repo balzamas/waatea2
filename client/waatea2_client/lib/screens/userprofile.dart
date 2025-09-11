@@ -223,7 +223,8 @@ class HomeState extends State<UserProfile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Change Password'),
+          title: const Text('Change Password',
+    style: TextStyle(color: Colors.white)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -248,7 +249,8 @@ class HomeState extends State<UserProfile> {
               },
             ),
             TextButton(
-              child: const Text('Change Password'),
+              child: const Text('Change Password',
+    style: TextStyle(color: Colors.white)),
               onPressed: () {
                 String newPassword = newPasswordController.text;
                 String confirmPassword = confirmPasswordController.text;
@@ -383,7 +385,8 @@ class HomeState extends State<UserProfile> {
     return Scaffold(
       key: employeeListKey,
       appBar: AppBar(
-        title: const Text('User Info'),
+        title: const Text('User Info',
+    style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.event_available_outlined),
@@ -511,6 +514,19 @@ class HomeState extends State<UserProfile> {
             Row(
               children: [
                 const SizedBox(width: 34),
+                const Icon(Icons.access_time),
+                const SizedBox(width: 24),
+                Text(
+                  // Falls clubHours null/fehlt: 0.0 anzeigen
+                  '${(globals.player.profile.clubHours).toStringAsFixed(1)}',
+                  style: const TextStyle(fontSize: 17),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const SizedBox(width: 34),
                 const Icon(Icons.fitness_center),
                 const SizedBox(width: 24),
                 SizedBox(
@@ -526,7 +542,7 @@ class HomeState extends State<UserProfile> {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
               onPressed: _showChangePasswordDialog,
               child: const Text('Change Password',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
             ),
             const SizedBox(height: 12),
             Text('Waatea version: ${_version.toString()}'),

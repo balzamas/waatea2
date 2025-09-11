@@ -15,6 +15,10 @@ if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(BASE_DIR / ".env"))
 
+HELFEREINSATZ_API_KEY = env("HELFEREINSATZ_API_KEY", default=None)
+HELFEREINSATZ_SLUG = env("HELFEREINSATZ_SLUG", default="rugby-winterthur")
+HELFEREINSATZ_BASE = env("HELFEREINSATZ_BASE", default="https://api.helfereinsatz.ch/v1")
+
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug

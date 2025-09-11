@@ -148,7 +148,8 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     return Scaffold(
       key: availabilityListKey,
       appBar: AppBar(
-        title: const Text('Game list'),
+        title: const Text('Game list',
+    style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             tooltip: 'Game-ICS',

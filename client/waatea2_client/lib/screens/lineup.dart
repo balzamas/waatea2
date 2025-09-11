@@ -164,7 +164,8 @@ class _LineUpEditorState extends State<LineUpEditor> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Player Selection Screen"),
+        title: const Text("Player Selection Screen",
+    style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.publish),

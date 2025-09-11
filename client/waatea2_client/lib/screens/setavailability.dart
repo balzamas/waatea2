@@ -95,7 +95,8 @@ class SetAvailabilityState extends State<SetAvailability> {
       appBar: isTopLevelScreen
           ? null
           : AppBar(
-              title: const Text('Set availability'),
+              title: const Text('Set availability',
+    style: TextStyle(color: Colors.white)),
             ),
       body: Center(
         child: FutureBuilder<List<SetAvailabilityModel>>(

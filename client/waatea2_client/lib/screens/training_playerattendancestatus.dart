@@ -16,7 +16,10 @@ class PlayerAttendanceStatusScreen extends StatefulWidget {
 
 class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScreen> {
   List<UserModel> players = [];
-  Map<String, bool> attendanceMap = {};
+  Map<String, bool> attendanceMap = {};            // playerId -> attended?
+  Map<String, String> attendanceIdByPlayer = {};   // playerId -> attendanceId
+
+  bool _loading = false;
 
   @override
   void initState() {
@@ -25,6 +28,7 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
   }
 
   Future<void> fetchPlayersAndAttendance() async {
+    setState(() => _loading = true);
     try {
       final responsePlayers = await http.get(
         Uri.parse("${globals.URL_PREFIX}/api/attendingusers/${widget.trainingId}/"),
@@ -33,12 +37,15 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
 
       if (responsePlayers.statusCode != 200) {
         print("Fehler beim Laden der Spieler");
+        setState(() => _loading = false);
         return;
       }
 
-      final playersData = json.decode(responsePlayers.body) as List;
-      players = playersData.map((json) => UserModel.fromJson(json)).toList()
-  ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      final playersData = json.decode(utf8.decode(responsePlayers.bodyBytes)) as List;
+      players = playersData
+          .map((json) => UserModel.fromJson(json))
+          .toList()
+        ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
       final responseAttendance = await http.get(
         Uri.parse(
@@ -48,21 +55,108 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
 
       if (responseAttendance.statusCode != 200) {
         print("Fehler beim Laden der Anwesenheiten");
+        setState(() => _loading = false);
         return;
       }
 
-      final attendanceData = json.decode(responseAttendance.body) as List;
-      List<AttendanceModel> attendances =
+      final attendanceData = json.decode(utf8.decode(responseAttendance.bodyBytes)) as List;
+      final List<AttendanceModel> attendances =
           attendanceData.map((json) => AttendanceModel.fromJson(json)).toList();
 
       attendanceMap.clear();
+      attendanceIdByPlayer.clear();
       for (var att in attendances) {
-        attendanceMap[att.player.toString()] = att.attended;
+        // Assuming AttendanceModel has fields: pk (or id), player, attended
+        final playerId = att.player.toString();
+        attendanceMap[playerId] = att.attended;
+        final attId = (att.pk ?? att.pk)?.toString() ?? "";
+        if (attId.isNotEmpty) {
+          attendanceIdByPlayer[playerId] = attId;
+        }
       }
 
       setState(() {});
     } catch (e) {
       print("Fehler beim Laden: $e");
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  int _todayDayOfYear() {
+    final now = DateTime.now();
+    return now.difference(DateTime(now.year)).inDays + 1;
+  }
+
+  Future<void> _setPlayerAbsent(UserModel player) async {
+    try {
+      final playerIdStr = player.pk.toString();
+      final attendanceId = attendanceIdByPlayer[playerIdStr];
+
+      // Common body for setting attended = false
+      final Map<String, dynamic> body = {
+        'attended': false,
+        'dayofyear': _todayDayOfYear(),
+        'player': player.pk,
+        'training': widget.trainingId,
+        'season': globals.seasonID,
+      };
+
+      http.Response? response;
+
+      if (attendanceId != null && attendanceId.isNotEmpty) {
+        // Try PATCH first
+        response = await http.patch(
+          Uri.parse('${globals.URL_PREFIX}/api/attendance/$attendanceId/'),
+          headers: {
+            'Authorization': 'Token ${globals.token}',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(body),
+        );
+
+        // If PATCH not supported, try PUT
+        if (response.statusCode >= 400) {
+          response = await http.put(
+            Uri.parse('${globals.URL_PREFIX}/api/attendance/$attendanceId/'),
+            headers: {
+              'Authorization': 'Token ${globals.token}',
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: json.encode(body),
+          );
+        }
+      } else {
+        // No record yet → create one with attended=false
+        response = await http.post(
+          Uri.parse('${globals.URL_PREFIX}/api/attendance/'),
+          headers: {
+            'Authorization': 'Token ${globals.token}',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(body),
+        );
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+        await fetchPlayersAndAttendance();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Player set to absent.')),
+        );
+      } else {
+        print("Fehler beim Aktualisieren: ${response.statusCode} ${response.body}");
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Update failed: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      print("Fehler beim Setzen auf abwesend: $e");
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error while updating attendance.')),
+      );
     }
   }
 
@@ -73,12 +167,12 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
         headers: {'Authorization': 'Token ${globals.token}'},
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != null && response.statusCode != 200) {
         print("Fehler beim Laden aller Spieler");
         return;
       }
 
-      final allPlayersData = json.decode(response.body) as List;
+      final allPlayersData = json.decode(utf8.decode(response.bodyBytes)) as List;
       final allPlayers = allPlayersData.map((json) => UserModel.fromJson(json)).toList();
 
       final existingIds = players.map((p) => p.pk).toSet();
@@ -86,6 +180,7 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
       final searchController = TextEditingController();
       List<UserModel> filteredPlayers = List.from(missingPlayers);
 
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -139,18 +234,25 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
     }
   }
 
-  Future<void> _addPlayerAttendance(UserModel player) async {
-    try {
-      final Map<String, dynamic> body = {
-        'attended': true,
-        'dayofyear': DateTime.now().difference(DateTime(DateTime.now().year)).inDays + 1,
-        'player': player.pk,
-        'training': widget.trainingId,
-        'season': globals.seasonID
-      };
+Future<void> _addPlayerAttendance(UserModel player) async {
+  try {
+    final playerIdStr = player.pk.toString();
+    final existingAttendanceId = attendanceIdByPlayer[playerIdStr];
 
-      final http.Response response = await http.post(
-        Uri.parse('${globals.URL_PREFIX}/api/attendance/'),
+    final Map<String, dynamic> body = {
+      'attended': true,
+      'dayofyear': _todayDayOfYear(),
+      'player': player.pk,
+      'training': widget.trainingId,
+      'season': globals.seasonID,
+    };
+
+    http.Response response;
+
+    if (existingAttendanceId != null && existingAttendanceId.isNotEmpty) {
+      // Attendance exists (possibly with attended=false) → flip to true
+      response = await http.patch(
+        Uri.parse('${globals.URL_PREFIX}/api/attendance/$existingAttendanceId/'),
         headers: {
           'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -158,49 +260,104 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
         body: json.encode(body),
       );
 
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        await fetchPlayersAndAttendance();
-      } else {
-        print("Fehler beim Hinzufügen: ${response.body}");
+      // If PATCH isn't supported by your API, try PUT:
+      if (response.statusCode >= 400) {
+        response = await http.put(
+          Uri.parse('${globals.URL_PREFIX}/api/attendance/$existingAttendanceId/'),
+          headers: {
+            'Authorization': 'Token ${globals.token}',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(body),
+        );
       }
-    } catch (e) {
-      print("Fehler beim Hinzufügen eines Spielers: $e");
+    } else {
+      // No record yet → create one
+      response = await http.post(
+        Uri.parse('${globals.URL_PREFIX}/api/attendance/'),
+        headers: {
+          'Authorization': 'Token ${globals.token}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode(body),
+      );
+    }
+
+    if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+      await fetchPlayersAndAttendance();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Player added (attending).')),
+        );
+      }
+    } else {
+      print("Fehler beim Hinzufügen/Aktualisieren: ${response.statusCode} ${response.body}");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not add: ${response.statusCode}')),
+        );
+      }
+    }
+  } catch (e) {
+    print("Fehler beim Hinzufügen eines Spielers: $e");
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error while adding player.')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Attendance Status'),
+        title:
+            const Text('Attendance Status', style: TextStyle(color: Colors.white)),
       ),
-      body: ListView.builder(
-        itemCount: players.length,
-        itemBuilder: (context, index) {
-          final player = players[index];
-          final attended = attendanceMap[player.pk.toString()];
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: players.length,
+              itemBuilder: (context, index) {
+                final player = players[index];
+                final attended = attendanceMap[player.pk.toString()];
 
-          Icon icon;
-          String label;
+                Icon icon;
+                String label;
 
-          if (attended == true) {
-            icon = const Icon(Icons.check_circle, color: Colors.green);
-            label = "Attending";
-          } else if (attended == false) {
-            icon = const Icon(Icons.cancel, color: Colors.red);
-            label = "Absent";
-          } else {
-            icon = const Icon(Icons.help_outline, color: Colors.grey);
-            label = "No info";
-          }
+                if (attended == true) {
+                  icon = const Icon(Icons.check_circle, color: Colors.green);
+                  label = "Attending";
+                } else if (attended == false) {
+                  icon = const Icon(Icons.cancel, color: Colors.red);
+                  label = "Absent";
+                } else {
+                  icon = const Icon(Icons.help_outline, color: Colors.grey);
+                  label = "No info";
+                }
 
-          return ListTile(
-            leading: icon,
-            title: Text(player.name),
-            subtitle: Text(label),
-          );
-        },
-      ),
+                return ListTile(
+                  leading: icon,
+                  title: Text(player.name),
+                  subtitle: Text(label),
+                  // Long-press to mark absent quickly
+                  onLongPress: () {
+                    if (attended != false) {
+                      _setPlayerAbsent(player);
+                    }
+                  },
+                  // Trailing button to "remove" from training (attended -> false)
+                  trailing: attended == true
+                      ? IconButton(
+                          tooltip: 'Set absent (remove from training)',
+                          icon: const Icon(Icons.remove_circle_outline),
+                          onPressed: () => _setPlayerAbsent(player),
+                        )
+                      : null,
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddPlayerDialog(),
         child: const Icon(Icons.person_add),

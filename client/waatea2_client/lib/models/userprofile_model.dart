@@ -7,6 +7,7 @@ class UserProfileModel {
   final int permission;
   final String comment;
   final String mobilePhone;
+  final double clubHours;
 
   final AbonnementModel? abonnement;
   final ClassificationModel? classification;
@@ -19,7 +20,8 @@ class UserProfileModel {
       required this.comment,
       required this.mobilePhone,
       required this.classification,
-      required this.positions});
+      required this.positions,
+      required this.clubHours,});
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     final List<dynamic> positionsJson = json['positions'] ?? [];
@@ -32,6 +34,7 @@ class UserProfileModel {
       permission: json['permission'],
       comment: json['comment'],
       mobilePhone: json['mobile_phone'],
+      clubHours: (json['club_hours'] ?? 0).toDouble(),
       classification: json['classification'] != null
           ? ClassificationModel.fromJson(json['classification'])
           : null,

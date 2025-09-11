@@ -44,7 +44,8 @@ class HistoricalGamesScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Historical Games'),
+            title: const Text('Historical Games',
+    style: TextStyle(color: Colors.white)),
           ),
           body: ListView.builder(
             itemCount: snapshot.data?.length,

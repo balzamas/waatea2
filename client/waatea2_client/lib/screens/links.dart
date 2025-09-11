@@ -43,7 +43,8 @@ class _ShowLinksState extends State<ShowLinks> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Links'),
+        title: const Text('Links',
+    style: TextStyle(color: Colors.white)),
       ),
       body: ListView.builder(
         itemCount: links.length,

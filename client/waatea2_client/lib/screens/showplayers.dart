@@ -298,7 +298,8 @@ class _ShowPlayersState extends State<ShowPlayers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User List'),
+        title: const Text('User List',
+    style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),

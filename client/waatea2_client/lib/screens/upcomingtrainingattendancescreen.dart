@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import '../globals.dart' as globals;
 import '../models/training_model.dart';
 import '../models/attendance.dart';
+import 'package:waatea2_client/widgets/setattendance_row.dart';
+import 'package:intl/intl.dart';
 
 class UpcomingTrainingAttendanceScreen extends StatefulWidget {
   const UpcomingTrainingAttendanceScreen({Key? key}) : super(key: key);
@@ -122,7 +124,8 @@ class _UpcomingTrainingAttendanceScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Upcoming trainings')),
+      appBar: AppBar(title: const Text('Upcoming trainings',
+    style: TextStyle(color: Colors.white))),
       body: FutureBuilder<List<TrainingModel>>(
         future: _future,
         builder: (context, snap) {
@@ -148,49 +151,24 @@ class _UpcomingTrainingAttendanceScreenState
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: trainings.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, i) {
-                final t = trainings[i];
-                final when = DateFormat('EEE, d. MMM yyyy – HH:mm')
-                    .format(DateTime.parse(t.date).toLocal());
-                final state = _stateByTraining[t.id] ?? 0;
+ itemBuilder: (context, i) {
+  final t = trainings[i];
+  final dt = DateTime.parse(t.date);
+  final whenLabel = DateFormat('EEE, d. MMM yyyy – HH:mm').format(dt.toLocal());
+  final dateLabel = DateFormat('dd.MM.yyyy').format(dt.toLocal());
+  final state = _stateByTraining[t.id] ?? 0;
+  final pk = _attendancePkByTraining[t.id] ?? '';
 
-                Icon leadingIcon;
-                if (state == 1) {
-                  leadingIcon =
-                      const Icon(Icons.check_circle, color: Colors.green);
-                } else if (state == 2) {
-                  leadingIcon = const Icon(Icons.cancel, color: Colors.red);
-                } else {
-                  leadingIcon =
-                      const Icon(Icons.help_outline, color: Colors.orange);
-                }
-
-
-                return ListTile(
-                  leading: leadingIcon,
-                  title: Text("${DateTime.parse(t.date).day}.${DateTime.parse(t.date).month}.${DateTime.parse(t.date).year}" ?? 'Training'),
-                  subtitle: Text('$when'),
-                  isThreeLine: true,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black),
-                        onPressed: () => _setAttendance(t: t, stateValue: 1),
-                        child: const Text('Yey'),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black),
-                        onPressed: () => _setAttendance(t: t, stateValue: 2),
-                        child: const Text('No'),
-                      ),
-                    ],
-                  ),
-                );
-              },
+  return SetAttendanceRow(
+    whenLabel: whenLabel,
+    dateLabel: dateLabel,
+    initialState: state,
+    initialAttendanceId: pk,
+    trainingId: t.id,
+    dayofyear: t.dayofyear,
+    season: t.season,
+  );
+},
             ),
           );
         },

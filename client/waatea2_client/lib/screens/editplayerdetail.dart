@@ -155,7 +155,8 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: const Text('Edit Profile',
+    style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -271,7 +272,8 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                   ),
                 );
               },
-              child: const Text('Save'),
+              child: const Text('Save',
+    style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

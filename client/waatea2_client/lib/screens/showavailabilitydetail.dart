@@ -274,7 +274,7 @@ class ShowAvailabilityDetailState extends State<ShowAvailabilityDetail> {
       key: availabilityListKey,
       appBar: AppBar(
         title: Text(
-            "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}"),
+            "${widget.game} // ${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}", style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),

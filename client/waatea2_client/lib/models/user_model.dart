@@ -8,6 +8,8 @@ class UserModel {
   final int attendancePercentage;
   final int fitness;
   final int caps;
+  final double clubHours;
+
 
   UserModel(
       {required this.pk,
@@ -16,7 +18,8 @@ class UserModel {
       required this.profile,
       required this.attendancePercentage,
       required this.caps,
-      required this.fitness});
+      required this.fitness,
+      required this.clubHours,});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -27,6 +30,7 @@ class UserModel {
       attendancePercentage: json['attendance_percentage'],
       caps: json['caps'],
       fitness: json['fitness'],
+      clubHours: (json['club_hours'] ?? 0).toDouble(),
     );
   }
 

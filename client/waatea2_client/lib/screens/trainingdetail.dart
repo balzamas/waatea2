@@ -435,7 +435,8 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                     },
                   ),
                   ElevatedButton(
-                    child: Text('Save'),
+                    child: Text('Save',
+    style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       // Update the training part's content with the edited text and minutes.
                       setState(() {

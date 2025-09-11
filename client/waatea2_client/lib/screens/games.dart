@@ -228,7 +228,8 @@ class ShowGamesState extends State<ShowGames> {
     return Scaffold(
       key: availabilityListKey,
       appBar: AppBar(
-        title: const Text('Game editor'),
+        title: const Text('Game editor',
+    style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: Icon(Icons.add_circle_outline),

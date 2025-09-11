@@ -1,5 +1,21 @@
 # Waatea Changelog
 
+## V0.0.45
+- **Bug Fix** Don't override training start time with 20:15 when date is changed
+- **Bug Fix** Title texts always white color, no matter if dark mode or not.
+- **Bug Fix** Crash when loading training ranking
+- **Bug Fix** Fix Umlauts in player names (training attendance list)
+- **Bug Fix** Add Club name to game calendar ICS
+- **Bug Fix** Fix screen jump when adding a new training
+- **Enhancement:** Show num of players who didn't set their training attendance
+- **Enhancement:** Icons instead of ugly buttons when setting for future trainings
+- **Enhancement:** Coaches can remove players from a training (no shows)
+- **CleanUp:** Get rid of unused libraries
+- **New Feature:** Compile Android version
+- **New Feature:** Import and show club hours (Helfereinsatz)
+
+
+
 ## V0.0.44
 - **Enhancement:** Attendance for future trainings can be set
 - **Enhancement:** Game calendar, for import into Google/Iphone (ics-File)
@@ -10,7 +26,8 @@
 
 ## V0.0.43
 - **Enhancement:** Coaches cann add players to a training
-- **Bug Fix** Sort players in training attended list
+- **Bug Fix** Sort play- **Enhancement:** Icons instead of ugly buttons when setting for future trainings
+ers in training attended list
 - **Bug Fix** Correct training attendance
 
 ## V0.0.42

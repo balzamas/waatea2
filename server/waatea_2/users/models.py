@@ -95,6 +95,14 @@ class UserProfile(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.SET_NULL, blank=True, null=True)
     positions = models.ManyToManyField(Position, blank=True)
     mobile_phone = CharField(_("Mobile phone number (format: 41798257004)"), blank=True, max_length=255)
+    club_hours = models.FloatField(default=0.0, help_text="Total club hours contributed by the user")
 
     def __str__(self):
         return f"{self.user.name}"
+
+
+class ClubHoursSync(UserProfile):
+    class Meta:
+        proxy = True
+        verbose_name = "Club hours Sync"
+        verbose_name_plural = "Club hours Sync"

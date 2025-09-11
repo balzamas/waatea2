@@ -21,7 +21,8 @@ class ShowPlayerDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(user.name),
+        title: Text(user.name,
+    style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),

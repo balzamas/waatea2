@@ -159,10 +159,14 @@ class PositionSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     classification = ClassificationField()
     positions = PositionSerializer(many=True)  # Add positions field
+    club_hours = serializers.FloatField(required=False)  # <- hinzugefügt
 
     class Meta:
         model = UserProfile
-        fields = ('assessment', 'is_playing', 'permission', 'abo', 'comment', 'classification', 'mobile_phone', 'positions')
+        fields = ('assessment', 'is_playing', 'permission', 'abo', 'comment', 'classification', 'mobile_phone', 'positions', 'club_hours')
+        extra_kwargs = {
+            'club_hours': {'required': False},  # PATCH freundlich
+        }
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -241,6 +245,7 @@ class UserSerializer(serializers.ModelSerializer):
     attendance_percentage = serializers.SerializerMethodField()
     caps = serializers.SerializerMethodField()
     fitness = serializers.SerializerMethodField()
+    club_hours = serializers.SerializerMethodField()
 
     club = ClubSerializer()
     profile = UserProfileSerializer(source='userprofile')
@@ -254,8 +259,12 @@ class UserSerializer(serializers.ModelSerializer):
         'profile',
             'attendance_percentage',
             'caps',
-            'fitness'
+            'fitness',
+            'club_hours'
         ]
+
+    def get_club_hours(self, obj):
+        return obj.userprofile.club_hours if hasattr(obj, 'userprofile') else 0
 
     def get_caps(self, obj):
         return HistoricalGame.objects.filter(player=obj.pk).order_by('-date').count()

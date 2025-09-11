@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         },
         child: Scaffold(
-          appBar: AppBar(title: const Text('Login')),
+          appBar: AppBar(title: const Text('Login', style: TextStyle(color: Colors.white))),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -199,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     onPressed: _login,
-                    child: const Text('Login'),
+                    child: const Text('Login', style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 55),
@@ -215,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-                  child: const Text('Register'),
+                  child: const Text('Register', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
