@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:waatea2_client/screens/detail_screen.dart';
 
 class ReorderableListScreen extends StatefulWidget {
-  const ReorderableListScreen({Key? key}) : super(key: key);
+  const ReorderableListScreen({super.key});
 
   @override
-  _ReorderableListScreenState createState() => _ReorderableListScreenState();
+   State<ReorderableListScreen> createState() => _ReorderableListScreenState();
 }
 
 class _ReorderableListScreenState extends State<ReorderableListScreen> {
@@ -27,7 +27,7 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
   void initState() {
     super.initState();
 
-   // _controller = QuillController.basic();
+    // _controller = QuillController.basic();
   }
 
   void _showAddItemsDialog() {
@@ -38,17 +38,18 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
           title: const Text('Add Items'),
           content: SingleChildScrollView(
             child: Column(
-              children: availableItems.map((item) {
-                return ListTile(
-                  title: Text(item),
-                  onTap: () {
-                    setState(() {
-                      elements.add(item);
-                    });
-                    Navigator.of(context).pop();
-                  },
-                );
-              }).toList(),
+              children:
+                  availableItems.map((item) {
+                    return ListTile(
+                      title: Text(item),
+                      onTap: () {
+                        setState(() {
+                          elements.add(item);
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  }).toList(),
             ),
           ),
         );
@@ -77,9 +78,7 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
     // final doc = _controller.document.toPlainText();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Training 19.9.23'),
-      ),
+      appBar: AppBar(title: const Text('Training 19.9.23')),
       body: Column(
         crossAxisAlignment:
             CrossAxisAlignment.start, // Align children to the left
@@ -96,25 +95,23 @@ class _ReorderableListScreenState extends State<ReorderableListScreen> {
           ),
           Expanded(
             child: ReorderableListView(
-              onReorder: (oldIndex, newIndex) {
+              onReorderItem: (oldIndex, newIndex) {
                 setState(() {
-                  if (newIndex > oldIndex) {
-                    newIndex -= 1;
-                  }
                   final element = elements.removeAt(oldIndex);
                   elements.insert(newIndex, element);
                 });
               },
-              children: elements.map((element) {
-                return ListTile(
-                  onTap: () {
-                    _openDetailScreen(context, element);
-                  },
-                  key: Key(element),
-                  title: Text(element),
-                  leading: const Icon(Icons.bolt),
-                );
-              }).toList(),
+              children:
+                  elements.map((element) {
+                    return ListTile(
+                      onTap: () {
+                        _openDetailScreen(context, element);
+                      },
+                      key: Key(element),
+                      title: Text(element),
+                      leading: const Icon(Icons.bolt),
+                    );
+                  }).toList(),
             ),
           ),
         ],

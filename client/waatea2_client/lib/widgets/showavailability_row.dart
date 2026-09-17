@@ -17,7 +17,7 @@ class ShowAvailabilityRow extends StatefulWidget {
   final int isNotSet;
 
   const ShowAvailabilityRow({
-    Key? key,
+    super.key,
     required this.gameId,
     required this.game,
     required this.gameDate,
@@ -27,10 +27,10 @@ class ShowAvailabilityRow extends StatefulWidget {
     required this.isNotAvailable,
     required this.isMaybe,
     required this.isNotSet,
-  }) : super(key: key);
+  });
 
   @override
-  _ShowAvailabilityRowState createState() => _ShowAvailabilityRowState();
+  State<ShowAvailabilityRow> createState() => _ShowAvailabilityRowState();
 }
 
 class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
@@ -54,23 +54,26 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ShowAvailabilityDetail(
-                  widget.gameId,
-                  widget.game,
-                  widget.gameDate,
-                  widget.dayofyear,
-                  widget.season,
-                  widget.isAvailable,
-                  widget.isNotAvailable,
-                  widget.isMaybe,
-                  widget.isNotSet,
-                ),
+                builder:
+                    (context) => ShowAvailabilityDetail(
+                      widget.gameId,
+                      widget.game,
+                      widget.gameDate,
+                      widget.dayofyear,
+                      widget.season,
+                      widget.isAvailable,
+                      widget.isNotAvailable,
+                      widget.isMaybe,
+                      widget.isNotSet,
+                    ),
                 // Pass any other necessary parameters to ShowAvailabilityDetail constructor
               ),
             );
           } else {
-            Future<List<GameModel>> games =
-                getGameList(widget.season, widget.dayofyear);
+            Future<List<GameModel>> games = getGameList(
+              widget.season,
+              widget.dayofyear,
+            );
             String team1Title = "";
             String team2Title = "";
             String team1id = "";
@@ -92,20 +95,23 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
               }
 
               if (isPublished) {
-                final team1Lineup =
-                    await getLineUp(team1id); // Load the lineup for team 1
-                final team2Lineup =
-                    await getLineUp(team2id); // Load the lineup for team 2
+                final team1Lineup = await getLineUp(
+                  team1id,
+                ); // Load the lineup for team 1
+                final team2Lineup = await getLineUp(
+                  team2id,
+                ); // Load the lineup for team 2
 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShowLineUp(
-                      team1Title: team1Title,
-                      team1Lineup: team1Lineup,
-                      team2Title: team2Title,
-                      team2Lineup: team2Lineup,
-                    ),
+                    builder:
+                        (context) => ShowLineUp(
+                          team1Title: team1Title,
+                          team1Lineup: team1Lineup,
+                          team2Title: team2Title,
+                          team2Lineup: team2Lineup,
+                        ),
                   ),
                 );
               }
@@ -125,13 +131,11 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                       children: [
                         Text(
                           widget.game,
-                          style: DefaultTextStyle.of(context)
-                              .style
-                              .apply(fontSizeFactor: 1.5),
+                          style: DefaultTextStyle.of(
+                            context,
+                          ).style.apply(fontSizeFactor: 1.5),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
@@ -148,11 +152,8 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                       children: [
                         Text(
                           "${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}",
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.black54,
-                                    fontSize: 18,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Colors.black54, fontSize: 18),
                         ),
                       ],
                     ),
@@ -167,13 +168,21 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              245,
+                              245,
+                              245,
+                            ),
                             foregroundColor: Colors.green,
                             radius: 20.0,
-                            child: Text(widget.isAvailable.toString(),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            child: Text(
+                              widget.isAvailable.toString(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -189,13 +198,21 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              245,
+                              245,
+                              245,
+                            ),
                             foregroundColor: Colors.red,
                             radius: 20.0,
-                            child: Text(widget.isNotAvailable.toString(),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            child: Text(
+                              widget.isNotAvailable.toString(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -211,13 +228,21 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              245,
+                              245,
+                              245,
+                            ),
                             foregroundColor: Colors.orange,
                             radius: 20.0,
-                            child: Text(widget.isMaybe.toString(),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            child: Text(
+                              widget.isMaybe.toString(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -233,13 +258,21 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                           foregroundColor: Colors.white,
                           radius: 25.0,
                           child: CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(255, 245, 245, 245),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              245,
+                              245,
+                              245,
+                            ),
                             foregroundColor: Colors.grey,
                             radius: 20.0,
-                            child: Text(widget.isNotSet.toString(),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            child: Text(
+                              widget.isNotSet.toString(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],

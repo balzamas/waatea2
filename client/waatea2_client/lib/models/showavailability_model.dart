@@ -38,6 +38,11 @@ class ShowAvailabilityModel {
     );
   }
 
-  Map<String, dynamic> toJson() =>
-      {'pk': pk, 'home': home, 'away': away, 'date': date, 'season': season};
+  Map<String, dynamic> toJson() => {
+    'pk': pk,
+    'home': home,
+    'away': away,
+    'date': date,
+    'season': season,
+  };
 }

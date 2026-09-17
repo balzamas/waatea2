@@ -9,14 +9,13 @@ import '../globals.dart' as globals;
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
-
 class EditPlayerComment extends StatefulWidget {
   final UserModel user;
 
-  const EditPlayerComment({Key? key, required this.user}) : super(key: key);
+  const EditPlayerComment({super.key, required this.user});
 
   @override
-  _EditPlayerCommentState createState() => _EditPlayerCommentState();
+   State<EditPlayerComment> createState() => _EditPlayerCommentState();
 }
 
 class _EditPlayerCommentState extends State<EditPlayerComment> {
@@ -48,9 +47,7 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
     };
 
     final http.Response response = await http.patch(
-      Uri.parse(
-        '${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/',
-      ),
+      Uri.parse('${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/'),
       headers: {
         'Authorization': 'Token ${globals.token}',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -60,9 +57,7 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
     Navigator.pop(context);
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => MyHomePage(initialIndex: 6),
-      ),
+      MaterialPageRoute(builder: (_) => MyHomePage(initialIndex: 6)),
     );
   }
 

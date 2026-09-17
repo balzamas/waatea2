@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:screenshot/screenshot.dart';
@@ -13,7 +12,7 @@ class ScoreImagePage extends StatefulWidget {
 }
 
 class _ScoreImagePageState extends State<ScoreImagePage> {
-    final _titleController = TextEditingController();
+  final _titleController = TextEditingController();
 
   final _teamAController = TextEditingController();
   final _teamBController = TextEditingController();
@@ -28,9 +27,9 @@ class _ScoreImagePageState extends State<ScoreImagePage> {
       final saver = getImageSaver(); // uses conditional import
       await saver.save(image);
       if (!kIsWeb) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Image saved")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Image saved")));
       }
     }
   }
@@ -43,32 +42,32 @@ class _ScoreImagePageState extends State<ScoreImagePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-                        TextField(
-  controller: _titleController,
-  decoration: const InputDecoration(labelText: "Title"),
-  onChanged: (_) => setState(() {}),
-),
             TextField(
-  controller: _teamAController,
-  decoration: const InputDecoration(labelText: "Team A"),
-  onChanged: (_) => setState(() {}),
-),
-TextField(
-  controller: _scoreAController,
-  decoration: const InputDecoration(labelText: "Team A"),
-  onChanged: (_) => setState(() {}),
-),
+              controller: _titleController,
+              decoration: const InputDecoration(labelText: "Title"),
+              onChanged: (_) => setState(() {}),
+            ),
+            TextField(
+              controller: _teamAController,
+              decoration: const InputDecoration(labelText: "Team A"),
+              onChanged: (_) => setState(() {}),
+            ),
+            TextField(
+              controller: _scoreAController,
+              decoration: const InputDecoration(labelText: "Team A"),
+              onChanged: (_) => setState(() {}),
+            ),
             const SizedBox(height: 8),
-TextField(
-  controller: _teamBController,
-  decoration: const InputDecoration(labelText: "Team B"),
-  onChanged: (_) => setState(() {}),
-),  
-TextField(
-  controller: _scoreBController,
-  decoration: const InputDecoration(labelText: "Team B"),
-  onChanged: (_) => setState(() {}),
-),               
+            TextField(
+              controller: _teamBController,
+              decoration: const InputDecoration(labelText: "Team B"),
+              onChanged: (_) => setState(() {}),
+            ),
+            TextField(
+              controller: _scoreBController,
+              decoration: const InputDecoration(labelText: "Team B"),
+              onChanged: (_) => setState(() {}),
+            ),
             const SizedBox(height: 20),
             Screenshot(
               controller: _screenshotController,
@@ -76,29 +75,42 @@ TextField(
                 alignment: Alignment.center,
                 children: [
                   Image.asset('assets/template.png'), // your template
-                                    Positioned(
+                  Positioned(
                     top: 180,
-                    
+
                     child: Text(
-                      '${_titleController.text}',
-                      style: const TextStyle(fontFamily: 'Gilroy',
-    fontSize: 28, color: Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold,),
+                      _titleController.text,
+                      style: const TextStyle(
+                        fontFamily: 'Gilroy',
+                        fontSize: 28,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Positioned(
                     top: 280,
-                    
+
                     child: Text(
                       '${_teamAController.text} ${_scoreAController.text}',
-                      style: const TextStyle(fontFamily: 'Gilroy',
-    fontSize: 28, color: Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold,),
+                      style: const TextStyle(
+                        fontFamily: 'Gilroy',
+                        fontSize: 28,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Positioned(
                     top: 320,
                     child: Text(
                       '${_teamBController.text} ${_scoreBController.text}',
-                      style: const TextStyle(fontFamily: 'Gilroy', fontSize: 28, color: Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontFamily: 'Gilroy',
+                        fontSize: 28,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

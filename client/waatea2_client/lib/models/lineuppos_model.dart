@@ -28,10 +28,10 @@ class LineUpPosModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'player': player,
-        'game': game,
-        'position': position,
-        'remarks': remarks
-      };
+    'id': id,
+    'player': player,
+    'game': game,
+    'position': position,
+    'remarks': remarks,
+  };
 }

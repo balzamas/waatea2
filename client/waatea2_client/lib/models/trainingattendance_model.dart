@@ -11,17 +11,18 @@ class TrainingAttendanceModel {
   final String remarks;
   final String review;
 
-  TrainingAttendanceModel(
-      {required this.pk,
-      required this.dayofyear,
-      required this.season,
-      required this.date,
-      required this.club,
-      required this.attendanceCount,
-      required this.nonattendanceCount,
-      required this.current,
-      required this.remarks,
-      required this.review});
+  TrainingAttendanceModel({
+    required this.pk,
+    required this.dayofyear,
+    required this.season,
+    required this.date,
+    required this.club,
+    required this.attendanceCount,
+    required this.nonattendanceCount,
+    required this.current,
+    required this.remarks,
+    required this.review,
+  });
 
   factory TrainingAttendanceModel.fromJson(Map<String, dynamic> json) {
     return TrainingAttendanceModel(

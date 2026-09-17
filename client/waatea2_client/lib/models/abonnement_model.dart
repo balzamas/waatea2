@@ -7,6 +7,9 @@ class AbonnementModel {
 
   factory AbonnementModel.fromJson(Map<String, dynamic> json) {
     return AbonnementModel(
-        pk: json['pk'], name: json['name'], short: json['short']);
+      pk: json['pk'],
+      name: json['name'],
+      short: json['short'],
+    );
   }
 }

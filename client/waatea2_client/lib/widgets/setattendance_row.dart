@@ -21,7 +21,7 @@ class SetAttendanceRow extends StatefulWidget {
   final String season;
 
   const SetAttendanceRow({
-    Key? key,
+    super.key,
     required this.whenLabel,
     required this.dateLabel,
     required this.initialState,
@@ -29,7 +29,7 @@ class SetAttendanceRow extends StatefulWidget {
     required this.trainingId,
     required this.dayofyear,
     required this.season,
-  }) : super(key: key);
+  });
 
   @override
   State<SetAttendanceRow> createState() => _SetAttendanceRowState();
@@ -64,7 +64,7 @@ class _SetAttendanceRowState extends State<SetAttendanceRow> {
       if (_attendancePk.isNotEmpty) {
         // PATCH existing
         final resp = await http.patch(
-          Uri.parse('${globals.URL_PREFIX}/api/attendance/${_attendancePk}/'),
+          Uri.parse('${globals.URL_PREFIX}/api/attendance/$_attendancePk/'),
           headers: headers,
           body: jsonEncode({'attended': nextState == 1}),
         );
@@ -114,15 +114,19 @@ class _SetAttendanceRowState extends State<SetAttendanceRow> {
     final yesSelected = _state == 1;
     final noSelected = _state == 2;
 
-    final leadingIcon = _state == 1
-        ? const Icon(Icons.check_circle, color: Colors.green)
-        : _state == 2
+    final leadingIcon =
+        _state == 1
+            ? const Icon(Icons.check_circle, color: Colors.green)
+            : _state == 2
             ? const Icon(Icons.cancel, color: Colors.red)
             : const Icon(Icons.help_outline, color: Colors.orange);
 
     return ListTile(
       leading: leadingIcon,
-      title: Text(widget.dateLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(
+        widget.dateLabel,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
       subtitle: Text(widget.whenLabel),
       isThreeLine: true,
       trailing: Row(
@@ -131,17 +135,19 @@ class _SetAttendanceRowState extends State<SetAttendanceRow> {
           IconButton(
             tooltip: 'I will attend',
             onPressed: _saving ? null : () => _save(1),
-            icon: yesSelected
-                ? const Icon(Icons.check_circle, size: 28)
-                : const Icon(Icons.check_circle_outline, size: 28),
+            icon:
+                yesSelected
+                    ? const Icon(Icons.check_circle, size: 28)
+                    : const Icon(Icons.check_circle_outline, size: 28),
             color: yesSelected ? Colors.green : null,
           ),
           IconButton(
             tooltip: "I can't attend",
             onPressed: _saving ? null : () => _save(2),
-            icon: noSelected
-                ? const Icon(Icons.cancel, size: 28)
-                : const Icon(Icons.cancel_outlined, size: 28),
+            icon:
+                noSelected
+                    ? const Icon(Icons.cancel, size: 28)
+                    : const Icon(Icons.cancel_outlined, size: 28),
             color: noSelected ? Colors.red : null,
           ),
         ],

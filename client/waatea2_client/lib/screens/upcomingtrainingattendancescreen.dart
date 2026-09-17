@@ -8,14 +8,12 @@ import '../globals.dart' as globals;
 import '../models/training_model.dart';
 import '../models/attendance.dart';
 import 'package:waatea2_client/widgets/setattendance_row.dart';
-import 'package:intl/intl.dart';
 
 class UpcomingTrainingAttendanceScreen extends StatefulWidget {
-  const UpcomingTrainingAttendanceScreen({Key? key}) : super(key: key);
+  const UpcomingTrainingAttendanceScreen({super.key});
 
   @override
-  State<UpcomingTrainingAttendanceScreen> createState() =>
-      _UpcomingTrainingAttendanceScreenState();
+  State<UpcomingTrainingAttendanceScreen> createState() => _UpcomingTrainingAttendanceScreenState();
 }
 
 class _UpcomingTrainingAttendanceScreenState
@@ -33,23 +31,25 @@ class _UpcomingTrainingAttendanceScreenState
   Future<List<TrainingModel>> _fetchUpcomingTrainings() async {
     final resp = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/trainings/?season=${globals.seasonID}&club=${globals.clubId}'),
+        '${globals.URL_PREFIX}/api/trainings/?season=${globals.seasonID}&club=${globals.clubId}',
+      ),
       headers: {'Authorization': 'Token ${globals.token}'},
     );
 
     if (resp.statusCode != 200) return [];
 
     final items = json.decode(utf8.decode(resp.bodyBytes)) as List<dynamic>;
-    final all = items
-        .map((j) => TrainingModel.fromJson(j as Map<String, dynamic>))
-        .toList();
+    final all =
+        items
+            .map((j) => TrainingModel.fromJson(j as Map<String, dynamic>))
+            .toList();
 
     final now = DateTime.now().toUtc();
-    final upcoming = all
-        .where((t) => DateTime.parse(t.date).toUtc().isAfter(now))
-        .toList()
-      ..sort((a, b) =>
-          DateTime.parse(a.date).compareTo(DateTime.parse(b.date)));
+    final upcoming =
+        all.where((t) => DateTime.parse(t.date).toUtc().isAfter(now)).toList()
+          ..sort(
+            (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
+          );
 
     // Vorbelegen: vorhandene Attendance pro Training laden
     for (final t in upcoming) {
@@ -63,7 +63,8 @@ class _UpcomingTrainingAttendanceScreenState
   Future<int> _loadMyAttendanceStateForTraining(String trainingId) async {
     final resp = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/attendances/filter?training=$trainingId&player=${globals.playerId}&season=${globals.seasonID}'),
+        '${globals.URL_PREFIX}/api/attendances/filter?training=$trainingId&player=${globals.playerId}&season=${globals.seasonID}',
+      ),
       headers: {'Authorization': 'Token ${globals.token}'},
     );
     if (resp.statusCode != 200) return 0;
@@ -124,8 +125,12 @@ class _UpcomingTrainingAttendanceScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Upcoming trainings',
-    style: TextStyle(color: Colors.white))),
+      appBar: AppBar(
+        title: const Text(
+          'Upcoming trainings',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       body: FutureBuilder<List<TrainingModel>>(
         future: _future,
         builder: (context, snap) {
@@ -150,25 +155,27 @@ class _UpcomingTrainingAttendanceScreenState
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: trainings.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
- itemBuilder: (context, i) {
-  final t = trainings[i];
-  final dt = DateTime.parse(t.date);
-  final whenLabel = DateFormat('EEE, d. MMM yyyy – HH:mm').format(dt.toLocal());
-  final dateLabel = DateFormat('dd.MM.yyyy').format(dt.toLocal());
-  final state = _stateByTraining[t.id] ?? 0;
-  final pk = _attendancePkByTraining[t.id] ?? '';
+              separatorBuilder: (_, _) => const Divider(height: 1),
+              itemBuilder: (context, i) {
+                final t = trainings[i];
+                final dt = DateTime.parse(t.date);
+                final whenLabel = DateFormat(
+                  'EEE, d. MMM yyyy – HH:mm',
+                ).format(dt.toLocal());
+                final dateLabel = DateFormat('dd.MM.yyyy').format(dt.toLocal());
+                final state = _stateByTraining[t.id] ?? 0;
+                final pk = _attendancePkByTraining[t.id] ?? '';
 
-  return SetAttendanceRow(
-    whenLabel: whenLabel,
-    dateLabel: dateLabel,
-    initialState: state,
-    initialAttendanceId: pk,
-    trainingId: t.id,
-    dayofyear: t.dayofyear,
-    season: t.season,
-  );
-},
+                return SetAttendanceRow(
+                  whenLabel: whenLabel,
+                  dateLabel: dateLabel,
+                  initialState: state,
+                  initialAttendanceId: pk,
+                  trainingId: t.id,
+                  dayofyear: t.dayofyear,
+                  season: t.season,
+                );
+              },
             ),
           );
         },

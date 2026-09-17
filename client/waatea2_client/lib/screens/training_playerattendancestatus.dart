@@ -8,16 +8,17 @@ import '../globals.dart' as globals;
 
 class PlayerAttendanceStatusScreen extends StatefulWidget {
   final String trainingId;
-  const PlayerAttendanceStatusScreen({Key? key, required this.trainingId}) : super(key: key);
+  const PlayerAttendanceStatusScreen({super.key, required this.trainingId});
 
   @override
   State<PlayerAttendanceStatusScreen> createState() => _PlayerAttendanceStatusScreenState();
 }
 
-class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScreen> {
+class _PlayerAttendanceStatusScreenState
+    extends State<PlayerAttendanceStatusScreen> {
   List<UserModel> players = [];
-  Map<String, bool> attendanceMap = {};            // playerId -> attended?
-  Map<String, String> attendanceIdByPlayer = {};   // playerId -> attendanceId
+  Map<String, bool> attendanceMap = {}; // playerId -> attended?
+  Map<String, String> attendanceIdByPlayer = {}; // playerId -> attendanceId
 
   bool _loading = false;
 
@@ -31,35 +32,40 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
     setState(() => _loading = true);
     try {
       final responsePlayers = await http.get(
-        Uri.parse("${globals.URL_PREFIX}/api/attendingusers/${widget.trainingId}/"),
+        Uri.parse(
+          "${globals.URL_PREFIX}/api/attendingusers/${widget.trainingId}/",
+        ),
         headers: {'Authorization': 'Token ${globals.token}'},
       );
 
       if (responsePlayers.statusCode != 200) {
-        print("Fehler beim Laden der Spieler");
+        debugPrint("Fehler beim Laden der Spieler");
         setState(() => _loading = false);
         return;
       }
 
-      final playersData = json.decode(utf8.decode(responsePlayers.bodyBytes)) as List;
-      players = playersData
-          .map((json) => UserModel.fromJson(json))
-          .toList()
-        ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      final playersData =
+          json.decode(utf8.decode(responsePlayers.bodyBytes)) as List;
+      players =
+          playersData.map((json) => UserModel.fromJson(json)).toList()..sort(
+            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+          );
 
       final responseAttendance = await http.get(
         Uri.parse(
-            "${globals.URL_PREFIX}/api/attendances/filter?training=${widget.trainingId}&season=${globals.seasonID}"),
+          "${globals.URL_PREFIX}/api/attendances/filter?training=${widget.trainingId}&season=${globals.seasonID}",
+        ),
         headers: {'Authorization': 'Token ${globals.token}'},
       );
 
       if (responseAttendance.statusCode != 200) {
-        print("Fehler beim Laden der Anwesenheiten");
+        debugPrint("Fehler beim Laden der Anwesenheiten");
         setState(() => _loading = false);
         return;
       }
 
-      final attendanceData = json.decode(utf8.decode(responseAttendance.bodyBytes)) as List;
+      final attendanceData =
+          json.decode(utf8.decode(responseAttendance.bodyBytes)) as List;
       final List<AttendanceModel> attendances =
           attendanceData.map((json) => AttendanceModel.fromJson(json)).toList();
 
@@ -69,7 +75,7 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
         // Assuming AttendanceModel has fields: pk (or id), player, attended
         final playerId = att.player.toString();
         attendanceMap[playerId] = att.attended;
-        final attId = (att.pk ?? att.pk)?.toString() ?? "";
+        final attId = (att.pk ?? att.pk).toString() ?? "";
         if (attId.isNotEmpty) {
           attendanceIdByPlayer[playerId] = attId;
         }
@@ -77,7 +83,7 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
 
       setState(() {});
     } catch (e) {
-      print("Fehler beim Laden: $e");
+      debugPrint("Fehler beim Laden: $e");
     } finally {
       setState(() => _loading = false);
     }
@@ -138,21 +144,25 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
         );
       }
 
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
         await fetchPlayersAndAttendance();
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Player set to absent.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Player set to absent.')));
       } else {
-        print("Fehler beim Aktualisieren: ${response.statusCode} ${response.body}");
+        debugPrint(
+          "Fehler beim Aktualisieren: ${response.statusCode} ${response.body}",
+        );
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Update failed: ${response.statusCode}')),
         );
       }
     } catch (e) {
-      print("Fehler beim Setzen auf abwesend: $e");
+      debugPrint("Fehler beim Setzen auf abwesend: $e");
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error while updating attendance.')),
@@ -163,20 +173,25 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
   Future<void> _showAddPlayerDialog() async {
     try {
       final response = await http.get(
-        Uri.parse("${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}"),
+        Uri.parse(
+          "${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}",
+        ),
         headers: {'Authorization': 'Token ${globals.token}'},
       );
 
-      if (response.statusCode != null && response.statusCode != 200) {
-        print("Fehler beim Laden aller Spieler");
+      if (response.statusCode != 200) {
+        debugPrint("Fehler beim Laden aller Spieler");
         return;
       }
 
-      final allPlayersData = json.decode(utf8.decode(response.bodyBytes)) as List;
-      final allPlayers = allPlayersData.map((json) => UserModel.fromJson(json)).toList();
+      final allPlayersData =
+          json.decode(utf8.decode(response.bodyBytes)) as List;
+      final allPlayers =
+          allPlayersData.map((json) => UserModel.fromJson(json)).toList();
 
       final existingIds = players.map((p) => p.pk).toSet();
-      final missingPlayers = allPlayers.where((p) => !existingIds.contains(p.pk)).toList();
+      final missingPlayers =
+          allPlayers.where((p) => !existingIds.contains(p.pk)).toList();
       final searchController = TextEditingController();
       List<UserModel> filteredPlayers = List.from(missingPlayers);
 
@@ -184,86 +199,108 @@ class _PlayerAttendanceStatusScreenState extends State<PlayerAttendanceStatusScr
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text("Add player to training"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: searchController,
-                    decoration: const InputDecoration(
-                      labelText: 'Search player',
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                    onChanged: (query) {
-                      setDialogState(() {
-                        filteredPlayers = missingPlayers
-                            .where((p) => p.name.toLowerCase().contains(query.toLowerCase()))
-                            .toList();
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 300,
-                    width: double.maxFinite,
-                    child: ListView.builder(
-                      itemCount: filteredPlayers.length,
-                      itemBuilder: (context, index) {
-                        final player = filteredPlayers[index];
-                        return ListTile(
-                          title: Text(player.name),
-                          trailing: const Icon(Icons.add),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            _addPlayerAttendance(player);
-                          },
-                        );
+          return StatefulBuilder(
+            builder: (context, setDialogState) {
+              return AlertDialog(
+                title: const Text("Add player to training"),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        labelText: 'Search player',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (query) {
+                        setDialogState(() {
+                          filteredPlayers =
+                              missingPlayers
+                                  .where(
+                                    (p) => p.name.toLowerCase().contains(
+                                      query.toLowerCase(),
+                                    ),
+                                  )
+                                  .toList();
+                        });
                       },
                     ),
-                  ),
-                ],
-              ),
-            );
-          });
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 300,
+                      width: double.maxFinite,
+                      child: ListView.builder(
+                        itemCount: filteredPlayers.length,
+                        itemBuilder: (context, index) {
+                          final player = filteredPlayers[index];
+                          return ListTile(
+                            title: Text(player.name),
+                            trailing: const Icon(Icons.add),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _addPlayerAttendance(player);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
         },
       );
     } catch (e) {
-      print("Fehler beim Anzeigen des Dialogs: $e");
+      debugPrint("Fehler beim Anzeigen des Dialogs: $e");
     }
   }
 
-Future<void> _addPlayerAttendance(UserModel player) async {
-  try {
-    final playerIdStr = player.pk.toString();
-    final existingAttendanceId = attendanceIdByPlayer[playerIdStr];
+  Future<void> _addPlayerAttendance(UserModel player) async {
+    try {
+      final playerIdStr = player.pk.toString();
+      final existingAttendanceId = attendanceIdByPlayer[playerIdStr];
 
-    final Map<String, dynamic> body = {
-      'attended': true,
-      'dayofyear': _todayDayOfYear(),
-      'player': player.pk,
-      'training': widget.trainingId,
-      'season': globals.seasonID,
-    };
+      final Map<String, dynamic> body = {
+        'attended': true,
+        'dayofyear': _todayDayOfYear(),
+        'player': player.pk,
+        'training': widget.trainingId,
+        'season': globals.seasonID,
+      };
 
-    http.Response response;
+      http.Response response;
 
-    if (existingAttendanceId != null && existingAttendanceId.isNotEmpty) {
-      // Attendance exists (possibly with attended=false) → flip to true
-      response = await http.patch(
-        Uri.parse('${globals.URL_PREFIX}/api/attendance/$existingAttendanceId/'),
-        headers: {
-          'Authorization': 'Token ${globals.token}',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode(body),
-      );
+      if (existingAttendanceId != null && existingAttendanceId.isNotEmpty) {
+        // Attendance exists (possibly with attended=false) → flip to true
+        response = await http.patch(
+          Uri.parse(
+            '${globals.URL_PREFIX}/api/attendance/$existingAttendanceId/',
+          ),
+          headers: {
+            'Authorization': 'Token ${globals.token}',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(body),
+        );
 
-      // If PATCH isn't supported by your API, try PUT:
-      if (response.statusCode >= 400) {
-        response = await http.put(
-          Uri.parse('${globals.URL_PREFIX}/api/attendance/$existingAttendanceId/'),
+        // If PATCH isn't supported by your API, try PUT:
+        if (response.statusCode >= 400) {
+          response = await http.put(
+            Uri.parse(
+              '${globals.URL_PREFIX}/api/attendance/$existingAttendanceId/',
+            ),
+            headers: {
+              'Authorization': 'Token ${globals.token}',
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: json.encode(body),
+          );
+        }
+      } else {
+        // No record yet → create one
+        response = await http.post(
+          Uri.parse('${globals.URL_PREFIX}/api/attendance/'),
           headers: {
             'Authorization': 'Token ${globals.token}',
             'Content-Type': 'application/json; charset=UTF-8',
@@ -271,93 +308,90 @@ Future<void> _addPlayerAttendance(UserModel player) async {
           body: json.encode(body),
         );
       }
-    } else {
-      // No record yet → create one
-      response = await http.post(
-        Uri.parse('${globals.URL_PREFIX}/api/attendance/'),
-        headers: {
-          'Authorization': 'Token ${globals.token}',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode(body),
-      );
-    }
 
-    if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
-      await fetchPlayersAndAttendance();
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
+        await fetchPlayersAndAttendance();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Player added (attending).')),
+          );
+        }
+      } else {
+        debugPrint(
+          "Fehler beim Hinzufügen/Aktualisieren: ${response.statusCode} ${response.body}",
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not add: ${response.statusCode}')),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Fehler beim Hinzufügen eines Spielers: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Player added (attending).')),
+          const SnackBar(content: Text('Error while adding player.')),
         );
       }
-    } else {
-      print("Fehler beim Hinzufügen/Aktualisieren: ${response.statusCode} ${response.body}");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not add: ${response.statusCode}')),
-        );
-      }
-    }
-  } catch (e) {
-    print("Fehler beim Hinzufügen eines Spielers: $e");
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error while adding player.')),
-      );
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            const Text('Attendance Status', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Attendance Status',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: players.length,
-              itemBuilder: (context, index) {
-                final player = players[index];
-                final attended = attendanceMap[player.pk.toString()];
+      body:
+          _loading
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                itemCount: players.length,
+                itemBuilder: (context, index) {
+                  final player = players[index];
+                  final attended = attendanceMap[player.pk.toString()];
 
-                Icon icon;
-                String label;
+                  Icon icon;
+                  String label;
 
-                if (attended == true) {
-                  icon = const Icon(Icons.check_circle, color: Colors.green);
-                  label = "Attending";
-                } else if (attended == false) {
-                  icon = const Icon(Icons.cancel, color: Colors.red);
-                  label = "Absent";
-                } else {
-                  icon = const Icon(Icons.help_outline, color: Colors.grey);
-                  label = "No info";
-                }
+                  if (attended == true) {
+                    icon = const Icon(Icons.check_circle, color: Colors.green);
+                    label = "Attending";
+                  } else if (attended == false) {
+                    icon = const Icon(Icons.cancel, color: Colors.red);
+                    label = "Absent";
+                  } else {
+                    icon = const Icon(Icons.help_outline, color: Colors.grey);
+                    label = "No info";
+                  }
 
-                return ListTile(
-                  leading: icon,
-                  title: Text(player.name),
-                  subtitle: Text(label),
-                  // Long-press to mark absent quickly
-                  onLongPress: () {
-                    if (attended != false) {
-                      _setPlayerAbsent(player);
-                    }
-                  },
-                  // Trailing button to "remove" from training (attended -> false)
-                  trailing: attended == true
-                      ? IconButton(
-                          tooltip: 'Set absent (remove from training)',
-                          icon: const Icon(Icons.remove_circle_outline),
-                          onPressed: () => _setPlayerAbsent(player),
-                        )
-                      : null,
-                );
-              },
-            ),
+                  return ListTile(
+                    leading: icon,
+                    title: Text(player.name),
+                    subtitle: Text(label),
+                    // Long-press to mark absent quickly
+                    onLongPress: () {
+                      if (attended != false) {
+                        _setPlayerAbsent(player);
+                      }
+                    },
+                    // Trailing button to "remove" from training (attended -> false)
+                    trailing:
+                        attended == true
+                            ? IconButton(
+                              tooltip: 'Set absent (remove from training)',
+                              icon: const Icon(Icons.remove_circle_outline),
+                              onPressed: () => _setPlayerAbsent(player),
+                            )
+                            : null,
+                  );
+                },
+              ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddPlayerDialog(),
         child: const Icon(Icons.person_add),

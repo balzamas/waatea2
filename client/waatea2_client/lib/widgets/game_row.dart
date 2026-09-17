@@ -9,16 +9,16 @@ class GameRow extends StatefulWidget {
   final String season;
 
   const GameRow({
-    Key? key,
+    super.key,
     required this.gameId,
     required this.game,
     required this.gameDate,
     required this.dayofyear,
     required this.season,
-  }) : super(key: key);
+  });
 
   @override
-  _GameRowState createState() => _GameRowState();
+  State<GameRow> createState() => _GameRowState();
 }
 
 class _GameRowState extends State<GameRow> {
@@ -52,13 +52,11 @@ class _GameRowState extends State<GameRow> {
                       children: [
                         Text(
                           "${widget.game} // ${formatterTime.format(DateTime.parse(widget.gameDate).toLocal())}",
-                          style: DefaultTextStyle.of(context)
-                              .style
-                              .apply(fontSizeFactor: 1.5),
+                          style: DefaultTextStyle.of(
+                            context,
+                          ).style.apply(fontSizeFactor: 1.5),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
@@ -75,11 +73,8 @@ class _GameRowState extends State<GameRow> {
                       children: [
                         Text(
                           "${DateTime.parse(widget.gameDate).day}.${DateTime.parse(widget.gameDate).month}.${DateTime.parse(widget.gameDate).year}",
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.black54,
-                                    fontSize: 18,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Colors.black54, fontSize: 18),
                         ),
                       ],
                     ),

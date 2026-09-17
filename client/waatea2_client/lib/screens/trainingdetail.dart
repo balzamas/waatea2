@@ -12,7 +12,7 @@ import '../globals.dart' as globals;
 import 'package:waatea2_client/models/trainingattendance_model.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:universal_html/html.dart' as uh;
+import '../utils/download.dart';
 
 enum FileGenerationStatus { idle, generating, complete, error }
 
@@ -20,10 +20,10 @@ final screenshotController = ScreenshotController();
 
 class TrainingDetailScreen extends StatefulWidget {
   final TrainingAttendanceModel training;
-  const TrainingDetailScreen({Key? key, required this.training}) : super(key: key);
+  const TrainingDetailScreen({super.key, required this.training});
 
   @override
-  _TrainingDetailScreenState createState() => _TrainingDetailScreenState();
+   State<TrainingDetailScreen> createState() => _TrainingDetailScreenState();
 }
 
 class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
@@ -75,17 +75,15 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
         // Training deleted successfully
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => MyHomePage(initialIndex: 5),
-          ),
+          MaterialPageRoute(builder: (_) => MyHomePage(initialIndex: 5)),
         );
       } else {
         // Handle error if necessary.
-        print('API Error: ${response.statusCode}');
+        debugPrint('API Error: ${response.statusCode}');
       }
     } catch (error) {
       // Handle error if necessary.
-      print('Error: $error');
+      debugPrint('Error: $error');
     }
   }
 
@@ -93,25 +91,27 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
     try {
       final response = await http.get(
         Uri.parse(
-            '${globals.URL_PREFIX}/api/trainingparts/?training=${widget.training.pk}'),
+          '${globals.URL_PREFIX}/api/trainingparts/?training=${widget.training.pk}',
+        ),
         headers: {'Authorization': 'Token ${globals.token}'},
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
-          trainingParts = data.map((item) {
-            final trainingPart = TrainingPart.fromJson(item);
-            return trainingPart;
-          }).toList();
+          trainingParts =
+              data.map((item) {
+                final trainingPart = TrainingPart.fromJson(item);
+                return trainingPart;
+              }).toList();
         });
       } else {
         // Handle error if necessary.
-        print('API Error: ${response.statusCode}');
+        debugPrint('API Error: ${response.statusCode}');
       }
     } catch (error) {
       // Handle error if necessary.
-      print('Error: $error');
+      debugPrint('Error: $error');
     }
   }
 
@@ -126,10 +126,11 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      List<TrainingModel> availableTrainings = data.map((item) {
-        final training = TrainingModel.fromJson(item);
-        return training;
-      }).toList();
+      List<TrainingModel> availableTrainings =
+          data.map((item) {
+            final training = TrainingModel.fromJson(item);
+            return training;
+          }).toList();
 
       // Show a dialog to select a training to import its parts.
       await showDialog(
@@ -139,53 +140,63 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             title: Text('Select a Training to Import Parts From'),
             content: SingleChildScrollView(
               child: Column(
-                children: availableTrainings.map((training) {
-                  DateTime trainingDate = DateTime.parse(training.date);
+                children:
+                    availableTrainings.map((training) {
+                      DateTime trainingDate = DateTime.parse(training.date);
 
-                  return ListTile(
-                    title: Text(
-                        '${trainingDate.day}.${trainingDate.month}.${trainingDate.year}'), // Customize the display as needed.
-                    onTap: () async {
-                      // Fetch the training parts of the selected training.
-                      final partsResponse = await http.get(
-                        Uri.parse(
-                          '${globals.URL_PREFIX}/api/trainingparts/?training=${training.id}',
-                        ),
-                        headers: {'Authorization': 'Token ${globals.token}'},
-                      );
+                      return ListTile(
+                        title: Text(
+                          '${trainingDate.day}.${trainingDate.month}.${trainingDate.year}',
+                        ), // Customize the display as needed.
+                        onTap: () async {
+                          // Fetch the training parts of the selected training.
+                          final partsResponse = await http.get(
+                            Uri.parse(
+                              '${globals.URL_PREFIX}/api/trainingparts/?training=${training.id}',
+                            ),
+                            headers: {
+                              'Authorization': 'Token ${globals.token}',
+                            },
+                          );
 
-                      if (partsResponse.statusCode == 200) {
-                        final List<dynamic> partsData =
-                            jsonDecode(partsResponse.body);
-                        List<TrainingPart> importedParts =
-                            partsData.map((item) {
-                          TrainingPart part = TrainingPart.fromJson(item);
-                          return part;
-                        }).toList();
+                          if (partsResponse.statusCode == 200) {
+                            final List<dynamic> partsData = jsonDecode(
+                              partsResponse.body,
+                            );
+                            List<TrainingPart> importedParts =
+                                partsData.map((item) {
+                                  TrainingPart part = TrainingPart.fromJson(
+                                    item,
+                                  );
+                                  return part;
+                                }).toList();
 
-                        // Add the imported training parts to the current training.
-                        setState(() {
-                          for (var trainingPart in importedParts) {
-                            // Perform your action on 'trainingPart' here.
-                            trainingParts.add(TrainingPart(
-                                id: null,
-                                trainingId: widget.training.pk,
-                                order: trainingPart.order,
-                                description: trainingPart.description,
-                                minutes: trainingPart.minutes));
+                            // Add the imported training parts to the current training.
+                            setState(() {
+                              for (var trainingPart in importedParts) {
+                                // Perform your action on 'trainingPart' here.
+                                trainingParts.add(
+                                  TrainingPart(
+                                    id: null,
+                                    trainingId: widget.training.pk,
+                                    order: trainingPart.order,
+                                    description: trainingPart.description,
+                                    minutes: trainingPart.minutes,
+                                  ),
+                                );
+                              }
+                            });
+
+                            // Close the dialog.
+                            Navigator.of(context).pop();
+                            _save();
+                          } else {
+                            // Handle error if necessary.
+                            debugPrint('API Error: ${partsResponse.statusCode}');
                           }
-                        });
-
-                        // Close the dialog.
-                        Navigator.of(context).pop();
-                        _save();
-                      } else {
-                        // Handle error if necessary.
-                        print('API Error: ${partsResponse.statusCode}');
-                      }
-                    },
-                  );
-                }).toList(),
+                        },
+                      );
+                    }).toList(),
               ),
             ),
           );
@@ -193,7 +204,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
       );
     } else {
       // Handle error if necessary.
-      print('API Error: ${response.statusCode}');
+      debugPrint('API Error: ${response.statusCode}');
     }
   }
 
@@ -205,7 +216,8 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
         // This training part already has a primary key (pk), so update it with a PATCH request.
         final response = await http.patch(
           Uri.parse(
-              '${globals.URL_PREFIX}/api/trainingpart/${trainingPart.id}/'),
+            '${globals.URL_PREFIX}/api/trainingpart/${trainingPart.id}/',
+          ),
           headers: {'Authorization': 'Token ${globals.token}'},
           body: {
             'description': trainingPart.description,
@@ -217,10 +229,10 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
 
         if (response.statusCode == 200) {
           // Handle success as needed.
-          print('Updated training part with id: ${trainingPart.id}');
+          debugPrint('Updated training part with id: ${trainingPart.id}');
         } else {
           // Handle error if necessary.
-          print('API Error: ${response.statusCode}');
+          debugPrint('API Error: ${response.statusCode}');
         }
       } else {
         // This training part doesn't have a primary key (pk), so create a new record with a POST request.
@@ -231,20 +243,20 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             'description': trainingPart.description,
             'order': index.toString(),
             'training': widget.training.pk,
-            'minutes': trainingPart.minutes.toString()
+            'minutes': trainingPart.minutes.toString(),
           },
         );
 
         if (response.statusCode == 201) {
           // Handle success as needed.
-          print('Created a new training part');
+          debugPrint('Created a new training part');
           // Update the trainingPart with the newly created primary key (pk).
           final Map<String, dynamic> responseData = jsonDecode(response.body);
           trainingParts[index].id = responseData['id'];
           //trainingPart.id = responseData['id'];
         } else {
           // Handle error if necessary.
-          print('API Error: ${response.statusCode}');
+          debugPrint('API Error: ${response.statusCode}');
         }
       }
     }
@@ -256,19 +268,22 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            "${trainingDate.day}.${trainingDate.month}.${trainingDate.year}"),
+          "${trainingDate.day}.${trainingDate.month}.${trainingDate.year}",
+        ),
         actions: [
-                    IconButton(
+          IconButton(
             icon: Icon(Icons.people_outline),
             onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              PlayerAttendanceStatusScreen(trainingId: widget.training.pk),
-        ),
-      );
-    },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (_) => PlayerAttendanceStatusScreen(
+                        trainingId: widget.training.pk,
+                      ),
+                ),
+              );
+            },
           ),
           IconButton(
             icon: Icon(Icons.picture_as_pdf),
@@ -322,59 +337,62 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
             ),
             Screenshot(
               controller: screenshotController, // create a ScreenshotController
-// Draggable list of training parts.
+              // Draggable list of training parts.
               child: SizedBox(
                 width: MediaQuery.of(context).size.width - 60,
                 child: SizedBox(
                   height: 900, // Set the desired height.
                   child: ReorderableListView(
-                    onReorder: (int oldIndex, int newIndex) {
+                    onReorderItem: (int oldIndex, int newIndex) {
                       setState(() {
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        final TrainingPart movedItem =
-                            trainingParts.removeAt(oldIndex);
+                        final TrainingPart movedItem = trainingParts.removeAt(
+                          oldIndex,
+                        );
                         trainingParts.insert(newIndex, movedItem);
                         _save();
                       });
                     },
-                    children: trainingParts.asMap().entries.map((entry) {
-                      final int index = entry.key;
-                      final TrainingPart trainingPart = entry.value;
-                      final uniqueKey = Key(
-                          '${trainingPart.id}_${index.toString()}'); // Unique key for each training part.
-                      return ReorderableDragStartListener(
-                          index: index,
-                          key: uniqueKey,
-                          child: GestureDetector(
-                            // Wrap the ListTile with GestureDetector
-                            onDoubleTap: () {
-                              // Perform the action you want when double-clicked
-                              // For example, you can show a dialog or navigate to a new screen.
-                              // You can use the `trainingPart` object to access data related to the selected item.
-                              _handleDoubleTap(trainingPart);
-                            },
-                            child: Container(
-                              color: index % 2 == 0
-                                  ? Colors.white
-                                  : Colors.grey[200],
-                              child: ListTile(
-                                key: ValueKey(uniqueKey),
-                                title: Text(trainingPart.description),
-                                leading: Text(trainingPart.minutes.toString()),
-                                // Add more training part details here.
+                    children:
+                        trainingParts.asMap().entries.map((entry) {
+                          final int index = entry.key;
+                          final TrainingPart trainingPart = entry.value;
+                          final uniqueKey = Key(
+                            '${trainingPart.id}_${index.toString()}',
+                          ); // Unique key for each training part.
+                          return ReorderableDragStartListener(
+                            index: index,
+                            key: uniqueKey,
+                            child: GestureDetector(
+                              // Wrap the ListTile with GestureDetector
+                              onDoubleTap: () {
+                                // Perform the action you want when double-clicked
+                                // For example, you can show a dialog or navigate to a new screen.
+                                // You can use the `trainingPart` object to access data related to the selected item.
+                                _handleDoubleTap(trainingPart);
+                              },
+                              child: Container(
+                                color:
+                                    index % 2 == 0
+                                        ? Colors.white
+                                        : Colors.grey[200],
+                                child: ListTile(
+                                  key: ValueKey(uniqueKey),
+                                  title: Text(trainingPart.description),
+                                  leading: Text(
+                                    trainingPart.minutes.toString(),
+                                  ),
+                                  // Add more training part details here.
+                                ),
                               ),
                             ),
-                          ));
-                    }).toList(),
+                          );
+                        }).toList(),
                   ),
                 ),
               ),
             ),
 
             SizedBox(height: 20), // Adjust spacing as needed
-
             // // Display Reviews
             // Padding(
             //   padding: const EdgeInsets.all(8.0),
@@ -399,11 +417,15 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   }
 
   void _showEditTrainingPartDialog(
-      BuildContext context, TrainingPart trainingPart) {
-    TextEditingController editDescriptionController =
-        TextEditingController(text: trainingPart.description);
-    TextEditingController editMinutesController =
-        TextEditingController(text: trainingPart.minutes.toString());
+    BuildContext context,
+    TrainingPart trainingPart,
+  ) {
+    TextEditingController editDescriptionController = TextEditingController(
+      text: trainingPart.description,
+    );
+    TextEditingController editMinutesController = TextEditingController(
+      text: trainingPart.minutes.toString(),
+    );
 
     showDialog(
       context: context,
@@ -435,15 +457,15 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                     },
                   ),
                   ElevatedButton(
-                    child: Text('Save',
-    style: TextStyle(color: Colors.white)),
+                    child: Text('Save', style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       // Update the training part's content with the edited text and minutes.
                       setState(() {
                         trainingPart.description =
                             editDescriptionController.text;
-                        trainingPart.minutes =
-                            int.parse(editMinutesController.text);
+                        trainingPart.minutes = int.parse(
+                          editMinutesController.text,
+                        );
                       });
                       // Close the edit dialog.
                       _save();
@@ -477,11 +499,11 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
         });
       } else {
         // Handle error if necessary.
-        print('API Error: ${response.statusCode}');
+        debugPrint('API Error: ${response.statusCode}');
       }
     } catch (error) {
       // Handle error if necessary.
-      print('Error: $error');
+      debugPrint('Error: $error');
     }
   }
 
@@ -505,12 +527,7 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
               pw.SizedBox(height: 20),
               pw.Row(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Text(
-                    "mins",
-                    textAlign: pw.TextAlign.left,
-                  ),
-                ],
+                children: [pw.Text("mins", textAlign: pw.TextAlign.left)],
               ),
               pw.Divider(),
 
@@ -524,10 +541,10 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Text(
-                            trainingParts[index]
-                                .minutes
-                                .toString()
-                                .padLeft(2, '0'),
+                            trainingParts[index].minutes.toString().padLeft(
+                              2,
+                              '0',
+                            ),
                             textAlign: pw.TextAlign.left,
                           ),
                           pw.SizedBox(width: 30),
@@ -559,14 +576,9 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   Future<void> saveAndDownloadFile(String fileName, Uint8List content) async {
     try {
       // Handle file download for web platforms
-      final blob = uh.Blob([Uint8List.fromList(content)]);
-      final url = uh.Url.createObjectUrlFromBlob(blob);
-      final anchor = uh.AnchorElement(href: url)
-        ..setAttribute('download', fileName)
-        ..click();
-      uh.Url.revokeObjectUrl(url);
+      downloadBytes(Uint8List.fromList(content), fileName);
     } catch (e) {
-      print('Error generating file: $e');
+      debugPrint('Error generating file: $e');
       Navigator.of(context).pop(); // Close the generation status dialog
     }
   }
@@ -608,8 +620,9 @@ class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
               onPressed: () async {
                 final newTrainingPartDescription =
                     addDescriptionController.text;
-                final newTrainingPartMinutes =
-                    int.parse(addMinutesController.text);
+                final newTrainingPartMinutes = int.parse(
+                  addMinutesController.text,
+                );
 
                 if (newTrainingPartDescription.isNotEmpty) {
                   // Create a new TrainingPart and add it to the list

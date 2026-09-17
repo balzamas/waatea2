@@ -16,7 +16,7 @@ import '../globals.dart' as globals;
 import '../models/user_model.dart';
 
 class UserProfile extends StatefulWidget {
-  const UserProfile({Key? key}) : super(key: key);
+  const UserProfile({super.key});
   @override
   HomeState createState() => HomeState();
 }
@@ -53,10 +53,9 @@ class HomeState extends State<UserProfile> {
   Future<List<AbonnementModel>> fetchAbonnements() async {
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/abonnements/filter?club=${globals.clubId}'),
-      headers: {
-        'Authorization': 'Token ${globals.token}',
-      },
+        '${globals.URL_PREFIX}/api/abonnements/filter?club=${globals.clubId}',
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
     );
 
     if (response.statusCode == 200) {
@@ -84,10 +83,7 @@ class HomeState extends State<UserProfile> {
 
     final uri = Uri.parse(base).replace(
       path: "/calendar/player/$playerId/trainings.ics",
-      queryParameters: {
-        "season": season.toString(),
-        "club": club.toString(),
-      },
+      queryParameters: {"season": season.toString(), "club": club.toString()},
     );
     return uri.toString();
   }
@@ -100,9 +96,9 @@ class HomeState extends State<UserProfile> {
   Future<void> _copyToClipboard(String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Link copied')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Link copied')));
     }
   }
 
@@ -124,50 +120,57 @@ class HomeState extends State<UserProfile> {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const ListTile(
-                leading: Icon(Icons.calendar_month),
-                title: Text('Training calendar'),
-                subtitle: Text('Subscribe ICS or copy link'),
+      builder:
+          (ctx) => SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const ListTile(
+                    leading: Icon(Icons.calendar_month),
+                    title: Text('Training calendar'),
+                    subtitle: Text('Subscribe ICS or copy link'),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.open_in_browser),
+                    title: const Text('Open in Google calendar (https)'),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _launchUrlString(httpsUrl);
+                    },
+                    subtitle: Text(
+                      httpsUrl,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.phone_iphone),
+                    title: const Text('Subscribe on iPhone (webcal)'),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _launchUrlString(webcalUrl);
+                    },
+                    subtitle: Text(
+                      webcalUrl,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.copy),
+                    title: const Text('Copy link (https)'),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _copyToClipboard(httpsUrl);
+                    },
+                  ),
+                ],
               ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.open_in_browser),
-                title: const Text('Open in Google calendar (https)'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _launchUrlString(httpsUrl);
-                },
-                subtitle: Text(httpsUrl,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-              ),
-              ListTile(
-                leading: const Icon(Icons.phone_iphone),
-                title: const Text('Subscribe on iPhone (webcal)'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _launchUrlString(webcalUrl);
-                },
-                subtitle: Text(webcalUrl,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-              ),
-              ListTile(
-                leading: const Icon(Icons.copy),
-                title: const Text('Copy link (https)'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _copyToClipboard(httpsUrl);
-                },
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
   // ---------- end ICS helpers ----------
@@ -208,10 +211,10 @@ class HomeState extends State<UserProfile> {
         final sharedPreferences = await SharedPreferences.getInstance();
         sharedPreferences.setString('password', newPassword);
       } else {
-        print('Failed to change password. Status code: ${response.statusCode}');
+        debugPrint('Failed to change password. Status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error while changing password: $error');
+      debugPrint('Error while changing password: $error');
     }
   }
 
@@ -223,8 +226,10 @@ class HomeState extends State<UserProfile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Change Password',
-    style: TextStyle(color: Colors.white)),
+          title: const Text(
+            'Change Password',
+            style: TextStyle(color: Colors.white),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -235,8 +240,9 @@ class HomeState extends State<UserProfile> {
               ),
               TextField(
                 controller: confirmPasswordController,
-                decoration:
-                    const InputDecoration(labelText: 'Confirm New Password'),
+                decoration: const InputDecoration(
+                  labelText: 'Confirm New Password',
+                ),
                 obscureText: true,
               ),
             ],
@@ -249,8 +255,10 @@ class HomeState extends State<UserProfile> {
               },
             ),
             TextButton(
-              child: const Text('Change Password',
-    style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Change Password',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () {
                 String newPassword = newPasswordController.text;
                 String confirmPassword = confirmPasswordController.text;
@@ -289,8 +297,9 @@ class HomeState extends State<UserProfile> {
                 children: <Widget>[
                   TextField(
                     controller: phoneNumberController,
-                    decoration:
-                        const InputDecoration(labelText: 'Phone Number'),
+                    decoration: const InputDecoration(
+                      labelText: 'Phone Number',
+                    ),
                   ),
                   const SizedBox(height: 32),
                   const Text('Select Abo'),
@@ -337,7 +346,8 @@ class HomeState extends State<UserProfile> {
 
                     final http.Response response = await http.patch(
                       Uri.parse(
-                          '${globals.URL_PREFIX}/api/user-profile/${globals.player.email}/'),
+                        '${globals.URL_PREFIX}/api/user-profile/${globals.player.email}/',
+                      ),
                       headers: {
                         'Authorization': 'Token ${globals.token}',
                         'Content-Type': 'application/json; charset=UTF-8',
@@ -346,19 +356,23 @@ class HomeState extends State<UserProfile> {
                     );
 
                     final http.Response response2 = await http.get(
-                        Uri.parse(
-                            '${globals.URL_PREFIX}/api/users/filter?email=${globals.player.email}'),
-                        headers: {'Authorization': 'Token ${globals.token}'});
+                      Uri.parse(
+                        '${globals.URL_PREFIX}/api/users/filter?email=${globals.player.email}',
+                      ),
+                      headers: {'Authorization': 'Token ${globals.token}'},
+                    );
 
                     if (response2.statusCode == 200) {
                       String responseBody = utf8.decode(response2.bodyBytes);
 
-                      final itemsUser = json
-                          .decode(responseBody)
-                          .cast<Map<String, dynamic>>();
-                      List<UserModel> users = itemsUser.map<UserModel>((json) {
-                        return UserModel.fromJson(json);
-                      }).toList();
+                      final itemsUser =
+                          json
+                              .decode(responseBody)
+                              .cast<Map<String, dynamic>>();
+                      List<UserModel> users =
+                          itemsUser.map<UserModel>((json) {
+                            return UserModel.fromJson(json);
+                          }).toList();
 
                       globals.player = users[0];
 
@@ -385,26 +399,23 @@ class HomeState extends State<UserProfile> {
     return Scaffold(
       key: employeeListKey,
       appBar: AppBar(
-        title: const Text('User Info',
-    style: TextStyle(color: Colors.white)),
+        title: const Text('User Info', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.event_available_outlined),
             tooltip: 'Training ICS',
             onPressed: _showIcsActionsSheet,
           ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: _showEditDialog,
-          ),
+          IconButton(icon: const Icon(Icons.edit), onPressed: _showEditDialog),
           IconButton(
             icon: const Icon(Icons.history_edu_rounded),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      HistoricalGamesScreen(playerId: globals.playerId),
+                  builder:
+                      (context) =>
+                          HistoricalGamesScreen(playerId: globals.playerId),
                 ),
               );
             },
@@ -422,10 +433,7 @@ class HomeState extends State<UserProfile> {
                 const SizedBox(width: 34),
                 const Icon(Icons.person),
                 const SizedBox(width: 24),
-                Text(
-                  globals.player.name,
-                  style: const TextStyle(fontSize: 17),
-                )
+                Text(globals.player.name, style: const TextStyle(fontSize: 17)),
               ],
             ),
             const SizedBox(height: 12),
@@ -437,7 +445,7 @@ class HomeState extends State<UserProfile> {
                 Text(
                   "Active: ${globals.player.profile.isPlaying.toString()}",
                   style: const TextStyle(fontSize: 17),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -449,7 +457,7 @@ class HomeState extends State<UserProfile> {
                 Text(
                   globals.player.email,
                   style: const TextStyle(fontSize: 17),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -461,7 +469,7 @@ class HomeState extends State<UserProfile> {
                 Text(
                   globals.player.profile.mobilePhone,
                   style: const TextStyle(fontSize: 17),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -477,7 +485,7 @@ class HomeState extends State<UserProfile> {
                         globals.player.profile.classification?.name != null)
                       Text(globals.player.profile.classification!.name),
                   ],
-                )
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -493,7 +501,7 @@ class HomeState extends State<UserProfile> {
                         globals.player.profile.abonnement?.name != null)
                       Text(globals.player.profile.abonnement!.name),
                   ],
-                )
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -504,10 +512,8 @@ class HomeState extends State<UserProfile> {
                 const SizedBox(width: 24),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(globals.player.caps.toString()),
-                  ],
-                )
+                  children: [Text(globals.player.caps.toString())],
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -518,7 +524,7 @@ class HomeState extends State<UserProfile> {
                 const SizedBox(width: 24),
                 Text(
                   // Falls clubHours null/fehlt: 0.0 anzeigen
-                  '${(globals.player.profile.clubHours).toStringAsFixed(1)}',
+                  (globals.player.profile.clubHours).toStringAsFixed(1),
                   style: const TextStyle(fontSize: 17),
                 ),
               ],
@@ -533,16 +539,25 @@ class HomeState extends State<UserProfile> {
                   width: 400,
                   height: 30,
                   child: ShowPlayerAttendance(
-                      globals.playerId, 15, MainAxisAlignment.start),
-                )
+                    globals.playerId,
+                    15,
+                    MainAxisAlignment.start,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
               onPressed: _showChangePasswordDialog,
-              child: const Text('Change Password',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+              child: const Text(
+                'Change Password',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
             const SizedBox(height: 12),
             Text('Waatea version: ${_version.toString()}'),

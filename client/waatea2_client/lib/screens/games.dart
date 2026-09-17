@@ -11,9 +11,9 @@ import '../widgets/game_row.dart';
 import 'home.dart';
 
 class ShowGames extends StatefulWidget {
-  const ShowGames({Key? key}) : super(key: key);
+  const ShowGames({super.key});
   @override
-  ShowGamesState createState() => ShowGamesState();
+  State<ShowGames> createState() => ShowGamesState();
 }
 
 class ShowGamesState extends State<ShowGames> {
@@ -31,7 +31,8 @@ class ShowGamesState extends State<ShowGames> {
   Future<void> loadTeams() async {
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/teams/filter?club=${globals.clubId}'),
+        '${globals.URL_PREFIX}/api/teams/filter?club=${globals.clubId}',
+      ),
       headers: {'Authorization': 'Token ${globals.token}'},
     );
     String responseBody = utf8.decode(response.bodyBytes);
@@ -52,8 +53,13 @@ class ShowGamesState extends State<ShowGames> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        DateTime selectedDateTime = DateTime(DateTime.now().year,
-            DateTime.now().month, DateTime.now().day, 15, 00);
+        DateTime selectedDateTime = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          15,
+          00,
+        );
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
@@ -64,33 +70,35 @@ class ShowGamesState extends State<ShowGames> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     DropdownButtonFormField<TeamModel>(
-                      value: selectedHomeTeam,
+                      initialValue: selectedHomeTeam,
                       onChanged: (TeamModel? newValue) {
                         setState(() {
                           selectedHomeTeam = newValue!;
                         });
                       },
-                      items: teams.map((TeamModel team) {
-                        return DropdownMenuItem<TeamModel>(
-                          value: team,
-                          child: Text(team.name),
-                        );
-                      }).toList(),
+                      items:
+                          teams.map((TeamModel team) {
+                            return DropdownMenuItem<TeamModel>(
+                              value: team,
+                              child: Text(team.name),
+                            );
+                          }).toList(),
                       decoration: InputDecoration(labelText: 'Home Team'),
                     ),
                     DropdownButtonFormField<TeamModel>(
-                      value: selectedAwayTeam,
+                      initialValue: selectedAwayTeam,
                       onChanged: (TeamModel? newValue) {
                         setState(() {
                           selectedAwayTeam = newValue!;
                         });
                       },
-                      items: teams.map((TeamModel team) {
-                        return DropdownMenuItem<TeamModel>(
-                          value: team,
-                          child: Text(team.name),
-                        );
-                      }).toList(),
+                      items:
+                          teams.map((TeamModel team) {
+                            return DropdownMenuItem<TeamModel>(
+                              value: team,
+                              child: Text(team.name),
+                            );
+                          }).toList(),
                       decoration: InputDecoration(labelText: 'Away Team'),
                     ),
                     InkWell(
@@ -148,8 +156,9 @@ class ShowGamesState extends State<ShowGames> {
                           const Icon(Icons.access_time),
                           const SizedBox(width: 10),
                           Text(
-                            TimeOfDay.fromDateTime(selectedDateTime)
-                                .format(context),
+                            TimeOfDay.fromDateTime(
+                              selectedDateTime,
+                            ).format(context),
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -173,7 +182,7 @@ class ShowGamesState extends State<ShowGames> {
                         'away': selectedAwayTeam?.id,
                         'date': selectedDateTime.toUtc().toIso8601String(),
                         'season': globals.seasonID,
-                        'club': globals.clubId
+                        'club': globals.clubId,
                       }),
                     );
 
@@ -209,16 +218,19 @@ class ShowGamesState extends State<ShowGames> {
   Future<List<GameModel>> getGameList() async {
     //Get games
     final response = await http.get(
-        Uri.parse(
-            "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}"),
-        headers: {'Authorization': 'Token ${globals.token}'});
+      Uri.parse(
+        "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}",
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
 
     String responseBody = utf8.decode(response.bodyBytes);
 
     final items = json.decode(responseBody).cast<Map<String, dynamic>>();
-    List<GameModel> games = items.map<GameModel>((json) {
-      return GameModel.fromJson(json);
-    }).toList();
+    List<GameModel> games =
+        items.map<GameModel>((json) {
+          return GameModel.fromJson(json);
+        }).toList();
 
     return games;
   }
@@ -228,8 +240,7 @@ class ShowGamesState extends State<ShowGames> {
     return Scaffold(
       key: availabilityListKey,
       appBar: AppBar(
-        title: const Text('Game editor',
-    style: TextStyle(color: Colors.white)),
+        title: const Text('Game editor', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: Icon(Icons.add_circle_outline),
@@ -254,11 +265,12 @@ class ShowGamesState extends State<ShowGames> {
                 var data = snapshot.data[index];
 
                 return GameRow(
-                    gameId: data.pk,
-                    game: data.home + " - " + data.away,
-                    gameDate: data.date,
-                    dayofyear: data.dayofyear,
-                    season: data.season);
+                  gameId: data.pk,
+                  game: data.home + " - " + data.away,
+                  gameDate: data.date,
+                  dayofyear: data.dayofyear,
+                  season: data.season,
+                );
               },
             );
           },

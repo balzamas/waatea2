@@ -4,17 +4,19 @@ class LinkModel {
   final String url;
   final String icon;
 
-  LinkModel(
-      {required this.pk,
-      required this.name,
-      required this.url,
-      required this.icon});
+  LinkModel({
+    required this.pk,
+    required this.name,
+    required this.url,
+    required this.icon,
+  });
 
   factory LinkModel.fromJson(Map<String, dynamic> json) {
     return LinkModel(
-        pk: json['pk'],
-        name: json['name'],
-        url: json['url'],
-        icon: json['icon']);
+      pk: json['pk'],
+      name: json['name'],
+      url: json['url'],
+      icon: json['icon'],
+    );
   }
 }

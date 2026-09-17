@@ -8,10 +8,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+     State<SignUpScreen> createState() => _SignUpScreenState();
+
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
@@ -43,8 +44,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<String> getCSRFToken() async {
-    final response =
-        await http.get(Uri.parse('${globals.URL_PREFIX}/get-csrf-token/'));
+    final response = await http.get(
+      Uri.parse('${globals.URL_PREFIX}/get-csrf-token/'),
+    );
     if (response.statusCode == 200) {
       return response.headers['set-cookie'].toString();
     } else {
@@ -68,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
     } else {
       // Handle error if clubs fetching fails
-      print('Failed to fetch clubs.');
+      debugPrint('Failed to fetch clubs.');
     }
   }
 
@@ -79,7 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "name": _nameController.text.trim(),
       "email": _emailController.text.trim().toLowerCase(),
       "password": _passwordController.text,
-      "club": _selectedClub!.pk
+      "club": _selectedClub!.pk,
     };
 
     final csrfToken = await getCSRFToken();
@@ -96,11 +98,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final Map<String, String> headers = {'Content-Type': 'application/json'};
       final Map<String, String> body = {
         'username': _emailController.text,
-        'password': _passwordController.text
+        'password': _passwordController.text,
       };
 
-      final http.Response responseLogin = await http.post(Uri.parse(apiUrl),
-          headers: headers, body: json.encode(body));
+      final http.Response responseLogin = await http.post(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: json.encode(body),
+      );
 
       if (responseLogin.statusCode == 200) {
         // Login successful, extract the token from the response
@@ -112,7 +117,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         final http.Response response = await http.patch(
           Uri.parse(
-              '${globals.URL_PREFIX}/api/user-profile/${_emailController.text}/'),
+            '${globals.URL_PREFIX}/api/user-profile/${_emailController.text}/',
+          ),
           headers: {
             'Authorization': 'Token $token',
             'Content-Type': 'application/json; charset=UTF-8',
@@ -127,40 +133,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Success"),
-          content: const Text("User registered successfully!"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Navigate to the login screen
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                  ),
-                );
-              },
-              child: const Text("OK"),
+        builder:
+            (_) => AlertDialog(
+              title: const Text("Success"),
+              content: const Text("User registered successfully!"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    // Navigate to the login screen
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     } else {
       // Registration failed, handle error
       showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Error"),
-          content: Text(
-              "Failed to register user. Please try again.\n\nError:\n${response.body}"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
+        builder:
+            (_) => AlertDialog(
+              title: const Text("Error"),
+              content: Text(
+                "Failed to register user. Please try again.\n\nError:\n${response.body}",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     }
   }
@@ -168,7 +175,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Sign Up", style: TextStyle(color: Colors.white))),
+      appBar: AppBar(
+        title: const Text("Sign Up", style: TextStyle(color: Colors.white)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -179,9 +188,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: "Name and last name",
-                errorText: _formSubmitted && _nameController.text.isEmpty
-                    ? "Field is required"
-                    : null,
+                errorText:
+                    _formSubmitted && _nameController.text.isEmpty
+                        ? "Field is required"
+                        : null,
               ),
             ),
             const SizedBox(height: 16),
@@ -190,9 +200,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               inputFormatters: [_mobilephoneFormatter],
               decoration: InputDecoration(
                 labelText: "Mobile phone (format: 41798257004)",
-                errorText: _formSubmitted && _mobilephoneController.text.isEmpty
-                    ? "Field is required"
-                    : null,
+                errorText:
+                    _formSubmitted && _mobilephoneController.text.isEmpty
+                        ? "Field is required"
+                        : null,
               ),
             ),
             const SizedBox(height: 16),
@@ -200,9 +211,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: "Email",
-                errorText: _formSubmitted && _emailController.text.isEmpty
-                    ? "Field is required"
-                    : _formSubmitted && !_isValidEmail(_emailController.text)
+                errorText:
+                    _formSubmitted && _emailController.text.isEmpty
+                        ? "Field is required"
+                        : _formSubmitted &&
+                            !_isValidEmail(_emailController.text)
                         ? "Enter a valid email"
                         : null,
               ),
@@ -210,24 +223,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(height: 24),
             SizedBox(height: 24),
             DropdownButtonFormField<ClubModel>(
-              value: _selectedClub,
+              initialValue: _selectedClub,
               onChanged: (ClubModel? newValue) {
                 setState(() {
                   _selectedClub = newValue;
                 });
               },
-              items: _clubs.map((club) {
-                return DropdownMenuItem<ClubModel>(
-                  value: club,
-                  child: Text(club.name),
-                );
-              }).toList(),
+              items:
+                  _clubs.map((club) {
+                    return DropdownMenuItem<ClubModel>(
+                      value: club,
+                      child: Text(club.name),
+                    );
+                  }).toList(),
               decoration: InputDecoration(
                 labelText: "Club",
                 border: const OutlineInputBorder(),
-                errorText: _formSubmitted && _selectedClub == null
-                    ? "Field is required"
-                    : null,
+                errorText:
+                    _formSubmitted && _selectedClub == null
+                        ? "Field is required"
+                        : null,
               ),
             ),
             const SizedBox(height: 16),
@@ -236,9 +251,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               obscureText: true,
               decoration: InputDecoration(
                 labelText: "Password",
-                errorText: _formSubmitted && _passwordController.text.isEmpty
-                    ? "Field is required"
-                    : null,
+                errorText:
+                    _formSubmitted && _passwordController.text.isEmpty
+                        ? "Field is required"
+                        : null,
               ),
             ),
             const SizedBox(height: 16),
@@ -266,17 +282,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 } else {
                   showDialog(
                     context: context,
-                    builder: (_) => AlertDialog(
-                      title: const Text("Password Mismatch"),
-                      content:
-                          const Text("Please make sure both passwords match."),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("OK"),
+                    builder:
+                        (_) => AlertDialog(
+                          title: const Text("Password Mismatch"),
+                          content: const Text(
+                            "Please make sure both passwords match.",
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("OK"),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                   );
                 }
               },

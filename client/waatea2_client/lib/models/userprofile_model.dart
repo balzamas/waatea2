@@ -13,21 +13,23 @@ class UserProfileModel {
   final ClassificationModel? classification;
   final List<PositionModel>? positions; // Add positions field
 
-  UserProfileModel(
-      {required this.isPlaying,
-      required this.permission,
-      required this.abonnement,
-      required this.comment,
-      required this.mobilePhone,
-      required this.classification,
-      required this.positions,
-      required this.clubHours,});
+  UserProfileModel({
+    required this.isPlaying,
+    required this.permission,
+    required this.abonnement,
+    required this.comment,
+    required this.mobilePhone,
+    required this.classification,
+    required this.positions,
+    required this.clubHours,
+  });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     final List<dynamic> positionsJson = json['positions'] ?? [];
-    final List<PositionModel> positions = positionsJson
-        .map((positionJson) => PositionModel.fromJson(positionJson))
-        .toList();
+    final List<PositionModel> positions =
+        positionsJson
+            .map((positionJson) => PositionModel.fromJson(positionJson))
+            .toList();
 
     return UserProfileModel(
       isPlaying: json['is_playing'],
@@ -35,12 +37,14 @@ class UserProfileModel {
       comment: json['comment'],
       mobilePhone: json['mobile_phone'],
       clubHours: (json['club_hours'] ?? 0).toDouble(),
-      classification: json['classification'] != null
-          ? ClassificationModel.fromJson(json['classification'])
-          : null,
-      abonnement: json['abonnement'] != null
-          ? AbonnementModel.fromJson(json['abonnement'])
-          : null,
+      classification:
+          json['classification'] != null
+              ? ClassificationModel.fromJson(json['classification'])
+              : null,
+      abonnement:
+          json['abonnement'] != null
+              ? AbonnementModel.fromJson(json['abonnement'])
+              : null,
       positions: positions,
     );
   }

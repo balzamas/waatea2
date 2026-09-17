@@ -14,19 +14,19 @@ class SetAvailabilityRow extends StatefulWidget {
   final int dayofyear;
   final String season;
 
-  const SetAvailabilityRow(
-      {Key? key,
-      required this.game,
-      required this.date,
-      required this.initialState,
-      required this.playerId,
-      required this.initialAvailabilityId,
-      required this.dayofyear,
-      required this.season})
-      : super(key: key);
+  const SetAvailabilityRow({
+    super.key,
+    required this.game,
+    required this.date,
+    required this.initialState,
+    required this.playerId,
+    required this.initialAvailabilityId,
+    required this.dayofyear,
+    required this.season,
+  });
 
   @override
-  _SetAvailabilityRowState createState() => _SetAvailabilityRowState();
+   State<SetAvailabilityRow> createState() => _SetAvailabilityRowState();
 }
 
 class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
@@ -46,9 +46,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
     int state,
   ) async {
     if (availabilityId != "") {
-      final Map<String, int> body = {
-        'state': state,
-      };
+      final Map<String, int> body = {'state': state};
 
       final http.Response response = await http.patch(
         Uri.parse('${globals.URL_PREFIX}/api/availability/$availabilityId/'),
@@ -64,7 +62,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
         'player': widget.playerId.toString(),
         'club': globals.clubId,
         'dayofyear': widget.dayofyear,
-        'season': widget.season
+        'season': widget.season,
       };
 
       final http.Response response = await http.post(
@@ -104,11 +102,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
           } else {
             newState = state + 1;
           }
-          _submitMutation(
-            context,
-            widget.playerId,
-            newState,
-          );
+          _submitMutation(context, widget.playerId, newState);
         },
         child: Row(
           children: [
@@ -119,19 +113,17 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
                 children: [
                   Text(
                     widget.date,
-                    style: DefaultTextStyle.of(context)
-                        .style
-                        .apply(fontSizeFactor: 1.5),
+                    style: DefaultTextStyle.of(
+                      context,
+                    ).style.apply(fontSizeFactor: 1.5),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     widget.game,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.black54,
-                          fontSize: 12,
-                        ),
+                      color: Colors.black54,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),

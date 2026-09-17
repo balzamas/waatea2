@@ -30,10 +30,10 @@ class TrainingModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'dayofyear': dayofyear,
-        'season': season,
-        'updated': date,
-        'club': club
-      };
+    'id': id,
+    'dayofyear': dayofyear,
+    'season': season,
+    'updated': date,
+    'club': club,
+  };
 }

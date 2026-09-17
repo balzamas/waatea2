@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,16 +9,16 @@ import 'package:waatea2_client/screens/showplayerdetail.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
-import 'package:universal_html/html.dart' as uh;
+import '../utils/download.dart';
 import '../models/game_model.dart';
 
 enum FileGenerationStatus { idle, generating, complete, error }
 
 class ShowPlayers extends StatefulWidget {
-  const ShowPlayers({Key? key}) : super(key: key);
+  const ShowPlayers({super.key});
 
   @override
-  _ShowPlayersState createState() => _ShowPlayersState();
+   State<ShowPlayers> createState() => _ShowPlayersState();
 }
 
 class _ShowPlayersState extends State<ShowPlayers> {
@@ -37,18 +35,13 @@ class _ShowPlayersState extends State<ShowPlayers> {
       // await file.writeAsString(content);
 
       // Handle file download for web platforms
-      final blob = uh.Blob([Uint8List.fromList(content.codeUnits)]);
-      final url = uh.Url.createObjectUrlFromBlob(blob);
-      final anchor = uh.AnchorElement(href: url)
-        ..setAttribute('download', fileName)
-        ..click();
-      uh.Url.revokeObjectUrl(url);
+      downloadText(content, fileName);
 
       setState(() {
         generationStatus = FileGenerationStatus.complete;
       });
     } catch (e) {
-      print('Error generating file: $e');
+      debugPrint('Error generating file: $e');
       Navigator.of(context).pop(); // Close the generation status dialog
       setState(() {
         generationStatus = FileGenerationStatus.error;
@@ -62,27 +55,33 @@ class _ShowPlayersState extends State<ShowPlayers> {
     });
 
     final response = await http.get(
-        Uri.parse(
-            "${globals.URL_PREFIX}/api/games_past/filter?club=${globals.clubId}&season=${globals.seasonID}"),
-        headers: {'Authorization': 'Token ${globals.token}'});
+      Uri.parse(
+        "${globals.URL_PREFIX}/api/games_past/filter?club=${globals.clubId}&season=${globals.seasonID}",
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
 
     String responseBody = utf8.decode(response.bodyBytes);
     final items = json.decode(responseBody).cast<Map<String, dynamic>>();
-    List<GameModel> gamesPast = items.map<GameModel>((json) {
-      return GameModel.fromJson(json);
-    }).toList();
+    List<GameModel> gamesPast =
+        items.map<GameModel>((json) {
+          return GameModel.fromJson(json);
+        }).toList();
 
     final responseSeason = await http.get(
-        Uri.parse(
-            "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}&season=${globals.seasonID}"),
-        headers: {'Authorization': 'Token ${globals.token}'});
+      Uri.parse(
+        "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}&season=${globals.seasonID}",
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
 
     String responsebodyFuture = utf8.decode(responseSeason.bodyBytes);
     final itemsFuture =
         json.decode(responsebodyFuture).cast<Map<String, dynamic>>();
-    List<GameModel> gamesFuture = itemsFuture.map<GameModel>((json) {
-      return GameModel.fromJson(json);
-    }).toList();
+    List<GameModel> gamesFuture =
+        itemsFuture.map<GameModel>((json) {
+          return GameModel.fromJson(json);
+        }).toList();
 
     List<List<dynamic>> csvData = [
       [
@@ -101,8 +100,8 @@ class _ShowPlayersState extends State<ShowPlayers> {
         'Games Maybe Future',
         'Games Unavail Future',
         'Games Notset Future',
-        'Caps'
-      ]
+        'Caps',
+      ],
     ];
 
     for (var player in players) {
@@ -116,22 +115,25 @@ class _ShowPlayersState extends State<ShowPlayers> {
       int notsetFuture = 0;
 
       final responseAvail = await http.get(
-          Uri.parse(
-              "${globals.URL_PREFIX}/api/availabilities/filter?player=${player.pk}&season=${globals.seasonID}"),
-          headers: {'Authorization': 'Token ${globals.token}'});
+        Uri.parse(
+          "${globals.URL_PREFIX}/api/availabilities/filter?player=${player.pk}&season=${globals.seasonID}",
+        ),
+        headers: {'Authorization': 'Token ${globals.token}'},
+      );
 
       if (responseAvail.statusCode == 200) {
         final items =
             json.decode(responseAvail.body).cast<Map<String, dynamic>>();
         List<AvailabilityModel> availabilities =
             items.map<AvailabilityModel>((json) {
-          return AvailabilityModel.fromJson(json);
-        }).toList();
+              return AvailabilityModel.fromJson(json);
+            }).toList();
 
         if (availabilities.isNotEmpty) {
           for (AvailabilityModel availability in availabilities) {
-            if (gamesPast
-                .any((obj) => obj.dayofyear == availability.dayofyear)) {
+            if (gamesPast.any(
+              (obj) => obj.dayofyear == availability.dayofyear,
+            )) {
               if (availability.state == 1) {
                 notavailablePast = notavailablePast + 1;
               } else if (availability.state == 2) {
@@ -142,8 +144,9 @@ class _ShowPlayersState extends State<ShowPlayers> {
             }
           }
           for (AvailabilityModel availability in availabilities) {
-            if (gamesFuture
-                .any((obj) => obj.dayofyear == availability.dayofyear)) {
+            if (gamesFuture.any(
+              (obj) => obj.dayofyear == availability.dayofyear,
+            )) {
               if (availability.state == 1) {
                 notavailableFuture = notavailableFuture + 1;
               } else if (availability.state == 2) {
@@ -161,7 +164,8 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
       int uniquecountSeason =
           gamesFuture.map((obj) => obj.dayofyear).toSet().length;
-      notsetFuture = uniquecountSeason -
+      notsetFuture =
+          uniquecountSeason -
           (availableFuture + notavailableFuture + maybeFuture);
 
       int attended10 = 0;
@@ -171,18 +175,23 @@ class _ShowPlayersState extends State<ShowPlayers> {
 
       List<AttendedViewModel> trainings10 = [];
       final response = await http.get(
-          Uri.parse(
-              '${globals.URL_PREFIX}/api/training-attendance?season=${globals.seasonID}&club=${globals.clubId}&user_id=${player.pk}'),
-          headers: {'Authorization': 'Token ${globals.token}'});
+        Uri.parse(
+          '${globals.URL_PREFIX}/api/training-attendance?season=${globals.seasonID}&club=${globals.clubId}&user_id=${player.pk}',
+        ),
+        headers: {'Authorization': 'Token ${globals.token}'},
+      );
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
 
-        trainings10 = data
-            .map((item) => AttendedViewModel(
-                  date: item['date'],
-                  attended: item['attended'],
-                ))
-            .toList();
+        trainings10 =
+            data
+                .map(
+                  (item) => AttendedViewModel(
+                    date: item['date'],
+                    attended: item['attended'],
+                  ),
+                )
+                .toList();
         for (AttendedViewModel training in trainings10) {
           trainingCount = trainingCount + 1;
           if (training.attended) {
@@ -213,13 +222,13 @@ class _ShowPlayersState extends State<ShowPlayers> {
         maybeFuture,
         notavailableFuture,
         notsetFuture,
-        player.caps
+        player.caps,
       ]);
     }
 
-    String csv = const ListToCsvConverter().convert(csvData);
+    String csvString = csv.encode(csvData);
 
-    saveAndDownloadFile('players.csv', csv);
+    saveAndDownloadFile('players.csv', csvString);
   }
 
   void showGenerationStatusDialog(BuildContext context) {
@@ -265,7 +274,8 @@ class _ShowPlayersState extends State<ShowPlayers> {
   Future<void> fetchUsers() async {
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}'),
+        '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}',
+      ),
       headers: {
         'Authorization': 'Token ${globals.token}',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -298,8 +308,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User List',
-    style: TextStyle(color: Colors.white)),
+        title: const Text('User List', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -331,7 +340,7 @@ class _ShowPlayersState extends State<ShowPlayers> {
                   generationStatus = FileGenerationStatus.complete;
                 });
               } catch (e) {
-                print('Error generating file: $e');
+                debugPrint('Error generating file: $e');
                 setState(() {
                   generationStatus = FileGenerationStatus.error;
                 });
@@ -342,9 +351,9 @@ class _ShowPlayersState extends State<ShowPlayers> {
             },
           ),
           IconButton(
-            icon: Icon(showOnlyActive
-                ? Icons.check_box
-                : Icons.check_box_outline_blank),
+            icon: Icon(
+              showOnlyActive ? Icons.check_box : Icons.check_box_outline_blank,
+            ),
             onPressed: () {
               onFilterChanged(!showOnlyActive);
             },
@@ -364,9 +373,9 @@ class _ShowPlayersState extends State<ShowPlayers> {
             leading: RandomAvatar(user.name, height: 40, width: 40),
             title: Text(
               user.name,
-              style: DefaultTextStyle.of(context)
-                  .style
-                  .apply(fontSizeFactor: 1, color: playerColor),
+              style: DefaultTextStyle.of(
+                context,
+              ).style.apply(fontSizeFactor: 1, color: playerColor),
             ),
             // subtitle: Column(
             //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,30 +394,29 @@ class _ShowPlayersState extends State<ShowPlayers> {
                 if (user.profile.classification != null &&
                     user.profile.classification?.icon != null)
                   Padding(
-                      padding: EdgeInsets.only(
-                          right: 8.0), // Adjust spacing as needed
-                      child: Icon(
-                        IconData(
-                            int.parse('0x${user.profile.classification!.icon}'),
-                            fontFamily: 'MaterialIcons'),
-                      )),
+                    padding: EdgeInsets.only(
+                      right: 8.0,
+                    ), // Adjust spacing as needed
+                    child: Icon(
+                      IconData(
+                        int.parse('0x${user.profile.classification!.icon}'),
+                        fontFamily: 'MaterialIcons',
+                      ),
+                    ),
+                  ),
                 const SizedBox(width: 10),
                 Text(
                   "${user.attendancePercentage}%",
-                  style: DefaultTextStyle.of(context)
-                      .style
-                      .apply(fontSizeFactor: 1, color: playerColor),
+                  style: DefaultTextStyle.of(
+                    context,
+                  ).style.apply(fontSizeFactor: 1, color: playerColor),
                 ),
               ],
             ),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => ShowPlayerDetail(
-                    user: user,
-                  ),
-                ),
+                MaterialPageRoute(builder: (_) => ShowPlayerDetail(user: user)),
               );
             },
           );

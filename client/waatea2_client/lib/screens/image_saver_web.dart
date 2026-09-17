@@ -1,16 +1,24 @@
+import 'dart:js_interop';
 import 'dart:typed_data';
-import 'dart:html' as html;
+
+import 'package:web/web.dart' as web;
 
 import 'image_saver.dart';
 
 class WebImageSaver implements ImageSaver {
   @override
   Future<void> save(Uint8List imageBytes) async {
-    final blob = html.Blob([imageBytes]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute("download", "match_result.png")
-      ..click();
-    html.Url.revokeObjectUrl(url);
+    final blob = web.Blob([imageBytes.toJS].toJS);
+
+    final url = web.URL.createObjectURL(blob);
+
+    final anchor =
+        web.HTMLAnchorElement()
+          ..href = url
+          ..download = 'match_result.png';
+
+    anchor.click();
+
+    web.URL.revokeObjectURL(url);
   }
 }

@@ -10,10 +10,10 @@ import '../models/user_model.dart';
 enum RankingType { trainingPercentage, caps, clubHours }
 
 class ShowRankings extends StatefulWidget {
-  const ShowRankings({Key? key}) : super(key: key);
+  const ShowRankings({super.key});
 
   @override
-  _ShowRankingsState createState() => _ShowRankingsState();
+  State<ShowRankings> createState() => _ShowRankingsState();
 }
 
 class _ShowRankingsState extends State<ShowRankings> {
@@ -36,7 +36,9 @@ class _ShowRankingsState extends State<ShowRankings> {
 
     try {
       final response = await http.get(
-        Uri.parse('${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}'),
+        Uri.parse(
+          '${globals.URL_PREFIX}/api/users/filter?club=${globals.clubId}',
+        ),
         headers: {
           'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -53,7 +55,8 @@ class _ShowRankingsState extends State<ShowRankings> {
         });
       } else {
         setState(() {
-          errorMessage = 'Failed to load users (status ${response.statusCode}).';
+          errorMessage =
+              'Failed to load users (status ${response.statusCode}).';
         });
       }
     } catch (e) {
@@ -72,13 +75,17 @@ class _ShowRankingsState extends State<ShowRankings> {
   void sortUsers() {
     switch (rankingType) {
       case RankingType.trainingPercentage:
-        users.sort((a, b) => b.attendancePercentage.compareTo(a.attendancePercentage));
+        users.sort(
+          (a, b) => b.attendancePercentage.compareTo(a.attendancePercentage),
+        );
         break;
       case RankingType.caps:
         users.sort((a, b) => b.caps.compareTo(a.caps));
         break;
       case RankingType.clubHours:
-        users.sort((a, b) => b.profile.clubHours.compareTo(a.profile.clubHours));
+        users.sort(
+          (a, b) => b.profile.clubHours.compareTo(a.profile.clubHours),
+        );
         break;
     }
   }
@@ -139,7 +146,10 @@ class _ShowRankingsState extends State<ShowRankings> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(getAppBarTitle(), style: const TextStyle(color: Colors.white)),
+        title: Text(
+          getAppBarTitle(),
+          style: const TextStyle(color: Colors.white),
+        ),
         actions: [
           IconButton(
             tooltip: 'Switch ranking',
@@ -171,7 +181,8 @@ class _ShowRankingsState extends State<ShowRankings> {
               if (index >= users.length) return const SizedBox.shrink();
 
               final user = users[index];
-              final Color playerColor = user.profile.isPlaying ? Colors.black : Colors.red;
+              final Color playerColor =
+                  user.profile.isPlaying ? Colors.black : Colors.red;
 
               return ListTile(
                 leading: RandomAvatar(user.name, height: 40, width: 40),

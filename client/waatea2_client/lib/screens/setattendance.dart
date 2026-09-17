@@ -16,9 +16,9 @@ import '../models/training_model.dart';
 import 'package:intl/intl.dart';
 
 class SetAttendance extends StatefulWidget {
-  const SetAttendance({Key? key}) : super(key: key);
+  const SetAttendance({super.key});
   @override
-  SetAttendanceState createState() => SetAttendanceState();
+  State<SetAttendance> createState() => SetAttendanceState();
 }
 
 class SetAttendanceState extends State<SetAttendance> {
@@ -44,20 +44,24 @@ class SetAttendanceState extends State<SetAttendance> {
   Future<void> _fetchExercises() async {
     final response = await http.get(
       Uri.parse(
-          "${globals.URL_PREFIX}/api/fitness/filter?season=${globals.seasonID}"),
+        "${globals.URL_PREFIX}/api/fitness/filter?season=${globals.seasonID}",
+      ),
       headers: {'Authorization': 'Token ${globals.token}'},
     );
 
     if (response.statusCode == 200) {
       final exercises = json.decode(utf8.decode(response.bodyBytes)) as List;
       setState(() {
-        _exercises = exercises.map((e) {
-          return {
-            'player': e['player_name'],
-            'date': DateFormat('yyyy-MM-dd').format(DateTime.parse(e['date'])),
-            'note': e['note'],
-          };
-        }).toList();
+        _exercises =
+            exercises.map((e) {
+              return {
+                'player': e['player_name'],
+                'date': DateFormat(
+                  'yyyy-MM-dd',
+                ).format(DateTime.parse(e['date'])),
+                'note': e['note'],
+              };
+            }).toList();
       });
     }
   }
@@ -67,31 +71,37 @@ class SetAttendanceState extends State<SetAttendance> {
 
     await showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Latest fitness entries'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: _exercises.map((exercise) {
-              return ListTile(
-                leading:
-                    RandomAvatar(exercise['player'], height: 50, width: 50),
-                title: Text(
-                    '${exercise['player']} had gains: ${exercise['note'] ?? 'No note'}'),
-                subtitle: Text(exercise['date']),
-              );
-            }).toList(),
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black, // Background color
+      builder:
+          (context) => AlertDialog(
+            title: Text('Latest fitness entries'),
+            content: SingleChildScrollView(
+              child: Column(
+                children:
+                    _exercises.map((exercise) {
+                      return ListTile(
+                        leading: RandomAvatar(
+                          exercise['player'],
+                          height: 50,
+                          width: 50,
+                        ),
+                        title: Text(
+                          '${exercise['player']} had gains: ${exercise['note'] ?? 'No note'}',
+                        ),
+                        subtitle: Text(exercise['date']),
+                      );
+                    }).toList(),
+              ),
             ),
-            child: Text('Close'),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black, // Background color
+                ),
+                child: Text('Close'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -101,9 +111,7 @@ class SetAttendanceState extends State<SetAttendance> {
       boolState = true;
     }
     if (attendanceId != "") {
-      final Map<String, bool> body = {
-        'attended': boolState,
-      };
+      final Map<String, bool> body = {'attended': boolState};
 
       final http.Response response = await http.patch(
         Uri.parse('${globals.URL_PREFIX}/api/attendance/$attendanceId/'),
@@ -119,7 +127,7 @@ class SetAttendanceState extends State<SetAttendance> {
         'dayofyear': dayofhteyear,
         'player': globals.playerId,
         'training': trainingId,
-        'season': globals.seasonID
+        'season': globals.seasonID,
       };
 
       final http.Response response = await http.post(
@@ -139,27 +147,32 @@ class SetAttendanceState extends State<SetAttendance> {
 
   Future<List<UserModel>> getAttendingPlayers(String trainingid) async {
     final response = await http.get(
-        Uri.parse("${globals.URL_PREFIX}/api/attendingusers/$trainingId/"),
-        headers: {'Authorization': 'Token ${globals.token}'});
+      Uri.parse("${globals.URL_PREFIX}/api/attendingusers/$trainingId/"),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
 
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
-    List<UserModel> attendingPlayers = items.map<UserModel>((json) {
-      return UserModel.fromJson(json);
-    }).toList();
+    List<UserModel> attendingPlayers =
+        items.map<UserModel>((json) {
+          return UserModel.fromJson(json);
+        }).toList();
 
     return attendingPlayers;
   }
 
   Future<SetAttendanceModel> getCurrentTraining() async {
     final response = await http.get(
-        Uri.parse(
-            "${globals.URL_PREFIX}/api/training_current/filter?club=${globals.clubId}&season=${globals.seasonID}"),
-        headers: {'Authorization': 'Token ${globals.token}'});
+      Uri.parse(
+        "${globals.URL_PREFIX}/api/training_current/filter?club=${globals.clubId}&season=${globals.seasonID}",
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
 
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
-    List<TrainingModel> trainings = items.map<TrainingModel>((json) {
-      return TrainingModel.fromJson(json);
-    }).toList();
+    List<TrainingModel> trainings =
+        items.map<TrainingModel>((json) {
+          return TrainingModel.fromJson(json);
+        }).toList();
 
     SetAttendanceModel setAttendance = SetAttendanceModel(text: "", state: 0);
 
@@ -170,17 +183,19 @@ class SetAttendanceState extends State<SetAttendance> {
       dayofhteyear = trainings[0].dayofyear;
       //Load attendance
       final responseAttend = await http.get(
-          Uri.parse(
-              "${globals.URL_PREFIX}/api/attendances/filter?training=${trainings[0].id}&player=${globals.playerId}&season=${globals.seasonID}"),
-          headers: {'Authorization': 'Token ${globals.token}'});
+        Uri.parse(
+          "${globals.URL_PREFIX}/api/attendances/filter?training=${trainings[0].id}&player=${globals.playerId}&season=${globals.seasonID}",
+        ),
+        headers: {'Authorization': 'Token ${globals.token}'},
+      );
 
       if (responseAttend.statusCode == 200) {
         final items =
             json.decode(responseAttend.body).cast<Map<String, dynamic>>();
         List<AttendanceModel> availabilities =
             items.map<AttendanceModel>((json) {
-          return AttendanceModel.fromJson(json);
-        }).toList();
+              return AttendanceModel.fromJson(json);
+            }).toList();
 
         String timePrefix = "Last";
 
@@ -221,38 +236,40 @@ class SetAttendanceState extends State<SetAttendance> {
       key: availabilityListKey,
 
       appBar: AppBar(
-  title: const Text('Current training',
-    style: TextStyle(color: Colors.white)),
-  actions: [
-    IconButton(
-      tooltip: 'Upcoming trainings',
-      icon: const Icon(Icons.event_available_outlined),
-      onPressed: () async {
-        // Screen öffnen
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => const UpcomingTrainingAttendanceScreen(),
-          ),
-        );
+        title: const Text(
+          'Current training',
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          IconButton(
+            tooltip: 'Upcoming trainings',
+            icon: const Icon(Icons.event_available_outlined),
+            onPressed: () async {
+              // Screen öffnen
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const UpcomingTrainingAttendanceScreen(),
+                ),
+              );
 
-        // (Optional) Nach Rückkehr den „Aktuell“-Screen neu laden,
-        // falls sich deine Teilnahme geändert hat:
-        setState(() {
-          setAttendanceContent = getCurrentTraining();
-        });
-      },
-    ),
-  ],
-),
+              // (Optional) Nach Rückkehr den „Aktuell“-Screen neu laden,
+              // falls sich deine Teilnahme geändert hat:
+              setState(() {
+                setAttendanceContent = getCurrentTraining();
+              });
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: FutureBuilder<SetAttendanceModel>(
           future: setAttendanceContent,
-          builder: (BuildContext context,
-              AsyncSnapshot<SetAttendanceModel> snapshot) {
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<SetAttendanceModel> snapshot,
+          ) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(
-                color: Colors.black,
-              );
+              return const CircularProgressIndicator(color: Colors.black);
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
@@ -265,17 +282,29 @@ class SetAttendanceState extends State<SetAttendance> {
               Icon icon;
 
               if (state == 1) {
-                icon = const Icon(Icons.check_circle_outline,
-                    color: Colors.green, size: 150);
+                icon = const Icon(
+                  Icons.check_circle_outline,
+                  color: Colors.green,
+                  size: 150,
+                );
               } else if (state == 2) {
-                icon = const Icon(Icons.highlight_off_outlined,
-                    color: Colors.red, size: 150);
+                icon = const Icon(
+                  Icons.highlight_off_outlined,
+                  color: Colors.red,
+                  size: 150,
+                );
               } else if (state == 0) {
-                icon = const Icon(Icons.help_outline,
-                    color: Colors.orange, size: 150);
+                icon = const Icon(
+                  Icons.help_outline,
+                  color: Colors.orange,
+                  size: 150,
+                );
               } else {
-                icon = const Icon(Icons.self_improvement_outlined,
-                    color: Colors.black, size: 150);
+                icon = const Icon(
+                  Icons.self_improvement_outlined,
+                  color: Colors.black,
+                  size: 150,
+                );
               }
 
               return Column(
@@ -285,7 +314,9 @@ class SetAttendanceState extends State<SetAttendance> {
                   Text(
                     setAttendance.text,
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   icon,
@@ -293,8 +324,10 @@ class SetAttendanceState extends State<SetAttendance> {
                     const SizedBox(height: 20),
                     const Text(
                       "Attending/Attended?",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -302,7 +335,8 @@ class SetAttendanceState extends State<SetAttendance> {
                       children: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black),
+                            backgroundColor: Colors.black,
+                          ),
                           onPressed: () {
                             setAttendance.state = 1;
                             state = 1;
@@ -311,14 +345,20 @@ class SetAttendanceState extends State<SetAttendance> {
                             });
                             setAttendanceNow(1);
                           },
-                          child: const Text("Yey!",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                          child: const Text(
+                            "Yey!",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 20),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black),
+                            backgroundColor: Colors.black,
+                          ),
                           onPressed: () {
                             setAttendance.state = 2;
                             state = 2;
@@ -327,31 +367,42 @@ class SetAttendanceState extends State<SetAttendance> {
                             });
                             setAttendanceNow(2);
                           },
-                          child: const Text("No",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                          child: const Text(
+                            "No",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 50),
                     const Text(
                       "Your attendance rate:",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       "${globals.player.attendancePercentage}%",
                       style: const TextStyle(
-                          fontSize: 23, fontWeight: FontWeight.bold),
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (globals.player.attendancePercentage > 79) ...[
                       const Text(
                         "❤️LOVELY!❤️",
                         style: TextStyle(
-                            fontSize: 23, fontWeight: FontWeight.bold),
-                      )
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
-                                        const SizedBox(height: 50),
+                    const SizedBox(height: 50),
                     Center(
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -364,13 +415,16 @@ class SetAttendanceState extends State<SetAttendance> {
                             true, // Wrap content inside a SingleChildScrollView if needed
                         itemCount: attendingPlayers.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return RandomAvatar(attendingPlayers[index].name,
-                              height: 800, width: 1000);
+                          return RandomAvatar(
+                            attendingPlayers[index].name,
+                            height: 800,
+                            width: 1000,
+                          );
                           //ToDo Umlauts
                         },
                       ),
                     ),
-                  ]
+                  ],
                 ],
               );
             }

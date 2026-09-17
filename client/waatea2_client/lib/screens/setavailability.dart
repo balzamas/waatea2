@@ -12,9 +12,9 @@ import '../widgets/setavailability_row.dart';
 
 class SetAvailability extends StatefulWidget {
   final int playerId;
-  const SetAvailability(this.playerId, {Key? key}) : super(key: key);
+  const SetAvailability(this.playerId, {super.key});
   @override
-  SetAvailabilityState createState() => SetAvailabilityState();
+  State<SetAvailability> createState() => SetAvailabilityState();
 }
 
 class SetAvailabilityState extends State<SetAvailability> {
@@ -32,15 +32,18 @@ class SetAvailabilityState extends State<SetAvailability> {
     final formatterTime = DateFormat('HH:mm');
 
     final response = await http.get(
-        Uri.parse(
-            "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}"),
-        headers: {'Authorization': 'Token ${globals.token}'});
+      Uri.parse(
+        "${globals.URL_PREFIX}/api/games_current/filter?club=${globals.clubId}",
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
 
     String responseBody = utf8.decode(response.bodyBytes);
     final items = json.decode(responseBody).cast<Map<String, dynamic>>();
-    List<GameModel> games = items.map<GameModel>((json) {
-      return GameModel.fromJson(json);
-    }).toList();
+    List<GameModel> games =
+        items.map<GameModel>((json) {
+          return GameModel.fromJson(json);
+        }).toList();
 
     List<SetAvailabilityModel> setAvailabilities = [];
 
@@ -53,25 +56,28 @@ class SetAvailabilityState extends State<SetAvailability> {
       } else {
         DateTime gameDate = DateTime.parse(games[i].date);
         SetAvailabilityModel record = SetAvailabilityModel(
-            availId: "",
-            games:
-                "${formatterTime.format(gameDate.toLocal())} - ${games[i].home} - ${games[i].away}",
-            dayofyear: games[i].dayofyear,
-            date: formatterDate.format(gameDate.toLocal()),
-            state: 0,
-            season: games[i].season);
+          availId: "",
+          games:
+              "${formatterTime.format(gameDate.toLocal())} - ${games[i].home} - ${games[i].away}",
+          dayofyear: games[i].dayofyear,
+          date: formatterDate.format(gameDate.toLocal()),
+          state: 0,
+          season: games[i].season,
+        );
         final responseAvail = await http.get(
-            Uri.parse(
-                "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&player=${widget.playerId}&season=${games[i].season}"),
-            headers: {'Authorization': 'Token ${globals.token}'});
+          Uri.parse(
+            "${globals.URL_PREFIX}/api/availabilities/filter?dayofyear=${games[i].dayofyear}&player=${widget.playerId}&season=${games[i].season}",
+          ),
+          headers: {'Authorization': 'Token ${globals.token}'},
+        );
 
         if (responseAvail.statusCode == 200) {
           final items =
               json.decode(responseAvail.body).cast<Map<String, dynamic>>();
           List<AvailabilityModel> availabilities =
               items.map<AvailabilityModel>((json) {
-            return AvailabilityModel.fromJson(json);
-          }).toList();
+                return AvailabilityModel.fromJson(json);
+              }).toList();
 
           if (availabilities.isNotEmpty) {
             record.state = availabilities[0].state;
@@ -92,21 +98,22 @@ class SetAvailabilityState extends State<SetAvailability> {
 
     return Scaffold(
       key: availabilityListKey,
-      appBar: isTopLevelScreen
-          ? null
-          : AppBar(
-              title: const Text('Set availability',
-    style: TextStyle(color: Colors.white)),
-            ),
+      appBar:
+          isTopLevelScreen
+              ? null
+              : AppBar(
+                title: const Text(
+                  'Set availability',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
       body: Center(
         child: FutureBuilder<List<SetAvailabilityModel>>(
           future: games,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // By default, show a loading spinner.
             if (!snapshot.hasData) {
-              return const CircularProgressIndicator(
-                color: Colors.black,
-              );
+              return const CircularProgressIndicator(color: Colors.black);
             }
             // Render employee lists
             return ListView.builder(
@@ -115,13 +122,14 @@ class SetAvailabilityState extends State<SetAvailability> {
                 var data = snapshot.data[index];
 
                 return SetAvailabilityRow(
-                    game: data.games,
-                    date: data.date,
-                    initialState: data.state,
-                    playerId: widget.playerId,
-                    initialAvailabilityId: data.availId,
-                    dayofyear: data.dayofyear,
-                    season: data.season);
+                  game: data.games,
+                  date: data.date,
+                  initialState: data.state,
+                  playerId: widget.playerId,
+                  initialAvailabilityId: data.availId,
+                  dayofyear: data.dayofyear,
+                  season: data.season,
+                );
               },
             );
           },

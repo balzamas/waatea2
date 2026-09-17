@@ -10,16 +10,16 @@ class UserModel {
   final int caps;
   final double clubHours;
 
-
-  UserModel(
-      {required this.pk,
-      required this.name,
-      required this.email,
-      required this.profile,
-      required this.attendancePercentage,
-      required this.caps,
-      required this.fitness,
-      required this.clubHours,});
+  UserModel({
+    required this.pk,
+    required this.name,
+    required this.email,
+    required this.profile,
+    required this.attendancePercentage,
+    required this.caps,
+    required this.fitness,
+    required this.clubHours,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -34,8 +34,5 @@ class UserModel {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'email': email,
-      };
+  Map<String, dynamic> toJson() => {'name': name, 'email': email};
 }

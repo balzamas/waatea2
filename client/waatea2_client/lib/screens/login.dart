@@ -11,10 +11,10 @@ import '../globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -49,8 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login_process(String token, String username) async {
     final http.Response response2 = await http.get(
-        Uri.parse('${globals.URL_PREFIX}/api/users/filter?email=$username'),
-        headers: {'Authorization': 'Token $token'});
+      Uri.parse('${globals.URL_PREFIX}/api/users/filter?email=$username'),
+      headers: {'Authorization': 'Token $token'},
+    );
 
     if (response2.statusCode == 200) {
       String clubid = json.decode(response2.body)[0]['club']['pk'];
@@ -59,21 +60,24 @@ class _LoginScreenState extends State<LoginScreen> {
       String responseBody = utf8.decode(response2.bodyBytes);
 
       final itemsUser = json.decode(responseBody).cast<Map<String, dynamic>>();
-      List<UserModel> users = itemsUser.map<UserModel>((json) {
-        return UserModel.fromJson(json);
-      }).toList();
+      List<UserModel> users =
+          itemsUser.map<UserModel>((json) {
+            return UserModel.fromJson(json);
+          }).toList();
 
       final responseCurrentseason = await http.get(
-          Uri.parse(
-              "${globals.URL_PREFIX}/api/currentseason/filter?club=$clubid"),
-          headers: {'Authorization': 'Token $token'});
+        Uri.parse(
+          "${globals.URL_PREFIX}/api/currentseason/filter?club=$clubid",
+        ),
+        headers: {'Authorization': 'Token $token'},
+      );
 
       final itemsCurrentseason =
           json.decode(responseCurrentseason.body).cast<Map<String, dynamic>>();
       List<CurrentSeasonModel> currentseason =
           itemsCurrentseason.map<CurrentSeasonModel>((json) {
-        return CurrentSeasonModel.fromJson(json);
-      }).toList();
+            return CurrentSeasonModel.fromJson(json);
+          }).toList();
 
       String season = currentseason[0].season;
 
@@ -85,9 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
       globals.player = users[0];
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(initialIndex: 1),
-        ),
+        MaterialPageRoute(builder: (context) => MyHomePage(initialIndex: 1)),
       );
     }
   }
@@ -105,12 +107,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final Map<String, String> headers = {'Content-Type': 'application/json'};
     final Map<String, String> body = {
       'username': username,
-      'password': password
+      'password': password,
     };
 
     try {
-      final http.Response response = await http.post(Uri.parse(apiUrl),
-          headers: headers, body: json.encode(body));
+      final http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: json.encode(body),
+      );
 
       if (response.statusCode == 200) {
         // User successfully logged in, save login credentials
@@ -128,31 +133,33 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         showDialog(
           context: context,
-          builder: (_) => AlertDialog(
-            title: const Text("Error"),
-            content: Text("Failed to log in.\n\nError:\n${response.body}"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
+          builder:
+              (_) => AlertDialog(
+                title: const Text("Error"),
+                content: Text("Failed to log in.\n\nError:\n${response.body}"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("OK"),
+                  ),
+                ],
               ),
-            ],
-          ),
         );
       }
     } catch (e) {
       showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Error"),
-          content: Text("Failed to log in.\n\nError:\n$e"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
+        builder:
+            (_) => AlertDialog(
+              title: const Text("Error"),
+              content: Text("Failed to log in.\n\nError:\n$e"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
             ),
-          ],
-        ),
       );
       // Error occurred while making the API call
       print('Error: $e');
@@ -162,64 +169,70 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-        focusNode:
-            FocusNode(), // Create a focus node to capture keyboard events
-        onKey: (event) {
-          if (event.logicalKey == LogicalKeyboardKey.enter) {
-            _login(); // Call _login() when Enter key is pressed
-          }
-        },
-        child: Scaffold(
-          appBar: AppBar(title: const Text('Login', style: TextStyle(color: Colors.white))),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextField(
-                  controller: _usernameController,
-                  decoration:
-                      const InputDecoration(labelText: 'Username/Email'),
-                  onSubmitted: (_) =>
-                      _login(), // Call _login() when Enter key is pressed
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  onSubmitted: (_) =>
-                      _login(), // Call _login() when Enter key is pressed
-                ),
-                const SizedBox(height: 32),
-                Focus(
-                  autofocus: true,
-                  child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                    onPressed: _login,
-                    child: const Text('Login', style: TextStyle(color: Colors.white)),
+    return KeyboardListener(
+      focusNode: FocusNode(),
+      onKeyEvent: (event) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.enter) {
+          _login();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Login', style: TextStyle(color: Colors.white)),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _usernameController,
+                decoration: const InputDecoration(labelText: 'Username/Email'),
+                onSubmitted:
+                    (_) => _login(), // Call _login() when Enter key is pressed
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                onSubmitted:
+                    (_) => _login(), // Call _login() when Enter key is pressed
+              ),
+              const SizedBox(height: 32),
+              Focus(
+                autofocus: true,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  onPressed: _login,
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-                const SizedBox(height: 55),
-                ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                  onPressed: () {
-                    // Navigate to the login screen
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SignUpScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text('Register', style: TextStyle(color: Colors.white)),
+              ),
+              const SizedBox(height: 55),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                onPressed: () {
+                  // Navigate to the login screen
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignUpScreen()),
+                  );
+                },
+                child: const Text(
+                  'Register',
+                  style: TextStyle(color: Colors.white),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

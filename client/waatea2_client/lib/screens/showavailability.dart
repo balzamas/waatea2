@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter/services.dart';           // Clipboard
-import 'package:url_launcher/url_launcher.dart';  // url_launcher
+import 'package:flutter/services.dart'; // Clipboard
+import 'package:url_launcher/url_launcher.dart'; // url_launcher
 
 import '../globals.dart' as globals;
 
@@ -11,9 +11,9 @@ import '../models/showavailability_model.dart';
 import '../widgets/showavailability_row.dart';
 
 class ShowAvailability extends StatefulWidget {
-  const ShowAvailability({Key? key}) : super(key: key);
+  const ShowAvailability({super.key});
   @override
-  ShowAvailabilityState createState() => ShowAvailabilityState();
+  State<ShowAvailability> createState() => ShowAvailabilityState();
 }
 
 class ShowAvailabilityState extends State<ShowAvailability> {
@@ -37,9 +37,10 @@ class ShowAvailabilityState extends State<ShowAvailability> {
 
     final responseBody = utf8.decode(response.bodyBytes);
     final items = json.decode(responseBody).cast<Map<String, dynamic>>();
-    final games = items.map<ShowAvailabilityModel>((json) {
-      return ShowAvailabilityModel.fromJson(json);
-    }).toList();
+    final games =
+        items.map<ShowAvailabilityModel>((json) {
+          return ShowAvailabilityModel.fromJson(json);
+        }).toList();
 
     return games;
   }
@@ -47,14 +48,12 @@ class ShowAvailabilityState extends State<ShowAvailability> {
   // ---------- ICS helpers (Games / Club) ----------
   String _gamesIcsHttpsUrl() {
     final base = globals.URL_PREFIX; // z.B. https://app.waatea.ch
-    final clubId = globals.clubId;   // UUID oder int – egal, kommt in die URL
+    final clubId = globals.clubId; // UUID oder int – egal, kommt in die URL
     final season = globals.seasonID; // UUID oder int
 
     final uri = Uri.parse(base).replace(
       path: "/calendar/club/$clubId.ics",
-      queryParameters: {
-        "season": season.toString(),
-      },
+      queryParameters: {"season": season.toString()},
     );
     return uri.toString();
   }
@@ -67,18 +66,18 @@ class ShowAvailabilityState extends State<ShowAvailability> {
   Future<void> _copyToClipboard(String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Link copied')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Link copied')));
   }
 
   Future<void> _launchUrlString(String url) async {
     final uri = Uri.parse(url);
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Was not able to open URL: $url')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Was not able to open URL: $url')));
     }
   }
 
@@ -89,56 +88,57 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const ListTile(
-                leading: Icon(Icons.sports_rugby),
-                title: Text('Game calendar'),
-                subtitle: Text('Subscribe ICS or copy link'),
+      builder:
+          (ctx) => SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const ListTile(
+                    leading: Icon(Icons.sports_rugby),
+                    title: Text('Game calendar'),
+                    subtitle: Text('Subscribe ICS or copy link'),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.open_in_browser),
+                    title: const Text('Open in Google calendar (https)'),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _launchUrlString(httpsUrl);
+                    },
+                    subtitle: Text(
+                      httpsUrl,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.phone_iphone),
+                    title: const Text('Subscribe on iPhone (webcal)'),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _launchUrlString(webcalUrl);
+                    },
+                    subtitle: Text(
+                      webcalUrl,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.copy),
+                    title: const Text('Copy link (https)'),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _copyToClipboard(httpsUrl);
+                    },
+                  ),
+                ],
               ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.open_in_browser),
-                title: const Text('Open in Google calendar (https)'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _launchUrlString(httpsUrl);
-                },
-                subtitle: Text(
-                  httpsUrl,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.phone_iphone),
-                title: const Text('Subscribe on iPhone (webcal)'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _launchUrlString(webcalUrl);
-                },
-                subtitle: Text(
-                  webcalUrl,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.copy),
-                title: const Text('Copy link (https)'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _copyToClipboard(httpsUrl);
-                },
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
   // ---------- end ICS helpers ----------
@@ -148,8 +148,7 @@ class ShowAvailabilityState extends State<ShowAvailability> {
     return Scaffold(
       key: availabilityListKey,
       appBar: AppBar(
-        title: const Text('Game list',
-    style: TextStyle(color: Colors.white)),
+        title: const Text('Game list', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             tooltip: 'Game-ICS',

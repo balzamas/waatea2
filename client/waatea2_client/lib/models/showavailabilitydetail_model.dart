@@ -11,34 +11,36 @@ class ShowAvailabilityDetailModel {
   DateTime? updated;
   final int caps;
 
-  ShowAvailabilityDetailModel(
-      {required this.pk,
-      required this.name,
-      required this.email,
-      required this.playerProfile,
-      required this.mobilephone,
-      required this.attendance_percentage,
-      required this.state,
-      required this.updated,
-      required this.caps});
+  ShowAvailabilityDetailModel({
+    required this.pk,
+    required this.name,
+    required this.email,
+    required this.playerProfile,
+    required this.mobilephone,
+    required this.attendance_percentage,
+    required this.state,
+    required this.updated,
+    required this.caps,
+  });
 
   factory ShowAvailabilityDetailModel.fromJson(Map<String, dynamic> json) {
     return ShowAvailabilityDetailModel(
-        pk: json['pk'],
-        name: json['name'],
-        email: json['email'],
-        attendance_percentage: json['attendance_percentage'],
-        playerProfile: UserProfileModel.fromJson(json['profile']),
-        mobilephone: json['profile']['mobile_phone'],
-        state: 0,
-        updated: null,
-        caps: json['caps']);
+      pk: json['pk'],
+      name: json['name'],
+      email: json['email'],
+      attendance_percentage: json['attendance_percentage'],
+      playerProfile: UserProfileModel.fromJson(json['profile']),
+      mobilephone: json['profile']['mobile_phone'],
+      state: 0,
+      updated: null,
+      caps: json['caps'],
+    );
   }
 
   Map<String, dynamic> toJson() => {
-        'pk': pk,
-        'name': name,
-        'email': email,
-        'mobilephone': mobilephone,
-      };
+    'pk': pk,
+    'name': name,
+    'email': email,
+    'mobilephone': mobilephone,
+  };
 }

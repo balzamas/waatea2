@@ -12,20 +12,19 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
   final UserProfileModel player;
   final int attendancePercentage;
 
-  const ShowAvailabilityDetailRow(
-      {Key? key,
-      required this.name,
-      required this.phonenumber,
-      required this.state,
-      required this.updated,
-      required this.game,
-      required this.player,
-      required this.attendancePercentage})
-      : super(key: key);
+  const ShowAvailabilityDetailRow({
+    super.key,
+    required this.name,
+    required this.phonenumber,
+    required this.state,
+    required this.updated,
+    required this.game,
+    required this.player,
+    required this.attendancePercentage,
+  });
 
   @override
-  _ShowAvailabilityDetailRowState createState() =>
-      _ShowAvailabilityDetailRowState();
+   State<ShowAvailabilityDetailRow> createState() => _ShowAvailabilityDetailRowState();
 }
 
 class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
@@ -56,9 +55,9 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   children: [
                     Text(
                       widget.name,
-                      style: DefaultTextStyle.of(context)
-                          .style
-                          .apply(fontSizeFactor: 1),
+                      style: DefaultTextStyle.of(
+                        context,
+                      ).style.apply(fontSizeFactor: 1),
                     ),
                   ],
                 ),
@@ -72,37 +71,40 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   children: [
                     Text(
                       "${widget.attendancePercentage}%",
-                      style: DefaultTextStyle.of(context)
-                          .style
-                          .apply(fontSizeFactor: 1),
+                      style: DefaultTextStyle.of(
+                        context,
+                      ).style.apply(fontSizeFactor: 1),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                  flex: 1,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          widget.player.classification?.icon != null
-                              ? IconData(
-                                  int.parse(
-                                      '0x${widget.player.classification!.icon}'),
-                                  fontFamily: 'MaterialIcons',
-                                )
-                              : Icons.highlight_off,
-                        )
-                      ])),
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      widget.player.classification?.icon != null
+                          ? IconData(
+                            int.parse(
+                              '0x${widget.player.classification!.icon}',
+                            ),
+                            fontFamily: 'MaterialIcons',
+                          )
+                          : Icons.highlight_off,
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(width: 10),
               Expanded(
-                  flex: 1,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(widget.player.abonnement?.short ?? '-')
-                      ])),
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [Text(widget.player.abonnement?.short ?? '-')],
+                ),
+              ),
               // const SizedBox(width: 10),
               // Expanded(
               //     flex: 1,
@@ -121,23 +123,24 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
               //                 ))
               //         ])),
               Expanded(
-                  flex: 1,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            String url =
-                                "https://wa.me/${widget.phonenumber}?text=Are you available for ${widget.game}? Please update Waatea!";
-                            await launchUrl(Uri.parse(url),
-                                mode: LaunchMode.externalApplication);
-                          },
-                          child: const Icon(
-                            Icons.message,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ])),
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        String url =
+                            "https://wa.me/${widget.phonenumber}?text=Are you available for ${widget.game}? Please update Waatea!";
+                        await launchUrl(
+                          Uri.parse(url),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                      child: const Icon(Icons.message, color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 flex: 1,
                 child: Column(
@@ -145,9 +148,9 @@ class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {
                   children: [
                     Text(
                       "${widget.updated?.day}.${widget.updated?.month}.${widget.updated?.year} ${widget.updated?.hour}.${widget.updated?.minute}",
-                      style: DefaultTextStyle.of(context)
-                          .style
-                          .apply(fontSizeFactor: 0.5),
+                      style: DefaultTextStyle.of(
+                        context,
+                      ).style.apply(fontSizeFactor: 0.5),
                     ),
                   ],
                 ),

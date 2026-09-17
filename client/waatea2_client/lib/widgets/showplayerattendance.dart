@@ -8,10 +8,15 @@ class ShowPlayerAttendance extends StatefulWidget {
   final int last_n;
   final MainAxisAlignment alignment;
 
-  const ShowPlayerAttendance(this.player, this.last_n, this.alignment, {Key? key}) : super(key: key);
+  const ShowPlayerAttendance(
+    this.player,
+    this.last_n,
+    this.alignment, {
+    super.key,
+  });
 
   @override
-  _ShowPlayerAttendanceState createState() => _ShowPlayerAttendanceState();
+  State<ShowPlayerAttendance> createState() => _ShowPlayerAttendanceState();
 }
 
 class AttendedViewModel {
@@ -33,18 +38,23 @@ class _ShowPlayerAttendanceState extends State<ShowPlayerAttendance> {
   Future<List<AttendedViewModel>> fetchTrainings() async {
     List<AttendedViewModel> trainingsX = [];
     final response = await http.get(
-        Uri.parse(
-            '${globals.URL_PREFIX}/api/training-attendance?season=${globals.seasonID}&club=${globals.clubId}&user_id=${widget.player}&last_n=${widget.last_n}'),
-        headers: {'Authorization': 'Token ${globals.token}'});
+      Uri.parse(
+        '${globals.URL_PREFIX}/api/training-attendance?season=${globals.seasonID}&club=${globals.clubId}&user_id=${widget.player}&last_n=${widget.last_n}',
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
+    );
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
 
-      trainingsX = data
-          .map((item) => AttendedViewModel(
-                date: item['date'],
-                attended: item['attended'],
-              ))
-          .toList();
+      trainingsX =
+          data
+              .map(
+                (item) => AttendedViewModel(
+                  date: item['date'],
+                  attended: item['attended'],
+                ),
+              )
+              .toList();
     }
     return trainingsX;
   }
@@ -66,22 +76,23 @@ class _ShowPlayerAttendanceState extends State<ShowPlayerAttendance> {
               color: Colors.transparent, // Set transparent background
               child: Row(
                 mainAxisAlignment: widget.alignment,
-                children: snapshot.data.map<Widget>((data) {
-                  return Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.square,
-                          size: 20.0,
-                          color: data.attended ? Colors.green : Colors.grey,
+                children:
+                    snapshot.data.map<Widget>((data) {
+                      return Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.square,
+                              size: 20.0,
+                              color: data.attended ? Colors.green : Colors.grey,
+                            ),
+                            // SizedBox(height: 4), // Adding spacing
+                            // Text(data.date),
+                          ],
                         ),
-                        // SizedBox(height: 4), // Adding spacing
-                        // Text(data.date),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
               ),
             );
           },

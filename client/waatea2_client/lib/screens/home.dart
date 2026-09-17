@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:waatea2_client/screens/fitness.dart';
 import 'package:waatea2_client/screens/games.dart';
 import 'package:waatea2_client/screens/links.dart';
 import 'package:waatea2_client/screens/rankings.dart';
-import 'package:waatea2_client/screens/score_image_page.dart';
 import 'package:waatea2_client/screens/showattendance.dart';
 import 'package:waatea2_client/screens/showplayers.dart';
 import 'setattendance.dart';
@@ -15,10 +13,13 @@ import '../globals.dart' as globals;
 class MyHomePage extends StatefulWidget {
   final int initialIndex; // Add this parameter
 
-  const MyHomePage({Key? key, this.initialIndex = 0}) : super(key: key); // Provide a default value
+  const MyHomePage({
+    super.key,
+    this.initialIndex = 0,
+  }); // Provide a default value
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {

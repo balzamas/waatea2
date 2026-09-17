@@ -6,10 +6,10 @@ import 'dart:convert';
 import '../globals.dart' as globals;
 
 class ShowLinks extends StatefulWidget {
-  const ShowLinks({Key? key}) : super(key: key);
+  const ShowLinks({super.key});
 
   @override
-  _ShowLinksState createState() => _ShowLinksState();
+  State<ShowLinks> createState() => _ShowLinksState();
 }
 
 class _ShowLinksState extends State<ShowLinks> {
@@ -24,7 +24,8 @@ class _ShowLinksState extends State<ShowLinks> {
   Future<void> fetchLinks() async {
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/links/filter?club=${globals.clubId}'),
+        '${globals.URL_PREFIX}/api/links/filter?club=${globals.clubId}',
+      ),
       headers: {
         'Authorization': 'Token ${globals.token}',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -43,8 +44,7 @@ class _ShowLinksState extends State<ShowLinks> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Links',
-    style: TextStyle(color: Colors.white)),
+        title: const Text('Links', style: TextStyle(color: Colors.white)),
       ),
       body: ListView.builder(
         itemCount: links.length,
@@ -53,23 +53,27 @@ class _ShowLinksState extends State<ShowLinks> {
 
           return ListTile(
             leading: Icon(
-              IconData(int.parse('0x${link.icon}'),
-                  fontFamily: 'MaterialIcons'),
+              IconData(
+                int.parse('0x${link.icon}'),
+                fontFamily: 'MaterialIcons',
+              ),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   link.name,
-                  style: DefaultTextStyle.of(context)
-                      .style
-                      .apply(fontSizeFactor: 1.5),
-                )
+                  style: DefaultTextStyle.of(
+                    context,
+                  ).style.apply(fontSizeFactor: 1.5),
+                ),
               ],
             ),
             onTap: () async {
-              await launchUrl(Uri.parse(link.url),
-                  mode: LaunchMode.externalApplication);
+              await launchUrl(
+                Uri.parse(link.url),
+                mode: LaunchMode.externalApplication,
+              );
             },
           );
         },

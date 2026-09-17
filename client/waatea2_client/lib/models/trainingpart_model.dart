@@ -15,10 +15,11 @@ class TrainingPart {
 
   factory TrainingPart.fromJson(Map<String, dynamic> json) {
     return TrainingPart(
-        id: json['id'],
-        trainingId: json['training'],
-        description: json['description'],
-        order: json['order'],
-        minutes: json['minutes']);
+      id: json['id'],
+      trainingId: json['training'],
+      description: json['description'],
+      order: json['order'],
+      minutes: json['minutes'],
+    );
   }
 }

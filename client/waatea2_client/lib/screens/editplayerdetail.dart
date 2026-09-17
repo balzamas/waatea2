@@ -10,24 +10,20 @@ import '../globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-
 class EditPlayerDetail extends StatefulWidget {
   final UserModel user;
 
-  const EditPlayerDetail({Key? key, required this.user}) : super(key: key);
+  const EditPlayerDetail({super.key, required this.user});
 
   @override
-  _EditPlayerDetailState createState() => _EditPlayerDetailState();
+   State<EditPlayerDetail> createState() => _EditPlayerDetailState();
 }
 
 class Animal {
   final int id;
   final String name;
 
-  Animal({
-    required this.id,
-    required this.name,
-  });
+  Animal({required this.id, required this.name});
 }
 
 class _EditPlayerDetailState extends State<EditPlayerDetail> {
@@ -85,8 +81,9 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
         //I don't understand why we have to initalive the list like this
         int loop = 0;
         for (PositionModel item in positionOptions) {
-          bool found = widget.user.profile.positions!
-              .any((secondItem) => secondItem.pk == item.pk);
+          bool found = widget.user.profile.positions!.any(
+            (secondItem) => secondItem.pk == item.pk,
+          );
           if (found) {
             if (_selectedPositions.isEmpty) {
               _selectedPositions = [positionOptions[loop]];
@@ -103,10 +100,9 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
   Future<List<ClassificationModel>> fetchClassifications() async {
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/classifications/filter?club=${globals.clubId}'),
-      headers: {
-        'Authorization': 'Token ${globals.token}',
-      },
+        '${globals.URL_PREFIX}/api/classifications/filter?club=${globals.clubId}',
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
     );
 
     if (response.statusCode == 200) {
@@ -120,10 +116,9 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
   Future<List<AbonnementModel>> fetchAbonnements() async {
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/abonnements/filter?club=${globals.clubId}'),
-      headers: {
-        'Authorization': 'Token ${globals.token}',
-      },
+        '${globals.URL_PREFIX}/api/abonnements/filter?club=${globals.clubId}',
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
     );
 
     if (response.statusCode == 200) {
@@ -137,10 +132,9 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
   Future<List<PositionModel>> fetchPositions() async {
     final response = await http.get(
       Uri.parse(
-          '${globals.URL_PREFIX}/api/positions/filter?club=${globals.clubId}'),
-      headers: {
-        'Authorization': 'Token ${globals.token}',
-      },
+        '${globals.URL_PREFIX}/api/positions/filter?club=${globals.clubId}',
+      ),
+      headers: {'Authorization': 'Token ${globals.token}'},
     );
 
     if (response.statusCode == 200) {
@@ -155,16 +149,20 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile',
-    style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Edit Profile',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Edit Profile for ${widget.user.name}',
-                style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              'Edit Profile for ${widget.user.name}',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 16),
             CheckboxListTile(
               title: const Text('Is Playing'),
@@ -201,10 +199,15 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
             const SizedBox(height: 16),
             const Text('Select Positions'),
             MultiSelectDialogField(
-              items: positionOptions
-                  .map((position) => MultiSelectItem<PositionModel>(
-                      position, position.position))
-                  .toList(),
+              items:
+                  positionOptions
+                      .map(
+                        (position) => MultiSelectItem<PositionModel>(
+                          position,
+                          position.position,
+                        ),
+                      )
+                      .toList(),
               initialValue: _selectedPositions,
               onConfirm: (values) {
                 setState(() {
@@ -240,11 +243,8 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
               onPressed: () async {
                 final List<Map<String, dynamic>> positionsData =
                     _selectedPositions.map((position) {
-                  return {
-                    'pk': position.pk,
-                    'position': position.position,
-                  };
-                }).toList();
+                      return {'pk': position.pk, 'position': position.position};
+                    }).toList();
                 final Map<String, dynamic> body = {
                   'is_playing': _isPlaying,
                   'abo': _selectedAbonnement?.pk,
@@ -254,7 +254,8 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
 
                 final http.Response response = await http.patch(
                   Uri.parse(
-                      '${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/'),
+                    '${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/',
+                  ),
                   headers: {
                     'Authorization': 'Token ${globals.token}',
                     'Content-Type': 'application/json; charset=UTF-8',
@@ -272,8 +273,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                   ),
                 );
               },
-              child: const Text('Save',
-    style: TextStyle(color: Colors.white)),
+              child: const Text('Save', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
