@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.46
+- **Upgrade** Update core and libraries
+
 ## V0.0.45
 - **Bug Fix** Don't override training start time with 20:15 when date is changed
 - **Bug Fix** Title texts always white color, no matter if dark mode or not.
