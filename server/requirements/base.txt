@@ -18,3 +18,4 @@ django-redis==5.2.0  # https://github.com/jazzband/django-redis
 djangorestframework
 openpyxl
 beautifulsoup4
+setuptools<81
