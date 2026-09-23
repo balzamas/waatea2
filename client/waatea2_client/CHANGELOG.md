@@ -1,5 +1,8 @@
 # Waatea Changelog
 
+## V0.0.48
+- **New Feature:** Import Caps from Sportlomo
+
 ## V0.0.47
 - **New Feature:** Games can be edited and deleted
 - **New Feature:** Trainings: filter for attending, not attending and not set

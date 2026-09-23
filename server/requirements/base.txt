@@ -17,3 +17,4 @@ crispy-bootstrap5==0.7  # https://github.com/django-crispy-forms/crispy-bootstra
 django-redis==5.2.0  # https://github.com/jazzband/django-redis
 djangorestframework
 openpyxl
+beautifulsoup4

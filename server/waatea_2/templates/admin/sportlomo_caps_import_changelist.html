@@ -1,0 +1,67 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+
+<div class="module" style="padding: 20px; margin-bottom: 20px;">
+    <h2>Import caps from SportLoMo</h2>
+
+    <p>
+        Imports one cap for every player listed on the selected
+        team's SportLoMo teamsheets.
+    </p>
+
+    <form method="post" action="{{ run_import_url }}">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 15px;">
+            <label for="competition_id">
+                <strong>Competition ID</strong>
+            </label>
+            <br>
+            <input
+                type="text"
+                id="competition_id"
+                name="competition_id"
+                value="111111"
+                required
+            >
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="team_name">
+                <strong>Exact SportLoMo team name</strong>
+            </label>
+            <br>
+            <input
+                type="text"
+                id="team_name"
+                name="team_name"
+                value="Rugby Club City"
+                size="40"
+                required
+            >
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>
+                <input
+                    type="checkbox"
+                    name="dry_run"
+                    checked
+                >
+                Dry run — don't change the database
+            </label>
+        </div>
+
+        <button
+            type="submit"
+            class="button default"
+        >
+            Run SportLoMo import
+        </button>
+    </form>
+</div>
+
+{{ block.super }}
+
+{% endblock %}

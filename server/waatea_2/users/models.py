@@ -106,3 +106,9 @@ class ClubHoursSync(UserProfile):
         proxy = True
         verbose_name = "Club hours Sync"
         verbose_name_plural = "Club hours Sync"
+
+class SportLomoCapsImport(UserProfile):
+    class Meta:
+        proxy = True
+        verbose_name = "SportLoMo caps import"
+        verbose_name_plural = "SportLoMo caps import"
