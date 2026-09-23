@@ -1,34 +1,37 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:random_avatar/random_avatar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:waatea2_client/models/abonnement_model.dart';
 import 'package:waatea2_client/screens/historicalgames.dart';
 import 'package:waatea2_client/screens/home.dart';
+import 'package:waatea2_client/screens/login.dart';
 import 'package:waatea2_client/widgets/showplayerattendance.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart'; // Clipboard
-import 'package:url_launcher/url_launcher.dart'; // url_launcher
 
 import '../globals.dart' as globals;
 import '../models/user_model.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
+
   @override
   HomeState createState() => HomeState();
 }
 
 class HomeState extends State<UserProfile> {
   final employeeListKey = GlobalKey<HomeState>();
+
   String? _version;
   AbonnementModel? _selectedAbonnement;
   List<AbonnementModel> abonnementOptions = [];
 
   TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController abonnementController = TextEditingController();
 
   @override
   void initState() {
@@ -36,8 +39,13 @@ class HomeState extends State<UserProfile> {
     _getAppVersion();
 
     fetchAbonnements().then((abonnements) {
+      if (!mounted) {
+        return;
+      }
+
       setState(() {
         abonnementOptions = abonnements;
+
         if (globals.player.profile.abonnement != null) {
           _selectedAbonnement = abonnementOptions.firstWhere(
             (abonnement) =>
@@ -50,17 +58,28 @@ class HomeState extends State<UserProfile> {
     });
   }
 
+  @override
+  void dispose() {
+    phoneNumberController.dispose();
+    super.dispose();
+  }
+
   Future<List<AbonnementModel>> fetchAbonnements() async {
     final response = await http.get(
       Uri.parse(
         '${globals.URL_PREFIX}/api/abonnements/filter?club=${globals.clubId}',
       ),
-      headers: {'Authorization': 'Token ${globals.token}'},
+      headers: {
+        'Authorization': 'Token ${globals.token}',
+      },
     );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => AbonnementModel.fromJson(item)).toList();
+
+      return data
+          .map((item) => AbonnementModel.fromJson(item))
+          .toList();
     } else {
       throw Exception('Failed to load abonnements');
     }
@@ -69,12 +88,18 @@ class HomeState extends State<UserProfile> {
   void _getAppVersion() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final version = packageInfo.version;
+
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
       _version = version;
     });
   }
 
   // ---------- ICS helper functions ----------
+
   String _playerTrainingIcsHttpsUrl() {
     final base = globals.URL_PREFIX;
     final playerId = globals.playerId;
@@ -82,32 +107,53 @@ class HomeState extends State<UserProfile> {
     final club = globals.clubId;
 
     final uri = Uri.parse(base).replace(
-      path: "/calendar/player/$playerId/trainings.ics",
-      queryParameters: {"season": season.toString(), "club": club.toString()},
+      path: '/calendar/player/$playerId/trainings.ics',
+      queryParameters: {
+        'season': season.toString(),
+        'club': club.toString(),
+      },
     );
+
     return uri.toString();
   }
 
   String _playerTrainingIcsWebcalUrl() {
     final https = _playerTrainingIcsHttpsUrl();
-    return https.replaceFirst(RegExp(r'^https?://'), 'webcal://');
+
+    return https.replaceFirst(
+      RegExp(r'^https?://'),
+      'webcal://',
+    );
   }
 
   Future<void> _copyToClipboard(String text) async {
-    await Clipboard.setData(ClipboardData(text: text));
+    await Clipboard.setData(
+      ClipboardData(text: text),
+    );
+
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Link copied')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Link copied'),
+        ),
+      );
     }
   }
 
   Future<void> _launchUrlString(String url) async {
     final uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Was not able to open link: $url')),
+          SnackBar(
+            content: Text(
+              'Was not able to open link: $url',
+            ),
+          ),
         );
       }
     }
@@ -120,60 +166,137 @@ class HomeState extends State<UserProfile> {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder:
-          (ctx) => SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const ListTile(
-                    leading: Icon(Icons.calendar_month),
-                    title: Text('Training calendar'),
-                    subtitle: Text('Subscribe ICS or copy link'),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.open_in_browser),
-                    title: const Text('Open in Google calendar (https)'),
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      _launchUrlString(httpsUrl);
-                    },
-                    subtitle: Text(
-                      httpsUrl,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.phone_iphone),
-                    title: const Text('Subscribe on iPhone (webcal)'),
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      _launchUrlString(webcalUrl);
-                    },
-                    subtitle: Text(
-                      webcalUrl,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.copy),
-                    title: const Text('Copy link (https)'),
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      _copyToClipboard(httpsUrl);
-                    },
-                  ),
-                ],
-              ),
-            ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            8,
+            16,
+            24,
           ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ListTile(
+                leading: Icon(
+                  Icons.calendar_month,
+                ),
+                title: Text(
+                  'Training calendar',
+                ),
+                subtitle: Text(
+                  'Subscribe ICS or copy link',
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(
+                  Icons.open_in_browser,
+                ),
+                title: const Text(
+                  'Open in Google calendar (https)',
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _launchUrlString(httpsUrl);
+                },
+                subtitle: Text(
+                  httpsUrl,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.phone_iphone,
+                ),
+                title: const Text(
+                  'Subscribe on iPhone (webcal)',
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _launchUrlString(webcalUrl);
+                },
+                subtitle: Text(
+                  webcalUrl,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: const Text(
+                  'Copy link (https)',
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _copyToClipboard(httpsUrl);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
+
   // ---------- end ICS helpers ----------
+
+  Future<void> _logout() async {
+    final sharedPreferences =
+        await SharedPreferences.getInstance();
+
+    await sharedPreferences.remove('token');
+
+    // Clean up passwords saved by older versions
+    // of the client.
+    await sharedPreferences.remove('password');
+
+    globals.token = '';
+
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+      (route) => false,
+    );
+  }
+
+  Future<void> _confirmLogout() async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Log out?'),
+          content: const Text(
+            'Are you sure you want to log out?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Log out'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await _logout();
+    }
+  }
 
   void _showSuccessDialog() {
     showDialog(
@@ -181,7 +304,9 @@ class HomeState extends State<UserProfile> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Success'),
-          content: const Text('Password updated successfully.'),
+          content: const Text(
+            'Password updated successfully.',
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
@@ -195,32 +320,54 @@ class HomeState extends State<UserProfile> {
     );
   }
 
-  Future<void> changePassword(String newPassword) async {
+  Future<void> changePassword(
+    String newPassword,
+  ) async {
     try {
       final response = await http.post(
-        Uri.parse('${globals.URL_PREFIX}/api/change-password/'),
+        Uri.parse(
+          '${globals.URL_PREFIX}/api/change-password/',
+        ),
         headers: {
           'Authorization': 'Token ${globals.token}',
           'Content-Type': 'application/json',
         },
-        body: json.encode({'new_password': newPassword}),
+        body: json.encode({
+          'new_password': newPassword,
+        }),
       );
 
       if (response.statusCode == 200) {
+        if (!mounted) {
+          return;
+        }
+
         _showSuccessDialog();
-        final sharedPreferences = await SharedPreferences.getInstance();
-        sharedPreferences.setString('password', newPassword);
+
+        // Do not store the password locally.
+        final sharedPreferences =
+            await SharedPreferences.getInstance();
+
+        await sharedPreferences.remove('password');
       } else {
-        debugPrint('Failed to change password. Status code: ${response.statusCode}');
+        debugPrint(
+          'Failed to change password. '
+          'Status code: ${response.statusCode}',
+        );
       }
     } catch (error) {
-      debugPrint('Error while changing password: $error');
+      debugPrint(
+        'Error while changing password: $error',
+      );
     }
   }
 
   void _showChangePasswordDialog() {
-    TextEditingController newPasswordController = TextEditingController();
-    TextEditingController confirmPasswordController = TextEditingController();
+    final newPasswordController =
+        TextEditingController();
+
+    final confirmPasswordController =
+        TextEditingController();
 
     showDialog(
       context: context,
@@ -228,20 +375,29 @@ class HomeState extends State<UserProfile> {
         return AlertDialog(
           title: const Text(
             'Change Password',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
-                controller: newPasswordController,
-                decoration: const InputDecoration(labelText: 'New Password'),
+                controller:
+                    newPasswordController,
+                decoration:
+                    const InputDecoration(
+                  labelText: 'New Password',
+                ),
                 obscureText: true,
               ),
               TextField(
-                controller: confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm New Password',
+                controller:
+                    confirmPasswordController,
+                decoration:
+                    const InputDecoration(
+                  labelText:
+                      'Confirm New Password',
                 ),
                 obscureText: true,
               ),
@@ -257,16 +413,28 @@ class HomeState extends State<UserProfile> {
             TextButton(
               child: const Text(
                 'Change Password',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
               onPressed: () {
-                String newPassword = newPasswordController.text;
-                String confirmPassword = confirmPasswordController.text;
+                final newPassword =
+                    newPasswordController.text;
 
-                if (newPassword != confirmPassword) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Passwords do not match.')),
+                final confirmPassword =
+                    confirmPasswordController.text;
+
+                if (newPassword !=
+                    confirmPassword) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Passwords do not match.',
+                      ),
+                    ),
                   );
+
                   return;
                 }
 
@@ -281,46 +449,64 @@ class HomeState extends State<UserProfile> {
   }
 
   void _showEditDialog() {
-    TextEditingController phoneNumberController = TextEditingController();
-    TextEditingController abonnementController = TextEditingController();
+    final phoneNumberController =
+        TextEditingController();
 
-    phoneNumberController.text = globals.player.profile.mobilePhone;
+    phoneNumberController.text =
+        globals.player.profile.mobilePhone;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext context, setState) {
+          builder: (
+            BuildContext context,
+            setState,
+          ) {
             return AlertDialog(
               title: const Text('Edit Profile'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextField(
-                    controller: phoneNumberController,
-                    decoration: const InputDecoration(
-                      labelText: 'Phone Number',
+                    controller:
+                        phoneNumberController,
+                    decoration:
+                        const InputDecoration(
+                      labelText:
+                          'Phone Number',
                     ),
                   ),
                   const SizedBox(height: 32),
                   const Text('Select Abo'),
-                  DropdownButton<AbonnementModel>(
+                  DropdownButton<
+                      AbonnementModel>(
                     value: _selectedAbonnement,
                     onChanged: (value) {
                       setState(() {
-                        _selectedAbonnement = value!;
+                        _selectedAbonnement =
+                            value;
                       });
                     },
                     items: [
-                      const DropdownMenuItem<AbonnementModel>(
+                      const DropdownMenuItem<
+                          AbonnementModel>(
                         value: null,
-                        child: Text('Select Abonnement'),
+                        child: Text(
+                          'Select Abonnement',
+                        ),
                       ),
-                      ...abonnementOptions.map((abonnement) {
-                        return DropdownMenuItem<AbonnementModel>(
-                          value: abonnement,
-                          child: Text(abonnement.name),
-                        );
-                      }),
+                      ...abonnementOptions.map(
+                        (abonnement) {
+                          return DropdownMenuItem<
+                              AbonnementModel>(
+                            value: abonnement,
+                            child: Text(
+                              abonnement.name,
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ],
@@ -333,54 +519,94 @@ class HomeState extends State<UserProfile> {
                   },
                 ),
                 TextButton(
-                  child: const Text('Save Changes'),
+                  child:
+                      const Text('Save Changes'),
                   onPressed: () async {
-                    String newPhoneNumber = phoneNumberController.text;
+                    final newPhoneNumber =
+                        phoneNumberController.text;
 
-                    final Map<String, dynamic> body = {
-                      'mobile_phone': newPhoneNumber,
-                      'abo': _selectedAbonnement?.pk,
+                    final Map<String, dynamic>
+                        body = {
+                      'mobile_phone':
+                          newPhoneNumber,
+                      'abo':
+                          _selectedAbonnement?.pk,
                       'classification':
-                          globals.player.profile.classification?.pk,
+                          globals
+                              .player
+                              .profile
+                              .classification
+                              ?.pk,
                     };
 
-                    final http.Response response = await http.patch(
+                    await http.patch(
                       Uri.parse(
-                        '${globals.URL_PREFIX}/api/user-profile/${globals.player.email}/',
+                        '${globals.URL_PREFIX}'
+                        '/api/user-profile/'
+                        '${globals.player.email}/',
                       ),
                       headers: {
-                        'Authorization': 'Token ${globals.token}',
-                        'Content-Type': 'application/json; charset=UTF-8',
+                        'Authorization':
+                            'Token ${globals.token}',
+                        'Content-Type':
+                            'application/json; '
+                            'charset=UTF-8',
                       },
                       body: json.encode(body),
                     );
 
-                    final http.Response response2 = await http.get(
+                    final http.Response response2 =
+                        await http.get(
                       Uri.parse(
-                        '${globals.URL_PREFIX}/api/users/filter?email=${globals.player.email}',
+                        '${globals.URL_PREFIX}'
+                        '/api/users/filter'
+                        '?email=${globals.player.email}',
                       ),
-                      headers: {'Authorization': 'Token ${globals.token}'},
+                      headers: {
+                        'Authorization':
+                            'Token ${globals.token}',
+                      },
                     );
 
-                    if (response2.statusCode == 200) {
-                      String responseBody = utf8.decode(response2.bodyBytes);
+                    if (response2.statusCode ==
+                        200) {
+                      final responseBody =
+                          utf8.decode(
+                        response2.bodyBytes,
+                      );
 
-                      final itemsUser =
-                          json
-                              .decode(responseBody)
-                              .cast<Map<String, dynamic>>();
-                      List<UserModel> users =
-                          itemsUser.map<UserModel>((json) {
-                            return UserModel.fromJson(json);
-                          }).toList();
+                      final itemsUser = json
+                          .decode(responseBody)
+                          .cast<
+                              Map<String,
+                                  dynamic>>();
+
+                      final List<UserModel> users =
+                          itemsUser
+                              .map<UserModel>(
+                                (json) =>
+                                    UserModel
+                                        .fromJson(
+                                  json,
+                                ),
+                              )
+                              .toList();
 
                       globals.player = users[0];
 
+                      if (!context.mounted) {
+                        return;
+                      }
+
                       Navigator.of(context).pop();
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => MyHomePage(initialIndex: 1),
+                          builder: (_) =>
+                              MyHomePage(
+                            initialIndex: 1,
+                          ),
                         ),
                       );
                     }
@@ -399,23 +625,39 @@ class HomeState extends State<UserProfile> {
     return Scaffold(
       key: employeeListKey,
       appBar: AppBar(
-        title: const Text('User Info', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'User Info',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.event_available_outlined),
+            icon: const Icon(
+              Icons.event_available_outlined,
+            ),
             tooltip: 'Training ICS',
             onPressed: _showIcsActionsSheet,
           ),
-          IconButton(icon: const Icon(Icons.edit), onPressed: _showEditDialog),
           IconButton(
-            icon: const Icon(Icons.history_edu_rounded),
+            icon: const Icon(Icons.edit),
+            tooltip: 'Edit profile',
+            onPressed: _showEditDialog,
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.history_edu_rounded,
+            ),
+            tooltip: 'Historical games',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (context) =>
-                          HistoricalGamesScreen(playerId: globals.playerId),
+                  builder: (context) =>
+                      HistoricalGamesScreen(
+                    playerId:
+                        globals.playerId,
+                  ),
                 ),
               );
             },
@@ -423,145 +665,230 @@ class HomeState extends State<UserProfile> {
         ],
       ),
       body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 24),
-            RandomAvatar(globals.player.name, height: 80, width: 80),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.person),
-                const SizedBox(width: 24),
-                Text(globals.player.name, style: const TextStyle(fontSize: 17)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.check_box),
-                const SizedBox(width: 24),
-                Text(
-                  "Active: ${globals.player.profile.isPlaying.toString()}",
-                  style: const TextStyle(fontSize: 17),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 24),
+              RandomAvatar(
+                globals.player.name,
+                height: 80,
+                width: 80,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(Icons.person),
+                  const SizedBox(width: 24),
+                  Text(
+                    globals.player.name,
+                    style: const TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(Icons.check_box),
+                  const SizedBox(width: 24),
+                  Text(
+                    'Active: '
+                    '${globals.player.profile.isPlaying}',
+                    style: const TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(Icons.email),
+                  const SizedBox(width: 24),
+                  Text(
+                    globals.player.email,
+                    style: const TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(Icons.phone),
+                  const SizedBox(width: 24),
+                  Text(
+                    globals.player.profile
+                        .mobilePhone,
+                    style: const TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(Icons.category),
+                  const SizedBox(width: 24),
+                  Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                    children: [
+                      if (globals
+                                  .player
+                                  .profile
+                                  .classification !=
+                              null &&
+                          globals
+                                  .player
+                                  .profile
+                                  .classification
+                                  ?.name !=
+                              null)
+                        Text(
+                          globals
+                              .player
+                              .profile
+                              .classification!
+                              .name,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(Icons.train),
+                  const SizedBox(width: 24),
+                  Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                    children: [
+                      if (globals
+                                  .player
+                                  .profile
+                                  .abonnement !=
+                              null &&
+                          globals
+                                  .player
+                                  .profile
+                                  .abonnement
+                                  ?.name !=
+                              null)
+                        Text(
+                          globals
+                              .player
+                              .profile
+                              .abonnement!
+                              .name,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(
+                    Icons.history_edu,
+                  ),
+                  const SizedBox(width: 24),
+                  Text(
+                    globals.player.caps
+                        .toString(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(
+                    Icons.access_time,
+                  ),
+                  const SizedBox(width: 24),
+                  Text(
+                    globals.player.profile
+                        .clubHours
+                        .toStringAsFixed(1),
+                    style: const TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const SizedBox(width: 34),
+                  const Icon(
+                    Icons.fitness_center,
+                  ),
+                  const SizedBox(width: 24),
+                  SizedBox(
+                    width: 400,
+                    height: 30,
+                    child:
+                        ShowPlayerAttendance(
+                      globals.playerId,
+                      15,
+                      MainAxisAlignment.start,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.black,
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.email),
-                const SizedBox(width: 24),
-                Text(
-                  globals.player.email,
-                  style: const TextStyle(fontSize: 17),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.phone),
-                const SizedBox(width: 24),
-                Text(
-                  globals.player.profile.mobilePhone,
-                  style: const TextStyle(fontSize: 17),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.category),
-                const SizedBox(width: 24),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (globals.player.profile.classification != null &&
-                        globals.player.profile.classification?.name != null)
-                      Text(globals.player.profile.classification!.name),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.train),
-                const SizedBox(width: 24),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (globals.player.profile.abonnement != null &&
-                        globals.player.profile.abonnement?.name != null)
-                      Text(globals.player.profile.abonnement!.name),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.history_edu),
-                const SizedBox(width: 24),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [Text(globals.player.caps.toString())],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.access_time),
-                const SizedBox(width: 24),
-                Text(
-                  // Falls clubHours null/fehlt: 0.0 anzeigen
-                  (globals.player.profile.clubHours).toStringAsFixed(1),
-                  style: const TextStyle(fontSize: 17),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const SizedBox(width: 34),
-                const Icon(Icons.fitness_center),
-                const SizedBox(width: 24),
-                SizedBox(
-                  width: 400,
-                  height: 30,
-                  child: ShowPlayerAttendance(
-                    globals.playerId,
-                    15,
-                    MainAxisAlignment.start,
+                onPressed:
+                    _showChangePasswordDialog,
+                child: const Text(
+                  'Change Password',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight:
+                        FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-              onPressed: _showChangePasswordDialog,
-              child: const Text(
-                'Change Password',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _confirmLogout,
+                icon: const Icon(
+                  Icons.logout,
+                ),
+                label: const Text(
+                  'Log out',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight:
+                        FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text('Waatea version: ${_version.toString()}'),
-          ],
+              const SizedBox(height: 20),
+              Text(
+                'Waatea version: ${_version ?? ''}',
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

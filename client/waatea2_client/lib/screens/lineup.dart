@@ -971,7 +971,7 @@ class _LineUpEditorState extends State<LineUpEditor> {
   }
 
   Future<void> _publish(String gameid) async {
-    final response = await http.patch(
+    await http.patch(
       Uri.parse('${globals.URL_PREFIX}/api/game/$gameid/'),
       headers: {'Authorization': 'Token ${globals.token}'},
       body: {'lineup_published': 'true'},
@@ -1016,9 +1016,6 @@ class _LineUpEditorState extends State<LineUpEditor> {
         if (response.statusCode == 201) {
           // Handle success as needed.
           debugPrint('Created a new lineuppos');
-          // Update the trainingPart with the newly created primary key (pk).
-          final Map<String, dynamic> responseData = jsonDecode(response.body);
-          //trainingPart.id = responseData['id'];
         } else {
           // Handle error if necessary.
           debugPrint('API Error: ${response.statusCode}');

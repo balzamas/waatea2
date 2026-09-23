@@ -24,7 +24,8 @@ class ShowAvailabilityDetailRow extends StatefulWidget {
   });
 
   @override
-   State<ShowAvailabilityDetailRow> createState() => _ShowAvailabilityDetailRowState();
+  State<ShowAvailabilityDetailRow> createState() =>
+      _ShowAvailabilityDetailRowState();
 }
 
 class _ShowAvailabilityDetailRowState extends State<ShowAvailabilityDetailRow> {

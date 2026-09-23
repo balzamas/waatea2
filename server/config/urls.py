@@ -16,10 +16,12 @@ from waateaapp.viewsets import GameCurrentFilterAPIView, UserFilterAPIView, Avai
     UserDetailAPIView, GameCurrentAvailCountFilterAPIView, change_password, HistoricalGameFilterAPIView, \
     LinksFilterAPIView, ClassificationFilterAPIView, AssessmentFilterAPIView, AbonnementFilterAPIView, get_csrf_token, \
     TrainingPartCreateAPIView, TrainingPartUpdateAPIView, LineUpPosCreateAPIView, LineUpPosUpdateAPIView, \
-    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView, TeamsAPIView, GameCreateAPIView, AttendingUsersViewSet, PositionFilterAPIView, FitnessCreateAPIView, FitnessFilterAPIView, TeamFilterAPIView
+    GameUpdateAPIView, GamePastFilterAPIView, TrainingDeleteAPIView, TeamsAPIView, GameCreateAPIView, \
+    AttendingUsersViewSet, PositionFilterAPIView, FitnessCreateAPIView, FitnessFilterAPIView, TeamFilterAPIView, request_password_reset
 from django.views.static import serve
 import os
 from waatea_2.users.views import register_user
+from django.views.generic import RedirectView
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('clubs', views.ClubViewSet)
 router.register('gamedetails', views.Game)
@@ -34,6 +36,14 @@ def flutter_redirect(request, resource):
     return serve(request, resource, FLUTTER_WEB_APP)
 
 urlpatterns = [
+    path(
+        "",
+        RedirectView.as_view(
+            url="/client/",
+            permanent=False,
+        ),
+        name="home",
+    ),
       path("calendar/club/<uuid:club_id>.ics", calendar_feed, name="calendar_feed"),
       path("calendar/player/<int:player_id>/trainings.ics", calendar_player_trainings, name="calendar_player_trainings",),
       path('api/register/', register_user, name='register'),
@@ -111,7 +121,11 @@ path('api/trainingparts/<uuid:pk>/', viewsets.delete_training_part),
                   path('api/lineuppos/<uuid:pk>/', LineUpPosUpdateAPIView.as_view(), name='lineuppos-update'),
 
                   path('rest-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
+    path(
+        "api/password-reset/",
+        request_password_reset,
+        name="password-reset",
+    ),
     path('api/change-password/', change_password, name='change_password'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

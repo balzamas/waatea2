@@ -16,7 +16,7 @@ class EditPlayerDetail extends StatefulWidget {
   const EditPlayerDetail({super.key, required this.user});
 
   @override
-   State<EditPlayerDetail> createState() => _EditPlayerDetailState();
+  State<EditPlayerDetail> createState() => _EditPlayerDetailState();
 }
 
 class Animal {
@@ -252,7 +252,7 @@ class _EditPlayerDetailState extends State<EditPlayerDetail> {
                   'positions': positionsData,
                 };
 
-                final http.Response response = await http.patch(
+                await http.patch(
                   Uri.parse(
                     '${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/',
                   ),

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:random_avatar/random_avatar.dart';
 import 'package:waatea2_client/models/user_model.dart';
 import 'package:waatea2_client/screens/upcomingtrainingattendancescreen.dart';
 import 'dart:convert';
 import '../globals.dart' as globals;
-
+import 'package:random_avatar/random_avatar.dart';
 import '../models/attendance.dart';
 import '../models/setattendance.dart';
 import '../models/training_model.dart';
 
 //Todo: programmiert mit Kindergeschrei im Hintergrund, total mess, aufräumen
-
-import 'package:intl/intl.dart';
 
 class SetAttendance extends StatefulWidget {
   const SetAttendance({super.key});
@@ -24,7 +21,6 @@ class SetAttendance extends StatefulWidget {
 class SetAttendanceState extends State<SetAttendance> {
   late Future<SetAttendanceModel> setAttendanceContent;
   late List<UserModel> attendingPlayers;
-  List<Map<String, dynamic>> _exercises = [];
 
   final availabilityListKey = GlobalKey<SetAttendanceState>();
   int state = 0;
@@ -41,70 +37,6 @@ class SetAttendanceState extends State<SetAttendance> {
     // });
   }
 
-  Future<void> _fetchExercises() async {
-    final response = await http.get(
-      Uri.parse(
-        "${globals.URL_PREFIX}/api/fitness/filter?season=${globals.seasonID}",
-      ),
-      headers: {'Authorization': 'Token ${globals.token}'},
-    );
-
-    if (response.statusCode == 200) {
-      final exercises = json.decode(utf8.decode(response.bodyBytes)) as List;
-      setState(() {
-        _exercises =
-            exercises.map((e) {
-              return {
-                'player': e['player_name'],
-                'date': DateFormat(
-                  'yyyy-MM-dd',
-                ).format(DateTime.parse(e['date'])),
-                'note': e['note'],
-              };
-            }).toList();
-      });
-    }
-  }
-
-  Future<void> _showLastExercisesDialog() async {
-    if (_exercises.isEmpty) return;
-
-    await showDialog<void>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('Latest fitness entries'),
-            content: SingleChildScrollView(
-              child: Column(
-                children:
-                    _exercises.map((exercise) {
-                      return ListTile(
-                        leading: RandomAvatar(
-                          exercise['player'],
-                          height: 50,
-                          width: 50,
-                        ),
-                        title: Text(
-                          '${exercise['player']} had gains: ${exercise['note'] ?? 'No note'}',
-                        ),
-                        subtitle: Text(exercise['date']),
-                      );
-                    }).toList(),
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black, // Background color
-                ),
-                child: Text('Close'),
-              ),
-            ],
-          ),
-    );
-  }
-
   Future setAttendanceNow(int state) async {
     bool boolState = false;
     if (state == 1) {
@@ -113,7 +45,7 @@ class SetAttendanceState extends State<SetAttendance> {
     if (attendanceId != "") {
       final Map<String, bool> body = {'attended': boolState};
 
-      final http.Response response = await http.patch(
+      await http.patch(
         Uri.parse('${globals.URL_PREFIX}/api/attendance/$attendanceId/'),
         headers: {
           'Authorization': 'Token ${globals.token}',

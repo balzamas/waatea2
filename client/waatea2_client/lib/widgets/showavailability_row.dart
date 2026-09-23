@@ -85,7 +85,7 @@ class _ShowAvailabilityRowState extends State<ShowAvailabilityRow> {
                 team1Title =
                     "${gameList[0].home} - ${gameList[0].away}"; // Set the title
                 team1id = gameList[0].pk;
-                isPublished = gameList[0].lineup_published;
+                isPublished = gameList[0].lineupPublished;
               }
               if (gameList.length > 1) {
                 team2Title =

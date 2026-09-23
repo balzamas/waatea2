@@ -10,7 +10,7 @@ from .serializers import GameSerializer, UserSerializer, AvailabilitySerializer,
     TrainingSerializer, CurrentSeasonSerializer, TrainingAttendanceCountSerializer, TrainingAttendanceSerializer, \
     UserProfileSerializer, GameAvailCountSerializer, HistoricalGameSerializer, LinksSerializer, AssessmentSerializer, \
     AbonnementSerializer, ClassificationSerializer, TrainingPartSerializer, LineUpPosSerializer, TeamSerializer, \
-    GameCreateSerializer, PositionSerializer, FitnessSerializer
+    GameCreateSerializer, PositionSerializer, FitnessSerializer, GameUpdateSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware
 from rest_framework.response import Response
@@ -24,6 +24,11 @@ from rest_framework.generics import DestroyAPIView
 from django.utils.dateparse import parse_datetime
 from datetime import datetime
 from django.utils.dateparse import parse_date
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from allauth.account.forms import ResetPasswordForm
+
+
 
 class TrainingPartViewSet(viewsets.ModelViewSet):
     serializer_class = TrainingPartSerializer
@@ -49,12 +54,14 @@ class GameViewSet(viewsets.ModelViewSet):
     ordering_fields = ['date']
     ordering = ['date']
 
-class GameUpdateAPIView(generics.RetrieveUpdateAPIView):
+class GameUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+
     queryset = Game.objects.all()
-    serializer_class = GameSerializer
+    serializer_class = GameUpdateSerializer
 
     def perform_update(self, serializer):
-        serializer.save()  # Use partial=True to allow partial updates
+        serializer.save()
+
 class HistoricalGameFilterAPIView(generics.ListAPIView):
     queryset = HistoricalGame.objects.order_by('-date')
     serializer_class = HistoricalGameSerializer
@@ -546,3 +553,40 @@ def change_password(request):
 def get_csrf_token(request):
     csrf_token = csrf.get_token(request)
     return JsonResponse({'csrf_token': csrf_token})
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def request_password_reset(request):
+    """
+    Request a password-reset email.
+
+    Always returns the same success response for valid email input,
+    regardless of whether the email belongs to an account.
+    """
+    email = request.data.get("email", "").strip().lower()
+
+    if not email:
+        return Response(
+            {"email": ["Email address is required."]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    form = ResetPasswordForm(data={"email": email})
+
+    if not form.is_valid():
+        return Response(
+            form.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    form.save(request=request)
+
+    return Response(
+        {
+            "detail": (
+                "If an account exists for this email address, "
+                "a password reset link has been sent."
+            )
+        },
+        status=status.HTTP_200_OK,
+    )

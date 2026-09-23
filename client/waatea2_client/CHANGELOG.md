@@ -1,5 +1,15 @@
 # Waatea Changelog
 
+## V0.0.47
+- **New Feature:** Games can be edited and deleted
+- **New Feature:** Trainings: filter for attending, not attending and not set
+- **Lost Feature:** CSV exports currently do not work 
+- **CleanUp:** Well, some more code clean ups
+- **Enhancement:** Date picker in euro format (Monday first day of the week)
+- **New Feature:** Log out button
+- **Security:** Remove password from SharedPreferences
+- **New Feature:** Reset password link
+
 ## V0.0.46
 - **Upgrade** Update core and libraries
 

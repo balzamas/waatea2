@@ -11,8 +11,7 @@ class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-     State<SignUpScreen> createState() => _SignUpScreenState();
-
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
@@ -115,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           'mobile_phone': _mobilephoneController.text.trim(),
         };
 
-        final http.Response response = await http.patch(
+        await http.patch(
           Uri.parse(
             '${globals.URL_PREFIX}/api/user-profile/${_emailController.text}/',
           ),

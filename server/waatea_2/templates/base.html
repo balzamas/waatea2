@@ -1,15 +1,29 @@
-{% load static i18n %}<!DOCTYPE html>
+{% load static i18n %}
+<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
-    <!-- ... (your existing head content) ... -->
+    <meta charset="utf-8">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+      {% block head_title %}Waatea{% endblock %}
+    </title>
+
+    {% block extra_head %}
+    {% endblock %}
   </head>
+
   <body>
+    {% block body %}
+      {% block content %}
+      {% endblock %}
+    {% endblock %}
 
-    <!-- JavaScript redirection -->
-    <script>
-      window.location.href = '/client'; // Change '/client' to your desired URL
-    </script>
-
+    {% block extra_body %}
+    {% endblock %}
   </body>
 </html>

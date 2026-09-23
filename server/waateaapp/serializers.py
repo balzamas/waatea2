@@ -90,6 +90,21 @@ class GameCreateSerializer(serializers.ModelSerializer):
             'lineup_published'
         ]
 
+class GameUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = [
+            'pk',
+            'home',
+            'away',
+            'club',
+            'date',
+            'dayofyear',
+            'season',
+            'lineup_published',
+        ]
+
+
 class GameAvailCountSerializer(serializers.ModelSerializer):
     home = TeamSerializer()
     away = TeamSerializer()

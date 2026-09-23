@@ -28,7 +28,6 @@ class TrainingDetailScreen extends StatefulWidget {
 
 class _TrainingDetailScreenState extends State<TrainingDetailScreen> {
   List<TrainingPart> trainingParts = []; // Replace with TrainingPart list
-  final TextEditingController _trainingPartController = TextEditingController();
   FileGenerationStatus generationStatus = FileGenerationStatus.idle;
 
   @override

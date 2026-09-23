@@ -13,7 +13,8 @@ class UpcomingTrainingAttendanceScreen extends StatefulWidget {
   const UpcomingTrainingAttendanceScreen({super.key});
 
   @override
-  State<UpcomingTrainingAttendanceScreen> createState() => _UpcomingTrainingAttendanceScreenState();
+  State<UpcomingTrainingAttendanceScreen> createState() =>
+      _UpcomingTrainingAttendanceScreenState();
 }
 
 class _UpcomingTrainingAttendanceScreenState
@@ -75,51 +76,6 @@ class _UpcomingTrainingAttendanceScreenState
     final a = AttendanceModel.fromJson(list.first as Map<String, dynamic>);
     _attendancePkByTraining[trainingId] = a.pk;
     return a.attended ? 1 : 2;
-  }
-
-  Future<void> _setAttendance({
-    required TrainingModel t,
-    required int stateValue, // 1 yes, 2 no
-  }) async {
-    final attended = (stateValue == 1);
-    final existingPk = _attendancePkByTraining[t.id];
-
-    if (existingPk != null && existingPk.isNotEmpty) {
-      // PATCH
-      await http.patch(
-        Uri.parse('${globals.URL_PREFIX}/api/attendance/$existingPk/'),
-        headers: {
-          'Authorization': 'Token ${globals.token}',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode({'attended': attended}),
-      );
-    } else {
-      // POST
-      final body = {
-        'attended': attended,
-        'dayofyear': t.dayofyear,
-        'player': globals.playerId,
-        'training': t.id,
-        'season': globals.seasonID,
-      };
-      final resp = await http.post(
-        Uri.parse('${globals.URL_PREFIX}/api/attendance/'),
-        headers: {
-          'Authorization': 'Token ${globals.token}',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode(body),
-      );
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        final data = json.decode(resp.body);
-        _attendancePkByTraining[t.id] = data['pk']?.toString();
-      }
-    }
-
-    setState(() {
-      _stateByTraining[t.id] = stateValue;
-    });
   }
 
   @override

@@ -15,7 +15,7 @@ class EditPlayerComment extends StatefulWidget {
   const EditPlayerComment({super.key, required this.user});
 
   @override
-   State<EditPlayerComment> createState() => _EditPlayerCommentState();
+  State<EditPlayerComment> createState() => _EditPlayerCommentState();
 }
 
 class _EditPlayerCommentState extends State<EditPlayerComment> {
@@ -46,7 +46,7 @@ class _EditPlayerCommentState extends State<EditPlayerComment> {
       // ),
     };
 
-    final http.Response response = await http.patch(
+    await http.patch(
       Uri.parse('${globals.URL_PREFIX}/api/user-profile/${widget.user.email}/'),
       headers: {
         'Authorization': 'Token ${globals.token}',

@@ -26,7 +26,7 @@ class SetAvailabilityRow extends StatefulWidget {
   });
 
   @override
-   State<SetAvailabilityRow> createState() => _SetAvailabilityRowState();
+  State<SetAvailabilityRow> createState() => _SetAvailabilityRowState();
 }
 
 class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
@@ -48,7 +48,7 @@ class _SetAvailabilityRowState extends State<SetAvailabilityRow> {
     if (availabilityId != "") {
       final Map<String, int> body = {'state': state};
 
-      final http.Response response = await http.patch(
+      await http.patch(
         Uri.parse('${globals.URL_PREFIX}/api/availability/$availabilityId/'),
         headers: {
           'Authorization': 'Token ${globals.token}',
